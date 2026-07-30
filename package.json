@@ -1,0 +1,18 @@
+{
+  "name": "mls-trade-value",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:elo": "vitest run tests/elo.test.ts tests/ranking.test.ts",
+    "demo:elo": "tsx scripts/demo-elo.ts",
+    "build": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.10"
+  }
+}

@@ -6,7 +6,11 @@
   "scripts": {
     "test": "vitest run",
     "test:elo": "vitest run tests/elo.test.ts tests/ranking.test.ts",
+    "test:data": "vitest run tests/data-normalization.test.ts tests/data-aggregation.test.ts tests/data-validation.test.ts",
     "demo:elo": "tsx scripts/demo-elo.ts",
+    "probe:data": "tsx scripts/probe-asa.ts",
+    "build:data": "tsx scripts/build-player-data.ts",
+    "validate:data": "tsx scripts/validate-player-data.ts",
     "build": "tsc --noEmit"
   },
   "devDependencies": {

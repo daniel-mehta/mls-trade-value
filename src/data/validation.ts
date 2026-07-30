@@ -6,7 +6,8 @@ const NON_NEGATIVE_FIELDS = ["appearances", "starts", "minutes", "goals", "assis
 
 export function validateDataset(dataset: PlayerDataset): string[] {
   const errors: string[] = [];
-  if (dataset.schemaVersion !== 1) errors.push("schemaVersion must be 1");
+  if (dataset.schemaVersion !== 1 && dataset.schemaVersion !== 2) errors.push("schemaVersion must be 1 or 2");
+  if (dataset.rosterSnapshot && (!/^\d{4}-\d{2}-\d{2}$/.test(dataset.rosterSnapshot.releaseDate) || dataset.rosterSnapshot.isLive !== false)) errors.push("invalid or live roster snapshot");
   if (!Number.isInteger(dataset.season) || dataset.season < 1996) errors.push("invalid dataset season");
   if (!Array.isArray(dataset.players) || !dataset.players.length) errors.push("players must be non-empty");
   const ids = new Set<string>();
@@ -29,6 +30,11 @@ function validatePlayer(player: StaticPlayer, ids: Set<string>, errors: string[]
   }
   for (const field of ["baseSalary", "guaranteedCompensation"] as const) if (player[field] !== undefined && (!Number.isFinite(player[field]) || player[field] < 0)) errors.push(`${player.id}: invalid ${field}`);
   if (JSON.stringify(player).includes("null")) errors.push(`${player.id}: null is not allowed; omit optional fields`);
+  const roster = player.rosterProfile;
+  if (roster) {
+    if (!roster.listedInRosterSnapshot || !roster.snapshotTeamId || !roster.snapshotTeamName || !/^\d{4}-\d{2}-\d{2}$/.test(roster.snapshotDate)) errors.push(`${player.id}: invalid roster profile`);
+    if (roster.optionYears && (new Set(roster.optionYears).size !== roster.optionYears.length || roster.optionYears.some((year) => !/^\d{4}$/.test(year)))) errors.push(`${player.id}: invalid option years`);
+  }
 }
 
 export function assertValidDataset(dataset: PlayerDataset): void { const errors = validateDataset(dataset); if (errors.length) throw new Error(`Dataset validation failed:\n- ${errors.join("\n- ")}`); }

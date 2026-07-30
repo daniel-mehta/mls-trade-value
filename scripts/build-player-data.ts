@@ -7,6 +7,8 @@ import { normalizePosition } from "../src/data/position.js";
 import { latestSalaryByPlayer } from "../src/data/salary.js";
 import { COMPETITION, CURRENT_SEASON, PREVIOUS_SEASON, type PlayerDataset, type PlayerSeasonStats, type StaticPlayer } from "../src/data/types.js";
 import { assertValidDataset } from "../src/data/validation.js";
+import { attachRoster, fetchLatestRoster } from "../src/data/roster.js";
+import { applyOverrides, loadOverrides } from "../src/data/rosterOverrides.js";
 
 const forceRefresh = process.argv.includes("--refresh");
 const ID = (row: AsaRow) => textField(row, "player_id", "playerId");
@@ -123,11 +125,17 @@ async function main(): Promise<void> {
   }
   for (const salaryId of salaryByPlayer.keys()) if (!ids.has(salaryId)) unmatchedSalaryRows++;
   if (unknownPositions.size) console.warn(`Unrecognized ASA positions excluded: ${[...unknownPositions].join(", ")}`);
-  const dataset: PlayerDataset = { schemaVersion: 1, dataVersion: `asa-mls-${CURRENT_SEASON}-${PREVIOUS_SEASON}`, competition: "MLS", season: CURRENT_SEASON, previousSeason: PREVIOUS_SEASON, generatedAt: new Date().toISOString(), sources: [{ name: "American Soccer Analysis API", url: "https://app.americansocceranalysis.com/api/v1/__docs__/" }], players: stablePlayerSort(players) };
+  const roster = await fetchLatestRoster(forceRefresh);
+  const rosterAudit = attachRoster(players, roster.release);
+  const overrides = await loadOverrides(join(process.cwd(), "data", "roster-overrides.json"), players, new Set(teams.keys()));
+  const overridesApplied = applyOverrides(players, overrides);
+  console.log(`Roster ${roster.release.release_date}: ${roster.release.teams.length} teams from ${roster.fromCache ? "cache" : "network"}; 2026 files: ${roster.available.join(", ")}`);
+  if (rosterAudit.optionFormats.length) console.warn(`Option-year values with no year token: ${rosterAudit.optionFormats.join("; ")}`);
+  const dataset: PlayerDataset = { schemaVersion: 2, dataVersion: `asa-mls-${CURRENT_SEASON}-${PREVIOUS_SEASON}-roster-${roster.release.release_date}`, competition: "MLS", season: CURRENT_SEASON, previousSeason: PREVIOUS_SEASON, generatedAt: new Date().toISOString(), sources: [{ name: "American Soccer Analysis API", url: "https://app.americansocceranalysis.com/api/v1/__docs__/" }, { name: "American Soccer Analysis MLS roster profiles", url: "https://github.com/American-Soccer-Analysis/mls-roster-profiles" }], rosterSnapshot: { releaseDate: roster.release.release_date, sourceName: "American Soccer Analysis MLS roster profiles", isLive: false, totalRecords: rosterAudit.total, unmatchedRecords: rosterAudit.unmatched, duplicateRecordsIgnored: rosterAudit.duplicates, missingPlayerIds: rosterAudit.missingIds }, manualOverridesApplied: overridesApplied, players: stablePlayerSort(players) };
   assertValidDataset(dataset);
   await mkdir(join(process.cwd(), "public", "data"), { recursive: true });
   await writeFile(join(process.cwd(), "public", "data", "players.json"), `${JSON.stringify(dataset, null, 2)}\n`);
-  console.log(`\nMLS player dataset generated\n\nCurrent season: ${CURRENT_SEASON}\nPrevious season: ${PREVIOUS_SEASON}\nPlayers written: ${players.length}\nTeams represented: ${new Set(players.map((player) => player.teamId)).size}\nPlayers with salary data: ${players.filter((player) => player.baseSalary !== undefined || player.guaranteedCompensation !== undefined).length}\nPlayers with current-season minutes: ${players.filter((player) => (player.currentSeason.minutes ?? 0) > 0).length}\nMulti-team players: ${multiTeam.size}\nUnmatched salary rows: ${unmatchedSalaryRows}\n\nOutput: public/data/players.json`);
+  console.log(`\nMLS player dataset generated\n\nCurrent season: ${CURRENT_SEASON}\nPlayers written: ${players.length}\nRoster records: ${roster.release.teams.reduce((n, team) => n + (team.players?.length ?? 0), 0)}\nRoster matched by ASA ID: ${players.filter((p) => p.rosterProfile).length}\nUnmatched roster players: ${rosterAudit.unmatched}\nManual overrides applied: ${overridesApplied}\nStatistical players outside snapshot: ${players.filter((p) => !p.rosterProfile).length}\nTeam disagreements: ${rosterAudit.disagreements}\nOutput: public/data/players.json`);
 }
 
 main().catch((error) => { console.error(`Dataset build failed: ${(error as Error).message}`); process.exitCode = 1; });

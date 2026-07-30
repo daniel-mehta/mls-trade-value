@@ -9,6 +9,9 @@
     "test:data": "vitest run tests/data-normalization.test.ts tests/data-aggregation.test.ts tests/data-validation.test.ts",
     "demo:elo": "tsx scripts/demo-elo.ts",
     "probe:data": "tsx scripts/probe-asa.ts",
+    "probe:rosters": "tsx scripts/probe-rosters.ts",
+    "audit:rosters": "tsx scripts/audit-rosters.ts",
+    "test:rosters": "vitest run tests/roster.test.ts",
     "build:data": "tsx scripts/build-player-data.ts",
     "validate:data": "tsx scripts/validate-player-data.ts",
     "build": "tsc --noEmit"

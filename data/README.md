@@ -47,3 +47,57 @@ publishing or redistributing a refreshed snapshot.
 Known limitations: the API may not yet carry the configured current season, and
 salary coverage can lag statistics. A failed request stops the build so a stale
 or partial result cannot be presented as a successful refresh.
+
+## Phase 2B roster snapshot
+
+The build also uses the published JSON releases in ASA's
+[`mls-roster-profiles`](https://github.com/American-Soccer-Analysis/mls-roster-profiles)
+repository. It lists JSON candidates, parses their embedded `release_date`, and
+selects the latest 2026 release; filenames are never used as the date authority.
+The selected 2026 release is a **static 2026-02-26 snapshot**, not a live roster.
+Transfers, loans, injuries, waivers, and signings after that date are not implied.
+
+Roster records join the statistical records only by ASA player ID. Snapshot team
+ID/name stays within `rosterProfile`, separately from the statistical team; a
+disagreement is reported rather than guessed away. Missing IDs and unmatched
+records are likewise reported. `activeAtRosterSnapshot` means listed, not marked
+unavailable, and not in the explicit `Off-Roster (Unavailable)` slot.
+
+Available fields include slot, designation, status, contract-through, normalized
+option years, permanent-transfer option, international status, TAM convertibility,
+unavailability, Canadian exemption, and team roster-construction model. Missing
+booleans are omitted, not changed to false. Raw release data is cached under
+`.cache/rosters/` and ignored by git; `--refresh` refreshes both ASA sources.
+
+`data/roster-overrides.json` is the deliberately empty framework for later
+documented corrections. Future overrides must name an ASA player ID, effective
+date, reason, source note, and explicit replacement fields. Precedence is
+statistics, then ASA snapshot, then a validated override. No comparison pool or
+trade-value ranking is selected in this phase.
+
+### Overrides
+
+The checked-in empty file is valid. Each entry has `playerId`, ISO
+`effectiveDate`, `reason`, `sourceNote`, and a non-empty `fields` object. The
+supported fields are `teamId`, `snapshotTeamId`, `snapshotTeamName`,
+`listedInRosterSnapshot`, `activeAtRosterSnapshot`, `rosterSlot`,
+`rosterDesignation`, `currentStatus`, `contractThrough`, `optionYears`,
+`permanentTransferOption`, `internationalSlot`, `convertibleWithTam`,
+`unavailable`, `canadianInternationalSlotExemption`, and
+`rosterConstructionModel`.
+
+```json
+{"playerId":"ASA_ID","effectiveDate":"2026-03-01","reason":"Roster correction","sourceNote":"Club announcement","fields":{"rosterSlot":"Senior Roster"}}
+```
+
+Duplicate/unknown players, bad dates, blank explanation fields, empty/unknown
+field objects, invalid booleans or option-year arrays, and unknown team IDs fail
+the build. Applied count is recorded as `manualOverridesApplied` and printed by
+both build and audit commands. Audit activity, unavailable, and off-roster
+counts are explicitly non-exclusive: unavailable/off-roster players are not
+active, and an off-roster player can also be unavailable.
+
+The audit accounts for every source record as matched, unmatched, or a duplicate
+ignored after documented loan-pair resolution; missing player IDs are shown as a
+subset of unmatched records. This avoids treating duplicate source rows as a
+silent discrepancy.

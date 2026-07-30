@@ -27,16 +27,28 @@ export interface StaticPlayer {
   guaranteedCompensation?: number;
   currentSeason: PlayerSeasonStats;
   previousSeason?: PlayerSeasonStats;
+  rosterProfile?: PlayerRosterProfile;
+}
+
+/** MLS roster profiles are historical compliance snapshots, never live rosters. */
+export interface PlayerRosterProfile {
+  snapshotDate: string; listedInRosterSnapshot: boolean; activeAtRosterSnapshot: boolean;
+  snapshotTeamId: string; snapshotTeamName: string; rosterSlot?: string; rosterDesignation?: string;
+  currentStatus?: string; contractThrough?: string; optionYears?: string[]; permanentTransferOption?: boolean;
+  internationalSlot?: boolean; convertibleWithTam?: boolean; unavailable?: boolean;
+  canadianInternationalSlotExemption?: boolean; rosterConstructionModel?: string;
 }
 
 export interface PlayerDataset {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   dataVersion: string;
   competition: "MLS";
   season: number;
   previousSeason: number;
   generatedAt: string;
   sources: Array<{ name: string; url?: string }>;
+  rosterSnapshot?: { releaseDate: string; sourceName: string; isLive: false; totalRecords?: number; unmatchedRecords?: number; duplicateRecordsIgnored?: number; missingPlayerIds?: number };
+  manualOverridesApplied?: number;
   players: StaticPlayer[];
 }
 

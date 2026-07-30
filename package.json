@@ -7,6 +7,7 @@
     "test": "vitest run",
     "test:elo": "vitest run tests/elo.test.ts tests/ranking.test.ts",
     "test:data": "vitest run tests/data-normalization.test.ts tests/data-aggregation.test.ts tests/data-validation.test.ts",
+    "test:pool": "vitest run tests/comparison-pool.test.ts tests/demo-comparison-pool.test.ts",
     "demo:elo": "tsx scripts/demo-elo.ts",
     "probe:data": "tsx scripts/probe-asa.ts",
     "probe:rosters": "tsx scripts/probe-rosters.ts",
@@ -14,6 +15,10 @@
     "test:rosters": "vitest run tests/roster.test.ts",
     "build:data": "tsx scripts/build-player-data.ts",
     "validate:data": "tsx scripts/validate-player-data.ts",
+    "build:pool": "tsx scripts/build-comparison-pool.ts",
+    "validate:pool": "tsx scripts/validate-comparison-pool.ts",
+    "audit:pool": "tsx scripts/audit-comparison-pool.ts",
+    "demo:pool": "tsx scripts/demo-comparison-pool.ts",
     "build": "tsc --noEmit"
   },
   "devDependencies": {

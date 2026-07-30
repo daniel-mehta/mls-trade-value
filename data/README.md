@@ -48,7 +48,7 @@ Known limitations: the API may not yet carry the configured current season, and
 salary coverage can lag statistics. A failed request stops the build so a stale
 or partial result cannot be presented as a successful refresh.
 
-## Phase 2B roster snapshot
+## roster snapshot
 
 The build also uses the published JSON releases in ASA's
 [`mls-roster-profiles`](https://github.com/American-Soccer-Analysis/mls-roster-profiles)
@@ -101,3 +101,43 @@ The audit accounts for every source record as matched, unmatched, or a duplicate
 ignored after documented loan-pair resolution; missing player IDs are shown as a
 subset of unmatched records. This avoids treating duplicate source rows as a
 silent discrepancy.
+
+## comparison pool
+
+`public/data/comparison-pool.json` is a separate, generated subset for future
+pairwise comparisons. It never replaces `players.json`: selection is an
+eligibility/involvement filter, **not a trade-value model or ranking**. Build,
+validate, inspect, and manually exercise it with:
+
+```sh
+npm run build:pool
+npm run validate:pool
+npm run audit:pool
+npm run demo:pool
+```
+
+Eligible players have a 2026 MLS minute, or are listed in the February 2026
+snapshot with a 2025 MLS minute. Unavailable snapshot players are not excluded.
+For each statistical team, the pool includes the top five eligible outfield
+players and top eligible goalkeeper by `2026 minutes + (2025 minutes * 0.5)`.
+This participation score is only an involvement filter, not an estimate of
+trade value. Ties use current minutes, previous minutes, then ASA ID.
+
+Every eligible explicit `Designated Player` and `U22 Initiative` designation is
+also included. Productive players with five current-season goals plus primary assists
+are also included; this is intentionally attacker-biased so the base quota does
+not omit them. ASA does not expose player starts in the normalized endpoints;
+minutes share is not treated as an equivalent automatic inclusion rule.
+
+`data/comparison-pool-overrides.json` has `include` and `exclude` arrays of
+`{ playerId, reason, sourceNote }`. IDs and explanation fields are required;
+unknown, duplicate, or include/exclude-conflicting IDs fail validation.
+Exclusions take precedence and inclusions receive `manual-inclusion`. The pool
+must naturally be approximately 250–325 players (fewer than 150 or more than
+325 fails validation); the audit labels overlapping reason counts.
+
+Manual inclusions are reserved for rare, explainable exceptions such as verified
+injury absences, major signings, stale-snapshot effects, or source-data errors,
+not ordinary rotation players. The terminal demo starts every player at 1500 Elo, keeps all votes only in
+memory, writes no state, and sends no data anywhere. The static browser app is
+not changed by this temporary integration test.

@@ -141,3 +141,22 @@ injury absences, major signings, stale-snapshot effects, or source-data errors,
 not ordinary rotation players. The terminal demo starts every player at 1500 Elo, keeps all votes only in
 memory, writes no state, and sends no data anywhere. The static browser app is
 not changed by this temporary integration test.
+
+## Browser use
+
+The framework-free TypeScript browser interface loads the committed
+`public/data/comparison-pool.json` through Vite as a static asset. It never calls
+ASA or any other external API at runtime. Start it with `npm run dev:web`, build
+it with `npm run build:web`, and run its focused tests with `npm run test:web`.
+
+The browser pool remains an eligibility and involvement filter, not a
+trade-value score. The personal Top 25 contains only players who have completed
+at least one comparison and applies the shared deterministic Elo ranking rules.
+If a player has no 2026 minutes, the card clearly labels its available 2025
+statistics as a fallback rather than placing them under a 2026 heading.
+
+All Phase 3 ratings, records, counts, and matchup-queue state are memory-only;
+refreshing or closing the page resets the ranking. The browser creates no saved
+session, and the project has no backend, database, accounts, or analytics.
+Roster fields still reflect the static February 26, 2026 snapshot described
+above, not current roster information.

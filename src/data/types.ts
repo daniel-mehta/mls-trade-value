@@ -12,6 +12,12 @@ export interface PlayerSeasonStats {
   xAssists?: number;
   keyPasses?: number;
   goalsAdded?: number;
+  goalsConceded?: number;
+  saves?: number;
+  savePercentage?: number;
+  expectedGoalsAgainst?: number;
+  goalsPrevented?: number;
+  cleanSheets?: number;
 }
 
 export interface StaticPlayer {

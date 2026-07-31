@@ -1,5 +1,5 @@
 {
-  "name": "mls-trade-value",
+  "name": "mls-trade-value-elo",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -19,12 +19,18 @@
     "validate:pool": "tsx scripts/validate-comparison-pool.ts",
     "audit:pool": "tsx scripts/audit-comparison-pool.ts",
     "demo:pool": "tsx scripts/demo-comparison-pool.ts",
+    "dev:web": "vite",
+    "build:web": "vite build",
+    "preview:web": "vite preview",
+    "test:web": "vitest run tests/web-*.test.ts",
     "build": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "jsdom": "^30.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
+    "vite": "^8.2.0",
     "vitest": "^4.1.10"
   }
 }

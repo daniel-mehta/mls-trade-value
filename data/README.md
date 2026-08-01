@@ -5,7 +5,7 @@ browser must never call American Soccer Analysis (ASA) directly.
 
 ## Source and commands
 
-The sole Phase 2A source is ASA's free public API: `GET /mls/players`,
+The sole source is ASA's free public API: `GET /mls/players`,
 `/mls/teams`, `/mls/players/xgoals`, `/xpass`, `/goals-added`, and `/salaries`.
 No API key or paid service is used. Generate and inspect it with:
 
@@ -28,7 +28,7 @@ be changed for a run with `MLS_CURRENT_SEASON` and `MLS_PREVIOUS_SEASON`.
   are summed. The ASA players endpoint has no current-team field; for a
   multi-team current season the displayed team is the one with most minutes.
   A recent transfer can therefore display a former club until a later
-  roster/manual-override phase.
+  roster/manual-override addition.
 - The observed ASA general positions map explicitly: `GK` → GK; `CB`/`FB` →
   DEF; `AM`/`CM`/`DM` → MID; and `ST`/`W` → FWD. Equivalent broad aliases are
   supported too. Unknown values are reported and excluded rather than guessed.
@@ -155,8 +155,13 @@ at least one comparison and applies the shared deterministic Elo ranking rules.
 If a player has no 2026 minutes, the card clearly labels its available 2025
 statistics as a fallback rather than placing them under a 2026 heading.
 
-All Phase 3 ratings, records, counts, and matchup-queue state are memory-only;
-refreshing or closing the page resets the ranking. The browser creates no saved
-session, and the project has no backend, database, accounts, or analytics.
+Stores only mutable personal-ranking state in browser `localStorage`
+under `daniel-mehta:mls-trade-value-elo:ranking-state` (schema version 1).
+Refresh and reopening the same browser can restore Elo records, totals, and a
+valid current matchup; full player data remains in this committed pool file and
+is never duplicated in storage. The browser creates no backend session and has
+no database, accounts, cookies, analytics, uploads, or synchronization. The
+ranking is origin-specific, so development and production do not share it, and
+clearing site data or using Reset ranking removes it.
 Roster fields still reflect the static February 26, 2026 snapshot described
 above, not current roster information.

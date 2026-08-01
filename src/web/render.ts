@@ -20,12 +20,17 @@ import {
 export interface RenderHandlers {
   onChoose(playerId: string): void;
   onSkip(): void;
+  onRequestReset?(): void;
+  onCancelReset?(): void;
+  onConfirmReset?(): void;
 }
 
 export interface RenderState {
   session: BrowserSession;
   status: ComparisonStatus;
   dataGeneratedAt?: string;
+  persistenceMessage?: string;
+  resetDialogOpen?: boolean;
 }
 
 export type ComparisonStatus =
@@ -138,13 +143,20 @@ function top25Row(entry: RankedPlayer, rank: number): HTMLLIElement {
   return item;
 }
 
-function rankingSidebar(entries: readonly RankedPlayer[]): HTMLElement {
+function rankingSidebar(entries: readonly RankedPlayer[], handlers: RenderHandlers): HTMLElement {
   const aside = element("aside", "ranking-panel");
   aside.setAttribute("aria-labelledby", "top-25-title");
-  aside.append(element("p", "eyebrow", "Memory-only ranking"));
+  const rankingHeader = element("div", "ranking-header");
+  const headingGroup = element("div", "ranking-header__heading");
+  headingGroup.append(element("p", "eyebrow", "Personal ranking"));
   const heading = element("h2", "ranking-panel__title", "Your Top 25");
   heading.id = "top-25-title";
-  aside.append(heading);
+  headingGroup.append(heading);
+  const reset = element("button", "button button--quiet", "Reset ranking");
+  reset.type = "button";
+  reset.addEventListener("click", () => handlers.onRequestReset?.());
+  rankingHeader.append(headingGroup, reset);
+  aside.append(rankingHeader);
   if (!entries.length) {
     aside.append(
       element("p", "ranking-empty", "Your Top 25 will appear after your first comparison."),
@@ -155,6 +167,27 @@ function rankingSidebar(entries: readonly RankedPlayer[]): HTMLElement {
   entries.forEach((entry, index) => list.append(top25Row(entry, index + 1)));
   aside.append(list);
   return aside;
+}
+
+function resetDialog(handlers: RenderHandlers): HTMLDialogElement {
+  const dialog = element("dialog", "reset-dialog");
+  dialog.setAttribute("aria-labelledby", "reset-dialog-title");
+  dialog.setAttribute("aria-describedby", "reset-dialog-description");
+  const heading = element("h2", "reset-dialog__title", "Reset your ranking?");
+  heading.id = "reset-dialog-title";
+  const description = element("p", "reset-dialog__description", "This will permanently erase your saved Elo ratings, records, comparison history, skipped count, and current matchup from this browser.");
+  description.id = "reset-dialog-description";
+  const actions = element("div", "reset-dialog__actions");
+  const cancel = element("button", "button button--secondary", "Cancel");
+  cancel.type = "button";
+  cancel.addEventListener("click", () => handlers.onCancelReset?.());
+  const confirm = element("button", "button button--danger", "Reset ranking");
+  confirm.type = "button";
+  confirm.addEventListener("click", () => handlers.onConfirmReset?.());
+  actions.append(cancel, confirm);
+  dialog.append(heading, description, actions);
+  dialog.addEventListener("cancel", (event) => { event.preventDefault(); handlers.onCancelReset?.(); });
+  return dialog;
 }
 
 function comparisonControls(
@@ -268,7 +301,7 @@ export function renderApp(
   );
   const notices = element("div", "site-notices");
   notices.append(
-    element("p", "reset-notice", "Session only: reloading or closing this page resets every rating and comparison."),
+    element("p", "persistence-notice", state.persistenceMessage ?? "Your ranking is saved only in this browser. It is not uploaded or shared."),
     element("p", "data-note", DATA_NOTE),
     element("p", "data-freshness", formatDataFreshnessNotice(state.dataGeneratedAt)),
     element("p", "pool-note", `${state.session.players.length} real players loaded from the static comparison pool.`),
@@ -288,9 +321,15 @@ export function renderApp(
     comparisonControls(playerA, playerB, handlers),
     comparisonStatus(state),
   );
-  workspace.append(rankingSidebar(buildTop25(state.session)), comparisonColumn);
-  page.append(header, workspace);
+  workspace.append(rankingSidebar(buildTop25(state.session), handlers), comparisonColumn);
+  page.append(header, workspace, resetDialog(handlers));
   root.replaceChildren(page);
+
+  const dialog = page.querySelector<HTMLDialogElement>(".reset-dialog");
+  if (state.resetDialogOpen && dialog) {
+    try { dialog.showModal(); } catch { dialog.open = true; }
+    dialog.querySelector<HTMLButtonElement>(".button--secondary")?.focus();
+  }
 }
 
 export function renderFatalState(

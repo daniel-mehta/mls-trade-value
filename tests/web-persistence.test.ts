@@ -84,16 +84,38 @@ describe("persisted ranking schema", () => {
       expect(JSON.stringify(parsed.state)).not.toContain("teamName");
       expect(parsed.state.skippedComparisons).toBe(1);
       expect(parsed.state.matchupState.currentPair).toEqual([session.currentMatchup!.playerAId, session.currentMatchup!.playerBId]);
+      expect(parsed.state.matchupState.recentPairs).toEqual(session.recentPairs);
+      expect(parsed.state.matchupState.recentPlayers).toEqual(session.recentPlayers);
     }
+  });
+
+  it("persists updated ratings and scheduler history after a vote", () => {
+    const initial = initializeBrowserSession(pool(["a", "b", "c", "d"]).players, zeroRandom);
+    const shown = initial.currentMatchup!;
+    const voted = applyBrowserVote(initial, shown.playerAId, zeroRandom).session;
+    const saved = createPersistedRankingState(voted, "pool-v1", "2026-08-01T00:00:00.000Z");
+    expect(saved.completedComparisons).toBe(1);
+    expect(saved.ratings.find((rating) => rating.playerId === shown.playerAId)?.comparisons).toBe(1);
+    expect(saved.matchupState.recentPairs).toContain([shown.playerAId, shown.playerBId].sort().join(":"));
+  });
+
+  it("persists a skip without changing Elo or the completed total", () => {
+    const initial = initializeBrowserSession(pool(["a", "b", "c", "d"]).players, zeroRandom);
+    const skipped = applySkip(initial, zeroRandom);
+    const saved = createPersistedRankingState(skipped, "pool-v1", "2026-08-01T00:00:00.000Z");
+    expect(skipped.ratings).toBe(initial.ratings);
+    expect(saved.completedComparisons).toBe(0);
+    expect(saved.skippedComparisons).toBe(1);
+    expect(saved.matchupState.recentPairs).toHaveLength(1);
   });
 
   it.each([
     ["invalid JSON", "{"],
-    ["unsupported schema", JSON.stringify({ schemaVersion: 2 })],
+    ["unsupported schema", JSON.stringify({ schemaVersion: 3 })],
     ["missing dataset version", JSON.stringify({ schemaVersion: 1 })],
   ])("rejects %s", (_, raw) => expect(deserializePersistedRankingState(raw).kind).toBe("invalid"));
 
-  it("rejects invalid timestamp, duplicate IDs, invalid Elo, counts, pairs, and queues", () => {
+  it("rejects invalid timestamp, duplicate IDs, invalid Elo, counts, pairs, and histories", () => {
     const base = createPersistedRankingState(sessionWithVote(), "pool-v1", "2026-08-01T00:00:00.000Z");
     const invalids = [
       { ...base, savedAt: "yesterday" },
@@ -102,14 +124,43 @@ describe("persisted ranking schema", () => {
       { ...base, ratings: base.ratings.map((rating, index) => index === 0 ? { ...rating, wins: -1 } : rating) },
       { ...base, ratings: base.ratings.map((rating, index) => index === 0 ? { ...rating, comparisons: 1.5 } : rating) },
       { ...base, matchupState: { ...base.matchupState, currentPair: ["a", "a"] } },
-      { ...base, matchupState: { ...base.matchupState, remainingQueue: ["a", "a"] } },
+      { ...base, matchupState: { ...base.matchupState, recentPairs: [1] } },
+      { ...base, matchupState: { ...base.matchupState, recentPlayers: [null] } },
     ];
     invalids.forEach((value) => expect(deserializePersistedRankingState(JSON.stringify(value)).kind).toBe("invalid"));
+  });
+
+  it("migrates version 1 without losing ratings, totals, or a valid current matchup", () => {
+    const session = sessionWithVote();
+    const currentPair = [session.currentMatchup!.playerAId, session.currentMatchup!.playerBId];
+    const previousPair = [session.previousMatchup!.playerAId, session.previousMatchup!.playerBId];
+    const legacy = {
+      schemaVersion: 1,
+      datasetVersion: "pool-v1",
+      savedAt: "2026-08-01T00:00:00.000Z",
+      ratings: createPersistedRankingState(session, "pool-v1").ratings,
+      completedComparisons: session.completedComparisons,
+      skippedComparisons: session.skippedMatchups,
+      matchupState: { currentPair, previousPair, remainingQueue: ["a", "b"] },
+    };
+    const parsed = deserializePersistedRankingState(JSON.stringify(legacy));
+    expect(parsed.kind).toBe("valid");
+    if (parsed.kind === "valid") {
+      expect(parsed.state.schemaVersion).toBe(2);
+      expect(parsed.state.migratedFromSchemaVersion).toBe(1);
+      expect(parsed.state.ratings).toEqual(legacy.ratings);
+      expect(parsed.state.completedComparisons).toBe(1);
+      expect(parsed.state.skippedComparisons).toBe(1);
+      expect(parsed.state.matchupState.currentPair).toEqual(currentPair);
+      const restored = restoreBrowserSession(pool(["a", "b", "c", "d"]), parsed.state, zeroRandom);
+      expect(restored.kind).toBe("reconciled");
+      if (restored.kind === "reconciled") expect(restored.reason).toBe("migration");
+    }
   });
 });
 
 describe("restoration and dataset reconciliation", () => {
-  it("restores Elo records, totals, Top 25, current matchup, and queue without mutating source players", () => {
+  it("restores Elo records, totals, Top 25, current matchup, and histories without mutating source players", () => {
     const source = pool(["a", "b", "c", "d"]);
     const before = structuredClone(source.players);
     const initial = initializeBrowserSession(source.players, zeroRandom);
@@ -121,6 +172,8 @@ describe("restoration and dataset reconciliation", () => {
       expect(restored.session.ratings).toEqual(voted.ratings);
       expect(restored.session.completedComparisons).toBe(1);
       expect(restored.session.currentMatchup).toEqual(voted.currentMatchup);
+      expect(restored.session.recentPairs).toEqual(voted.recentPairs);
+      expect(restored.session.recentPlayers).toEqual(voted.recentPlayers);
       expect(buildTop25(restored.session)).toHaveLength(2);
       expect(Object.values(restored.session.ratings).some((rating) => rating.comparisons === 0)).toBe(true);
     }
@@ -133,7 +186,8 @@ describe("restoration and dataset reconciliation", () => {
     const voted = applyBrowserVote(initial, initial.currentMatchup!.playerAId, zeroRandom).session;
     const saved = createPersistedRankingState(voted, oldPool.dataVersion, "2026-08-01T00:00:00.000Z");
     saved.matchupState.currentPair = ["removed", "a"];
-    saved.matchupState.remainingQueue = ["removed", "b"];
+    saved.matchupState.recentPairs = ["removed:a", ...saved.matchupState.recentPairs];
+    saved.matchupState.recentPlayers = ["removed", ...saved.matchupState.recentPlayers];
     const restored = restoreBrowserSession(pool(["a", "b", "new"], "new"), saved, zeroRandom);
     expect(restored.kind).toBe("reconciled");
     if (restored.kind === "reconciled") {
@@ -143,11 +197,45 @@ describe("restoration and dataset reconciliation", () => {
     }
   });
 
-  it("rejects unknown IDs for an unchanged dataset", () => {
+  it("filters unknown scheduler history for an unchanged dataset without discarding rankings", () => {
     const current = pool(["a", "b", "c", "d"]);
-    const saved = createPersistedRankingState(initializeBrowserSession(current.players, zeroRandom), current.dataVersion, "2026-08-01T00:00:00.000Z");
-    saved.matchupState.remainingQueue = ["unknown"];
-    expect(restoreBrowserSession(current, saved, zeroRandom).kind).toBe("invalid");
+    const initial = initializeBrowserSession(current.players, zeroRandom);
+    const voted = applyBrowserVote(initial, initial.currentMatchup!.playerAId, zeroRandom).session;
+    const saved = createPersistedRankingState(voted, current.dataVersion, "2026-08-01T00:00:00.000Z");
+    saved.matchupState.recentPairs.push("unknown:a", saved.matchupState.recentPairs[0]);
+    saved.matchupState.recentPlayers.push("unknown");
+    const restored = restoreBrowserSession(current, saved, zeroRandom);
+    expect(restored.kind).toBe("reconciled");
+    if (restored.kind === "reconciled") {
+      expect(restored.session.ratings).toEqual(voted.ratings);
+      expect(restored.session.recentPairs).not.toContain("unknown:a");
+      expect(restored.session.recentPlayers).not.toContain("unknown");
+    }
+  });
+
+  it("rebuilds a corrupt current matchup while preserving ranking progress", () => {
+    const current = pool(["a", "b", "c", "d"]);
+    const initial = initializeBrowserSession(current.players, zeroRandom);
+    const voted = applyBrowserVote(initial, initial.currentMatchup!.playerAId, zeroRandom).session;
+    const saved = createPersistedRankingState(voted, current.dataVersion, "2026-08-01T00:00:00.000Z");
+    saved.matchupState.currentPair = ["unknown", "a"];
+    const restored = restoreBrowserSession(current, saved, zeroRandom);
+    expect(restored.kind).toBe("reconciled");
+    if (restored.kind === "reconciled") {
+      expect(restored.session.completedComparisons).toBe(1);
+      expect(restored.session.currentMatchup?.playerAId).not.toBe(restored.session.currentMatchup?.playerBId);
+    }
+  });
+
+  it("a fresh reset session clears scheduler history", () => {
+    const current = pool(["a", "b", "c", "d"]);
+    const initial = initializeBrowserSession(current.players, zeroRandom);
+    const advanced = applySkip(initial, zeroRandom);
+    expect(advanced.recentPairs.length).toBeGreaterThan(0);
+    const reset = initializeBrowserSession(current.players, zeroRandom);
+    expect(reset.recentPairs).toEqual([]);
+    expect(reset.recentPlayers).toEqual([]);
+    expect(reset.previousMatchup).toBeNull();
   });
 
   it("serializes deterministically when a timestamp is supplied", () => {

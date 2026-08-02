@@ -23,11 +23,49 @@ roster, and comparison-pool commands remain separate; `npm test` runs all Vitest
 tests.
 
 The browser fetches the committed `public/data/comparison-pool.json` file and
-validates it before starting a shuffled, sequential matchup queue. The pool is
-an involvement-based selection of real players, not a trade-value score or
-ranking. A choice updates the two players through the shared Elo engine.
+validates it before starting adaptive comparison scheduling. Matchup selection
+prioritizes under-compared players, avoids recently repeated pairs and players,
+uses a modest early-session prominence preference from existing pool metadata,
+and gradually considers Elo similarity after enough completed comparisons. The
+scheduler changes only which two players appear; it does not change Elo
+calculations. The pool remains an involvement-based selection of real players,
+not a trade-value score or ranking. A choice updates the two players through the
+shared Elo engine.
 Only players with at least one completed comparison appear in **Your Top 25**,
 ordered by the existing deterministic Elo tie-breakers.
+
+## matchup-selection methodology
+
+To make the earliest comparisons more recognizable and engaging, the scheduler
+uses a temporary, metadata-derived featured-player preference. Its
+scheduler-only score is:
+
+| Signal | Score |
+| --- | ---: |
+| Designated Player | +3 |
+| U22 Initiative player | +2 |
+| 5+ current-season goals plus assists | +2 |
+| Base team-pool selection | +1 |
+| At least 900 current-season minutes | +1 |
+
+A score of 3 or more qualifies a player for this temporary preference. It
+affects matchup selection only: it never changes Elo, ranking position, or the
+Personal Top 25, and it does not use player names, fame, or salary. Coverage of
+under-compared players remains the highest priority.
+
+The scheduler aims for exactly one featured player in approximately 65% of the
+first 20 completed comparisons. This early-session prominence preference then
+gradually decays from comparisons 20 to 50 and has no scheduling influence from
+comparison 50 onward. Featured players may still appear after that through
+normal coverage and matchup selection.
+
+Timing is based on the saved `completedComparisons` count. The early preference
+begins again only when there is no saved ranking, **Reset ranking** starts a new
+one, saved data cannot be recovered and a fresh ranking starts, or the app is
+used in a different browser, device, or site origin. Refreshing or reopening
+the same browser does not restart it because the completed-comparison count is
+restored from localStorage. Skips do not count as completed Elo comparisons,
+though a skipped pair still updates matchup cooldown history.
 
 ## personal ranking storage
 
@@ -38,10 +76,12 @@ The application uses exactly one key:
 daniel-mehta:mls-trade-value-elo:ranking-state
 ```
 
-Its stored object currently has schema version `1`. It contains the comparison
+Its stored object currently has schema version `2`. It contains the comparison
 pool `dataVersion`, ISO save time, stable ASA player IDs, Elo values, win/loss
-and comparison counts, completed/skipped totals, and the current/remaining
-matchup schedule. It deliberately does **not** contain full player records,
+and comparison counts, completed/skipped totals, the current and previous
+matchups, and bounded recent-pair/player cooldown histories. Version 1 saved
+rankings migrate without losing valid ratings or totals. The stored state
+deliberately does **not** contain full player records,
 statistics, salary, contract or roster information, HTML, cookies, or any
 account or sensitive information. `comparison-pool.json` remains the source of
 truth for player data.

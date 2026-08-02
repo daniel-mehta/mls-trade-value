@@ -156,10 +156,15 @@ If a player has no 2026 minutes, the card clearly labels its available 2025
 statistics as a fallback rather than placing them under a 2026 heading.
 
 Stores only mutable personal-ranking state in browser `localStorage`
-under `daniel-mehta:mls-trade-value-elo:ranking-state` (schema version 1).
+under `daniel-mehta:mls-trade-value-elo:ranking-state` (schema version 2).
 Refresh and reopening the same browser can restore Elo records, totals, and a
-valid current matchup; full player data remains in this committed pool file and
-is never duplicated in storage. The browser creates no backend session and has
+valid current matchup. Balanced matchup selection prioritizes under-compared
+players, avoids recent repeated pairs and players, modestly favors relevant
+pool metadata early, and gradually considers Elo similarity later. Scheduling
+does not alter the Elo calculation. Only bounded cooldown history is stored;
+full player data remains in this committed pool file and is never duplicated in
+storage. Older saved rankings migrate while retaining valid records and totals.
+The browser creates no backend session and has
 no database, accounts, cookies, analytics, uploads, or synchronization. The
 ranking is origin-specific, so development and production do not share it, and
 clearing site data or using Reset ranking removes it.

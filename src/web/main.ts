@@ -69,9 +69,13 @@ try {
           if (restored.kind === "reconciled") {
             const saved = storage.saveRankingState(serializePersistedRankingState(state.session, pool.dataVersion));
             if (saved.kind === "unavailable") console.warn("Could not save reconciled ranking state.", saved.error);
-            state.persistenceMessage = saved.kind === "success"
-              ? "Player data was updated. Returning-player rankings were preserved."
-              : UNAVAILABLE_MESSAGE;
+            state.persistenceMessage = saved.kind !== "success"
+              ? UNAVAILABLE_MESSAGE
+              : restored.reason === "dataset"
+                ? "Player data was updated. Returning-player rankings were preserved."
+                : restored.reason === "migration"
+                  ? "Saved ranking updated for balanced matchup selection. Ratings and totals were preserved."
+                  : "Saved ranking restored. Invalid matchup history was repaired.";
           } else {
             state.persistenceMessage = "Saved ranking restored from this browser.";
           }

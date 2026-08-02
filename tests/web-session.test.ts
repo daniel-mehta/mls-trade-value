@@ -35,7 +35,7 @@ describe("browser session initialization", () => {
   });
 });
 
-describe("browser matchup queue", () => {
+describe("browser adaptive scheduling", () => {
   it("never pairs a player with themselves", () => {
     let session = initializeBrowserSession(players(6), zeroRandom);
     for (let index = 0; index < 20; index += 1) {
@@ -44,7 +44,7 @@ describe("browser matchup queue", () => {
     }
   });
 
-  it("keeps consecutive pairs non-overlapping while unused queue players remain", () => {
+  it("keeps consecutive pairs non-overlapping when alternatives exist", () => {
     const first = initializeBrowserSession(players(6), zeroRandom);
     const second = applySkip(first, zeroRandom);
     const firstIds = new Set(Object.values(first.currentMatchup!));
@@ -69,31 +69,40 @@ describe("browser matchup queue", () => {
     expect(pairKey(voted.currentMatchup!)).not.toBe(pairKey(session.currentMatchup!));
   });
 
-  it("exhausting the queue causes a reshuffle", () => {
-    let session = initializeBrowserSession(players(4), zeroRandom);
-    session = applySkip(session, zeroRandom);
-    expect(session.queueIndex).toBe(4);
-    const oldQueue = session.queue;
-    session = applySkip(session, () => 0.75);
-    expect(session.queueIndex).toBe(2);
-    expect(session.queue).not.toBe(oldQueue);
-  });
-
-  it("does not immediately repeat the previous pair after reshuffling when avoidable", () => {
-    let session = initializeBrowserSession(players(3), zeroRandom);
+  it("does not immediately repeat the previous pair when avoidable", () => {
+    const session = initializeBrowserSession(players(3), zeroRandom);
     const prior = session.currentMatchup!;
-    session = { ...session, queueIndex: session.queue.length, previousMatchup: prior };
-    const next = selectNextMatchup(session, zeroRandom);
+    const next = applySkip(session, zeroRandom);
     expect(pairKey(next.currentMatchup!)).not.toBe(pairKey(prior));
   });
 
-  it("avoids reusing either prior player after reshuffling when two alternatives exist", () => {
-    let session = initializeBrowserSession(players(6), zeroRandom);
+  it("avoids reusing either prior player when two alternatives exist", () => {
+    const session = initializeBrowserSession(players(6), zeroRandom);
     const prior = session.currentMatchup!;
-    session = { ...session, queueIndex: session.queue.length, previousMatchup: prior };
-    const next = selectNextMatchup(session, zeroRandom);
+    const next = applySkip(session, zeroRandom);
     const priorIds = new Set(Object.values(prior));
     expect(Object.values(next.currentMatchup!).every((id) => !priorIds.has(id))).toBe(true);
+  });
+
+  it("records bounded scheduling history after votes and skips", () => {
+    let session = initializeBrowserSession(players(8), zeroRandom);
+    const first = session.currentMatchup!;
+    session = applyBrowserVote(session, first.playerAId, zeroRandom).session;
+    expect(session.recentPairs).toContain(pairKey(first));
+    expect(session.recentPlayers).toEqual([first.playerAId, first.playerBId]);
+    const second = session.currentMatchup!;
+    session = applySkip(session, zeroRandom);
+    expect(session.recentPairs).toContain(pairKey(second));
+    expect(session.skippedMatchups).toBe(1);
+  });
+
+  it("selectNextMatchup uses current records rather than a precomputed queue", () => {
+    const session = initializeBrowserSession(players(4), zeroRandom);
+    session.ratings.a.comparisons = 20;
+    session.ratings.a.wins = 10;
+    session.ratings.a.losses = 10;
+    const next = selectNextMatchup({ ...session, currentMatchup: null }, zeroRandom);
+    expect(Object.values(next.currentMatchup!)).not.toContain("a");
   });
 });
 

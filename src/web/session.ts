@@ -2,20 +2,21 @@ import type { ComparisonPoolPlayer } from "../data/comparisonPool.js";
 import { applyVote as applyEloVote, initializeRatings } from "../domain/elo.js";
 import { rankPlayers } from "../domain/ranking.js";
 import type { Player, RankedPlayer, Ratings } from "../domain/types.js";
+import { appendMatchupHistory } from "./scheduler/history.js";
+import { matchupPairKey } from "./scheduler/pair.js";
+import { selectNextMatchup as selectScheduledMatchup } from "./scheduler/select.js";
+import type { Matchup, RandomSource } from "./scheduler/types.js";
 
-export interface Matchup {
-  playerAId: string;
-  playerBId: string;
-}
+export type { Matchup, RandomSource } from "./scheduler/types.js";
 
 export interface BrowserSession {
   players: ComparisonPoolPlayer[];
   eloPlayers: Player[];
   ratings: Ratings;
-  queue: string[];
-  queueIndex: number;
   currentMatchup: Matchup | null;
   previousMatchup: Matchup | null;
+  recentPairs: string[];
+  recentPlayers: string[];
   completedComparisons: number;
   skippedMatchups: number;
 }
@@ -28,8 +29,6 @@ export interface VoteResult {
   loserBefore: number;
   loserAfter: number;
 }
-
-export type RandomSource = () => number;
 
 export function mapPoolPlayersToEloPlayers(
   players: readonly ComparisonPoolPlayer[],
@@ -49,79 +48,28 @@ export function mapPoolPlayersToEloPlayers(
   });
 }
 
-export function shufflePlayerIds(
-  ids: readonly string[],
-  random: RandomSource = Math.random,
-): string[] {
-  const shuffled = [...ids];
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(random() * (index + 1));
-    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
-  }
-  return shuffled;
-}
-
+/** Compatibility helper for callers that only need an unordered pair key. */
 export function pairKey(matchup: Matchup): string {
-  return [matchup.playerAId, matchup.playerBId].sort().join(":");
-}
-
-function prepareReshuffledQueue(
-  ids: readonly string[],
-  previous: Matchup | null,
-  random: RandomSource,
-): string[] {
-  const queue = shufflePlayerIds(ids, random);
-  if (!previous) return queue;
-
-  const previousIds = new Set([previous.playerAId, previous.playerBId]);
-  if (queue.length >= 4) {
-    const alternatives = queue
-      .map((id, index) => ({ id, index }))
-      .filter(({ id }) => !previousIds.has(id));
-    if (alternatives.length >= 2) {
-      const firstId = alternatives[0].id;
-      const secondId = alternatives[1].id;
-      const firstIndex = queue.indexOf(firstId);
-      [queue[0], queue[firstIndex]] = [queue[firstIndex], queue[0]];
-      const secondIndex = queue.indexOf(secondId);
-      [queue[1], queue[secondIndex]] = [queue[secondIndex], queue[1]];
-    }
-  }
-
-  const candidate = { playerAId: queue[0], playerBId: queue[1] };
-  if (pairKey(candidate) === pairKey(previous) && queue.length > 2) {
-    const replacementIndex = queue.findIndex(
-      (id, index) => index > 1 && id !== queue[0] && pairKey({ playerAId: queue[0], playerBId: id }) !== pairKey(previous),
-    );
-    if (replacementIndex >= 0) {
-      [queue[1], queue[replacementIndex]] = [queue[replacementIndex], queue[1]];
-    }
-  }
-  return queue;
+  return matchupPairKey(matchup);
 }
 
 export function selectNextMatchup(
   session: BrowserSession,
   random: RandomSource = Math.random,
 ): BrowserSession {
-  let queue = session.queue;
-  let queueIndex = session.queueIndex;
-  if (queueIndex + 1 >= queue.length) {
-    queue = prepareReshuffledQueue(
-      session.eloPlayers.map((player) => player.id),
-      session.previousMatchup,
-      random,
-    );
-    queueIndex = 0;
+  const result = selectScheduledMatchup({
+    players: session.players,
+    ratings: session.ratings,
+    completedComparisons: session.completedComparisons,
+    recentPlayers: session.recentPlayers,
+    recentPairs: session.recentPairs,
+    previousPair: session.previousMatchup,
+    random,
+  });
+  if (result.kind === "insufficient-pool") {
+    throw new Error("At least two eligible players are required.");
   }
-  const currentMatchup = {
-    playerAId: queue[queueIndex],
-    playerBId: queue[queueIndex + 1],
-  };
-  if (currentMatchup.playerAId === currentMatchup.playerBId) {
-    throw new Error("A player cannot be matched against themselves.");
-  }
-  return { ...session, queue, queueIndex: queueIndex + 2, currentMatchup };
+  return { ...session, currentMatchup: result.matchup };
 }
 
 export function initializeBrowserSession(
@@ -137,10 +85,10 @@ export function initializeBrowserSession(
     players,
     eloPlayers,
     ratings: initializeRatings(eloPlayers),
-    queue: shufflePlayerIds(eloPlayers.map((player) => player.id), random),
-    queueIndex: 0,
     currentMatchup: null,
     previousMatchup: null,
+    recentPairs: [],
+    recentPlayers: [],
     completedComparisons: 0,
     skippedMatchups: 0,
   };
@@ -153,8 +101,16 @@ function advance(
   random: RandomSource,
 ): BrowserSession {
   const previousMatchup = session.currentMatchup;
+  if (!previousMatchup) throw new Error("The browser session has no current matchup.");
+  const history = appendMatchupHistory(session.recentPairs, session.recentPlayers, previousMatchup);
   return selectNextMatchup(
-    { ...session, ...changes, previousMatchup, currentMatchup: null },
+    {
+      ...session,
+      ...changes,
+      ...history,
+      previousMatchup,
+      currentMatchup: null,
+    },
     random,
   );
 }

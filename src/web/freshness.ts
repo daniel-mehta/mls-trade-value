@@ -1,5 +1,7 @@
 const FALLBACK_NOTICE = "Static dataset. Generation date unavailable.";
-const ROSTER_SNAPSHOT_NOTICE = "Roster metadata reflects February 26, 2026.";
+import { ROSTER_SNAPSHOT_LABEL } from "./config.js";
+
+const ROSTER_SNAPSHOT_NOTICE = `Roster metadata reflects ${ROSTER_SNAPSHOT_LABEL}.`;
 
 /**
  * Describes the committed comparison-pool artifact without implying live or

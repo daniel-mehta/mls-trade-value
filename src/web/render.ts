@@ -16,6 +16,7 @@ import {
   isPlayerUnranked,
   type BrowserSession,
 } from "./session.js";
+import type { RankingExportKind } from "./exports/filename.js";
 
 export interface RenderHandlers {
   onChoose(playerId: string): void;
@@ -23,6 +24,7 @@ export interface RenderHandlers {
   onRequestReset?(): void;
   onCancelReset?(): void;
   onConfirmReset?(): void;
+  onExport?(kind: RankingExportKind): void;
 }
 
 export interface RenderState {
@@ -143,6 +145,36 @@ function top25Row(entry: RankedPlayer, rank: number): HTMLLIElement {
   return item;
 }
 
+function rankingExports(hasRankedPlayers: boolean, handlers: RenderHandlers): HTMLElement {
+  const footer = element("section", "ranking-export");
+  footer.setAttribute("aria-labelledby", "ranking-export-title");
+  const title = element("h3", "ranking-export__title", "Export ranking");
+  title.id = "ranking-export-title";
+  const helper = element(
+    "p",
+    "ranking-export__helper",
+    hasRankedPlayers
+      ? "Download your compared-player ranking. Unranked players are omitted."
+      : "Complete at least one comparison to export your ranking.",
+  );
+  helper.id = "ranking-export-help";
+  const controls = element("div", "ranking-export__controls");
+  const options: Array<[RankingExportKind, string]> = [
+    ["csv", "CSV"], ["text", "Top 25 TXT"], ["json", "JSON"],
+  ];
+  for (const [kind, label] of options) {
+    const button = element("button", "button button--secondary button--export", label);
+    button.type = "button";
+    button.disabled = !hasRankedPlayers;
+    button.setAttribute("aria-describedby", "ranking-export-help");
+    button.setAttribute("aria-label", `Download ranking as ${label}`);
+    button.addEventListener("click", () => handlers.onExport?.(kind));
+    controls.append(button);
+  }
+  footer.append(title, helper, controls);
+  return footer;
+}
+
 function rankingSidebar(entries: readonly RankedPlayer[], handlers: RenderHandlers): HTMLElement {
   const aside = element("aside", "ranking-panel");
   aside.setAttribute("aria-labelledby", "top-25-title");
@@ -161,11 +193,12 @@ function rankingSidebar(entries: readonly RankedPlayer[], handlers: RenderHandle
     aside.append(
       element("p", "ranking-empty", "Your Top 25 will appear after your first comparison."),
     );
-    return aside;
+  } else {
+    const list = element("ol", "ranking-list");
+    entries.forEach((entry, index) => list.append(top25Row(entry, index + 1)));
+    aside.append(list);
   }
-  const list = element("ol", "ranking-list");
-  entries.forEach((entry, index) => list.append(top25Row(entry, index + 1)));
-  aside.append(list);
+  aside.append(rankingExports(entries.length > 0, handlers));
   return aside;
 }
 

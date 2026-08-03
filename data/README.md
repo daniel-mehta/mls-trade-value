@@ -170,3 +170,12 @@ ranking is origin-specific, so development and production do not share it, and
 clearing site data or using Reset ranking removes it.
 Roster fields still reflect the static February 26, 2026 snapshot described
 above, not current roster information.
+
+## browser-generated ranking exports
+
+The browser can download a personal ranking as complete-list CSV, Top 25 plain
+text, or machine-readable JSON. Files are made entirely in the browser; no
+ranking data is uploaded. Only compared players appear, and exporting does not
+change the saved ranking. JSON is an export format only and is not currently an
+import file. Users should review player names, ratings, and records before
+sharing exports publicly.

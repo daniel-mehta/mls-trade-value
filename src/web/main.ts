@@ -8,6 +8,7 @@ import {
 import { renderApp, renderFatalState, type RenderState } from "./render.js";
 import { applyBrowserVote, applySkip, initializeBrowserSession } from "./session.js";
 import { RankingStorageAdapter } from "./storage.js";
+import { exportPersonalRanking } from "./exports/exporter.js";
 
 const SAVED_MESSAGE = "Your ranking is saved only in this browser. It is not uploaded or shared.";
 const UNAVAILABLE_MESSAGE = "Saving unavailable. This session will reset on refresh.";
@@ -137,6 +138,16 @@ try {
       }
       rerender();
       root.querySelector<HTMLButtonElement>(".button--quiet")?.focus();
+    },
+    onExport(kind) {
+      const result = exportPersonalRanking(kind, state.session, {
+        dataVersion: pool.dataVersion,
+        generatedAt: pool.generatedAt,
+      });
+      state.status = result.kind === "success"
+        ? { kind: "idle", message: `${kind === "text" ? "Top 25 TXT" : kind.toUpperCase()} ranking downloaded.` }
+        : { kind: "idle", message: "The ranking export could not be created." };
+      rerender();
     },
   });
   rerender();

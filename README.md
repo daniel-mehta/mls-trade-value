@@ -107,3 +107,22 @@ Cards show 2026 MLS statistics when the player has 2026 minutes. When they do
 not, the card explicitly says that it is showing available 2025 statistics.
 Roster metadata is a static February 26, 2026 snapshot and must not be treated
 as live roster information.
+
+## ranking exports
+
+The **Export ranking** controls in the Personal Ranking panel generate files
+entirely in this browser. Nothing is uploaded, and downloading does not change
+your saved ranking state, Elo ratings, matchup, or scheduling history.
+
+- **CSV** downloads every compared player in your complete ranked list, with
+  spreadsheet-friendly columns for identity, team, position, Elo, and record.
+- **Top 25 TXT** downloads up to 25 compared players as plain shareable text.
+- **JSON** downloads the complete compared-player ranking plus dataset, Elo,
+  and comparison-count metadata. It is a ranking export, not currently an
+  import file. Exported Elo values use the same two-decimal precision as the
+  visible ranking.
+
+Only players with at least one completed comparison receive a personal rank and
+appear in these files; untouched pool players are omitted. Export files may
+contain player names, ratings, and records, so review them before sharing
+publicly.

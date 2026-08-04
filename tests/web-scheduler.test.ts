@@ -324,10 +324,11 @@ describe("Elo similarity ramp", () => {
 });
 
 describe("scheduler performance", () => {
-  it("selects responsively from the full 303-player pool", () => {
+  it("selects responsively from the full generated comparison pool", () => {
     const currentPool = JSON.parse(readFileSync(new URL("../public/data/comparison-pool.json", import.meta.url), "utf8")) as ComparisonPool;
     const source = currentPool.players;
-    expect(source).toHaveLength(303);
+    expect(source).toHaveLength(currentPool.audit.finalPoolSize);
+    expect(source.length).toBeGreaterThanOrEqual(2);
     const startedAt = performance.now();
     const result = selectNextMatchup(input(source, { random: seededRandom(123) }));
     expect(result.kind).toBe("selected");

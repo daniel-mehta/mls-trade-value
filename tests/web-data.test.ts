@@ -2,29 +2,17 @@ import { readFile } from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
 import { loadComparisonPool, PoolDataError, validateBrowserPool } from "../src/web/data.js";
 import { mapPoolPlayersToEloPlayers } from "../src/web/session.js";
-import { poolPlayer } from "./web-fixtures.js";
+import { comparisonPoolFixture, poolPlayer } from "./web-fixtures.js";
 
-const validPool = (players: ReturnType<typeof poolPlayer>[]) => ({
-  schemaVersion: 1,
-  dataVersion: "test-pool",
-  sourceDataVersion: "test-source",
-  season: 2026,
-  previousSeason: 2025,
-  generatedAt: "2026-07-31T00:00:00.000Z",
-  selectionRules: {
-    baseOutfieldPlayersPerTeam: 5,
-    baseGoalkeepersPerTeam: 1,
-    previousSeasonMinutesWeight: 0.5,
-    currentSeasonGoalContributionThreshold: 5,
-  },
-  players,
-});
+const validPool = (players: ReturnType<typeof poolPlayer>[]) => comparisonPoolFixture(players);
 
 describe("browser comparison-pool loading", () => {
   it("loads the committed static comparison pool", async () => {
     const raw = await readFile("public/data/comparison-pool.json", "utf8");
     const pool = validateBrowserPool(JSON.parse(raw));
-    expect(pool.players).toHaveLength(303);
+    expect(pool.players.length).toBeGreaterThanOrEqual(150);
+    expect(pool.players.length).toBeLessThanOrEqual(325);
+    expect(pool.audit.finalPoolSize).toBe(pool.players.length);
     expect(pool.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 
@@ -73,5 +61,11 @@ describe("browser comparison-pool loading", () => {
     expect(() => validateBrowserPool(validPool([poolPlayer("a"), { ...poolPlayer("b"), name: "" }]))).toThrow(
       "missing a required field",
     );
+  });
+
+  it("rejects missing or invalid provenance instead of using a hard-coded fallback", () => {
+    const pool = validPool([poolPlayer("a"), poolPlayer("b")]);
+    (pool.provenance as any).rosterSnapshotDate = "not-a-date";
+    expect(() => validateBrowserPool(pool)).toThrow("provenance is invalid");
   });
 });

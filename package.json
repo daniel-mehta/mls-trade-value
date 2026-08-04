@@ -6,7 +6,7 @@
   "scripts": {
     "test": "vitest run",
     "test:elo": "vitest run tests/elo.test.ts tests/ranking.test.ts",
-    "test:data": "vitest run tests/data-normalization.test.ts tests/data-aggregation.test.ts tests/data-validation.test.ts",
+    "test:data": "vitest run tests/data-normalization.test.ts tests/data-aggregation.test.ts tests/data-validation.test.ts tests/semantic-version.test.ts tests/provenance.test.ts",
     "test:pool": "vitest run tests/comparison-pool.test.ts tests/demo-comparison-pool.test.ts",
     "demo:elo": "tsx scripts/demo-elo.ts",
     "probe:data": "tsx scripts/probe-asa.ts",
@@ -20,7 +20,9 @@
     "audit:pool": "tsx scripts/audit-comparison-pool.ts",
     "demo:pool": "tsx scripts/demo-comparison-pool.ts",
     "dev:web": "vite",
-    "build:web": "vite build",
+    "test:publication:web": "vitest run tests/web-data.test.ts tests/web-freshness.test.ts tests/web-exports.test.ts tests/web-persistence.test.ts tests/web-documentation.test.ts",
+    "check:publication": "npm run validate:data && npm run validate:pool && npm run test:data && npm run test:rosters && npm run test:pool && npm run test:publication:web",
+    "build:web": "npm run check:publication && vite build",
     "preview:web": "vite preview",
     "test:web": "vitest run tests/web-*.test.ts",
     "build": "tsc --noEmit"

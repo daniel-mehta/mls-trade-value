@@ -1,181 +1,222 @@
-# MLS player data snapshot
+# MLS player data artifacts
 
-`public/data/players.json` is a generated static snapshot for the browser. The
-browser must never call American Soccer Analysis (ASA) directly.
+`public/data/players.json` is the normalized source artifact.
+`public/data/comparison-pool.json` is a generated, browser-facing subset. The
+browser never calls American Soccer Analysis (ASA) or another player-data
+service at runtime.
 
-## Source and commands
+## Source commands
 
-The sole source is ASA's free public API: `GET /mls/players`,
-`/mls/teams`, `/mls/players/xgoals`, `/xpass`, `/goals-added`, and `/salaries`.
-No API key or paid service is used. Generate and inspect it with:
+The player pipeline consumes the public ASA endpoints for player identities and
+positions, teams, player xGoals, xPass, Goals Added, and salaries. No API key or
+paid service is required.
 
 ```sh
 npm run probe:data
+npm run probe:rosters
 npm run build:data
 npm run validate:data
-```
-
-Use `-- --refresh` with the first two commands to bypass `.cache/asa/`.
-Raw cached responses are deliberately ignored by git; only the generated JSON
-snapshot is intended to be committed. Seasons default to 2026 and 2025 and can
-be changed for a run with `MLS_CURRENT_SEASON` and `MLS_PREVIOUS_SEASON`.
-
-## Rules
-
-- Stable ASA player IDs, team IDs, and seasons are the join keys. Names are
-  never used as a silent fallback.
-- ASA requests are split by season and team. Additive player-team components
-  are summed. The ASA players endpoint has no current-team field; for a
-  multi-team current season the displayed team is the one with most minutes.
-  A recent transfer can therefore display a former club until a later
-  roster/manual-override addition.
-- The observed ASA general positions map explicitly: `GK` → GK; `CB`/`FB` →
-  DEF; `AM`/`CM`/`DM` → MID; and `ST`/`W` → FWD. Equivalent broad aliases are
-  supported too. Unknown values are reported and excluded rather than guessed.
-- A player is eligible only with required identity/team/position fields and at
-  least one recorded minute in the current or previous season. Missing salary
-  does not exclude a player. Base salary and guaranteed compensation remain
-  separate optional numeric fields. Multiple MLSPA salary releases are never
-  summed: the latest valid `mlspa_release` is selected, and conflicting rows at
-  that release fail the build.
-
-The generated data includes only ASA fields observed by `probe:data`; unavailable
-statistics are omitted rather than fabricated. ASA data is not represented as
-official MLS data. Recheck ASA's current terms and attribution guidance before
-publishing or redistributing a refreshed snapshot.
-
-Known limitations: the API may not yet carry the configured current season, and
-salary coverage can lag statistics. A failed request stops the build so a stale
-or partial result cannot be presented as a successful refresh.
-
-## roster snapshot
-
-The build also uses the published JSON releases in ASA's
-[`mls-roster-profiles`](https://github.com/American-Soccer-Analysis/mls-roster-profiles)
-repository. It lists JSON candidates, parses their embedded `release_date`, and
-selects the latest 2026 release; filenames are never used as the date authority.
-The selected 2026 release is a **static 2026-02-26 snapshot**, not a live roster.
-Transfers, loans, injuries, waivers, and signings after that date are not implied.
-
-Roster records join the statistical records only by ASA player ID. Snapshot team
-ID/name stays within `rosterProfile`, separately from the statistical team; a
-disagreement is reported rather than guessed away. Missing IDs and unmatched
-records are likewise reported. `activeAtRosterSnapshot` means listed, not marked
-unavailable, and not in the explicit `Off-Roster (Unavailable)` slot.
-
-Available fields include slot, designation, status, contract-through, normalized
-option years, permanent-transfer option, international status, TAM convertibility,
-unavailability, Canadian exemption, and team roster-construction model. Missing
-booleans are omitted, not changed to false. Raw release data is cached under
-`.cache/rosters/` and ignored by git; `--refresh` refreshes both ASA sources.
-
-`data/roster-overrides.json` is the deliberately empty framework for later
-documented corrections. Future overrides must name an ASA player ID, effective
-date, reason, source note, and explicit replacement fields. Precedence is
-statistics, then ASA snapshot, then a validated override. No comparison pool or
-trade-value ranking is selected in this phase.
-
-### Overrides
-
-The checked-in empty file is valid. Each entry has `playerId`, ISO
-`effectiveDate`, `reason`, `sourceNote`, and a non-empty `fields` object. The
-supported fields are `teamId`, `snapshotTeamId`, `snapshotTeamName`,
-`listedInRosterSnapshot`, `activeAtRosterSnapshot`, `rosterSlot`,
-`rosterDesignation`, `currentStatus`, `contractThrough`, `optionYears`,
-`permanentTransferOption`, `internationalSlot`, `convertibleWithTam`,
-`unavailable`, `canadianInternationalSlotExemption`, and
-`rosterConstructionModel`.
-
-```json
-{"playerId":"ASA_ID","effectiveDate":"2026-03-01","reason":"Roster correction","sourceNote":"Club announcement","fields":{"rosterSlot":"Senior Roster"}}
-```
-
-Duplicate/unknown players, bad dates, blank explanation fields, empty/unknown
-field objects, invalid booleans or option-year arrays, and unknown team IDs fail
-the build. Applied count is recorded as `manualOverridesApplied` and printed by
-both build and audit commands. Audit activity, unavailable, and off-roster
-counts are explicitly non-exclusive: unavailable/off-roster players are not
-active, and an off-roster player can also be unavailable.
-
-The audit accounts for every source record as matched, unmatched, or a duplicate
-ignored after documented loan-pair resolution; missing player IDs are shown as a
-subset of unmatched records. This avoids treating duplicate source rows as a
-silent discrepancy.
-
-## comparison pool
-
-`public/data/comparison-pool.json` is a separate, generated subset for future
-pairwise comparisons. It never replaces `players.json`: selection is an
-eligibility/involvement filter, **not a trade-value model or ranking**. Build,
-validate, inspect, and manually exercise it with:
-
-```sh
+npm run audit:rosters
 npm run build:pool
 npm run validate:pool
 npm run audit:pool
-npm run demo:pool
+npm run check:publication
 ```
 
-Eligible players have a 2026 MLS minute, or are listed in the February 2026
-snapshot with a 2025 MLS minute. Unavailable snapshot players are not excluded.
-For each statistical team, the pool includes the top five eligible outfield
-players and top eligible goalkeeper by `2026 minutes + (2025 minutes * 0.5)`.
-This participation score is only an involvement filter, not an estimate of
-trade value. Ties use current minutes, previous minutes, then ASA ID.
+`-- --refresh` bypasses the ignored `.cache/asa/` and `.cache/rosters/`
+responses. A publication check never refreshes a source and never rewrites an
+artifact. Salary acquisition is optional: a salary request can fail while the
+statistical build succeeds, but the source and salary metadata must explicitly
+record the unavailable state. Required identity, team, statistical, or roster
+acquisition failures remain fatal.
 
-Every eligible explicit `Designated Player` and `U22 Initiative` designation is
-also included. Productive players with five current-season goals plus primary assists
-are also included; this is intentionally attacker-biased so the base quota does
-not omit them. ASA does not expose player starts in the normalized endpoints;
-minutes share is not treated as an equivalent automatic inclusion rule.
+Seasons default to 2026 and 2025 and can be configured for a build with
+`MLS_CURRENT_SEASON` and `MLS_PREVIOUS_SEASON`. Roster candidate filenames are
+selected for the configured current season. Parsed embedded snapshot dates,
+not filename ordering, determine the latest release. Distinct candidates with
+the same latest embedded date and different content fail as ambiguous.
 
-`data/comparison-pool-overrides.json` has `include` and `exclude` arrays of
-`{ playerId, reason, sourceNote }`. IDs and explanation fields are required;
-unknown, duplicate, or include/exclude-conflicting IDs fail validation.
-Exclusions take precedence and inclusions receive `manual-inclusion`. The pool
-must naturally be approximately 250–325 players (fewer than 150 or more than
-325 fails validation); the audit labels overlapping reason counts.
+## Semantic artifact identity
 
-Manual inclusions are reserved for rare, explainable exceptions such as verified
-injury absences, major signings, stale-snapshot effects, or source-data errors,
-not ordinary rotation players. The terminal demo starts every player at 1500 Elo, keeps all votes only in
-memory, writes no state, and sends no data anywhere. The static browser app is
-not changed by this temporary integration test.
+Schema version and semantic data version are separate concepts. Each artifact
+contains:
 
-## Browser use
+```text
+schemaVersion
+humanReadableLabel
+dataVersion
+generatedAt
+```
 
-The framework-free TypeScript browser interface loads the committed
-`public/data/comparison-pool.json` through Vite as a static asset. It never calls
-ASA or any other external API at runtime. Start it with `npm run dev:web`, build
-it with `npm run build:web`, and run its focused tests with `npm run test:web`.
+`humanReadableLabel` is descriptive. `dataVersion` is `sha256:` followed by a
+SHA-256 digest of canonical substantive content. Canonical JSON sorts object
+keys. Normalized records, source snapshots, and overrides are sorted by stable
+identifiers before hashing; source row checksums sort canonical rows so API
+response order and object-key order do not change identity.
 
-The browser pool remains an eligibility and involvement filter, not a
-trade-value score. The personal Top 25 contains only players who have completed
-at least one comparison and applies the shared deterministic Elo ranking rules.
-If a player has no 2026 minutes, the card clearly labels its available 2025
-statistics as a fallback rather than placing them under a 2026 heading.
+The player digest includes schema, competition, seasons, normalized players,
+canonical source checksums, salary and roster provenance, applied overrides,
+normalization/team-selection policy, and deterministic audit metadata. The pool
+digest includes the player version, pool schema, all eligibility/selection
+rules and tie-breakers, manual overrides, final membership, embedded player
+fields, and selection reasons.
 
-Stores only mutable personal-ranking state in browser `localStorage`
-under `daniel-mehta:mls-trade-value-elo:ranking-state` (schema version 2).
-Refresh and reopening the same browser can restore Elo records, totals, and a
-valid current matchup. Balanced matchup selection prioritizes under-compared
-players, avoids recent repeated pairs and players, modestly favors relevant
-pool metadata early, and gradually considers Elo similarity later. Scheduling
-does not alter the Elo calculation. Only bounded cooldown history is stored;
-full player data remains in this committed pool file and is never duplicated in
-storage. Older saved rankings migrate while retaining valid records and totals.
-The browser creates no backend session and has
-no database, accounts, cookies, analytics, uploads, or synchronization. The
-ranking is origin-specific, so development and production do not share it, and
-clearing site data or using Reset ranking removes it.
-Roster fields still reflect the static February 26, 2026 snapshot described
-above, not current roster information.
+`generatedAt`, source observation/retrieval timestamps, JSON indentation, cache
+paths, local paths, logs, browser state, Elo values, and export times are
+excluded. Changing only build time therefore preserves both semantic versions;
+changing substantive source content, normalized data, an applied override,
+pool rules, membership, or reasons changes the relevant version.
 
-## browser-generated ranking exports
+## Structured provenance
 
-The browser can download a personal ranking as complete-list CSV, Top 25 plain
-text, or machine-readable JSON. Files are made entirely in the browser; no
-ranking data is uploaded. Only compared players appear, and exporting does not
-change the saved ranking. JSON is an export format only and is not currently an
-import file. Users should review player names, ratings, and records before
-sharing exports publicly.
+The player artifact records each consumed source separately with:
+
+- Stable source ID and source type
+- Endpoint or repository identity
+- Season, where applicable
+- Canonical SHA-256 content checksum
+- Row count
+- `available` or `optional-unavailable` status
+- Retrieval time only when the cache has a trustworthy recorded acquisition
+  time
+
+Legacy caches have no trustworthy acquisition timestamp. They deliberately use
+`retrievedAt: null`; artifact build time is not substituted.
+
+Salary provenance records acquisition status, selected season, selected MLSPA
+release, USD currency, and selected-record count. It does not claim complete
+salary coverage. Roster provenance separately records the repository, release
+filename, file date, embedded snapshot date, checksum, team/raw record counts,
+and matched/unmatched/ignored-duplicate accounting.
+
+`statisticsThrough` is a separate nullable field. It remains `null` unless a
+date is directly defensible from the source rows consumed by the build. Current
+public copy therefore says: **Verified statistical coverage date not recorded.**
+
+## Player normalization
+
+- ASA player ID, team ID, and season are the only identity/join keys. Names are
+  never silent fallback identifiers.
+- Split player-team-season statistical components are additive and are summed.
+- For a multi-team current season, displayed team is selected by current-season
+  minutes, then previous-season minutes for the tied teams, then normalized ASA
+  team ID. Source response order never decides.
+- Observed general positions map explicitly: `GK` to GK; `CB`/`FB` to DEF;
+  `AM`/`CM`/`DM` to MID; and `ST`/`W` to FWD. Unknown values are excluded and
+  counted rather than guessed.
+- Normalized-dataset eligibility requires complete identity/team/position plus
+  at least one current- or previous-season minute. Salary is not required.
+- Base salary and average guaranteed compensation remain distinct optional
+  numeric fields. Multiple MLSPA releases are never summed. The latest valid
+  player release is selected and conflicting rows at that release fail.
+
+Audit metadata persists source row counts, current- and cross-season multi-team
+counts, unmatched salaries, unknown-position exclusions, roster accounting,
+final statistical/snapshot team disagreements, applied overrides, player/team
+counts, and position distribution. The disagreement count is recomputed from
+the final attached and overridden players, so transient loan-pair processing
+cannot alter it.
+
+## Roster snapshot
+
+Roster data comes from ASA's
+[`mls-roster-profiles`](https://github.com/American-Soccer-Analysis/mls-roster-profiles)
+repository. These are ASA-parsed roster-profile records whose upstream parser
+maps source names to ASA IDs; downstream joins use only those ASA IDs. They are
+not a live roster and should not be described as official current-team data.
+
+Statistical team ID/name/abbreviation and snapshot team ID/name remain separate.
+`activeAtRosterSnapshot` means listed, not marked unavailable, and not in the
+explicit `Off-Roster (Unavailable)` slot. Available optional fields include
+slot, designation, status, contract-through, option years, permanent-transfer
+option, international status, TAM convertibility, unavailability, Canadian
+exemption, and team roster-construction model. Missing booleans are omitted,
+not converted to false.
+
+Duplicate roster IDs are resolved only for a recognizable loan pair with
+exactly one record matching the normalized statistical team. Any other
+normalized duplicate fails rather than depending on response order.
+
+## Strict roster overrides
+
+`data/roster-overrides.json` remains an empty, checked-in correction mechanism.
+Entries require a known ASA player ID, real calendar date, nonblank reason and
+source note, and a non-empty supported `fields` object. Unknown top-level,
+entry, or field keys fail. Player IDs must be unique.
+
+Statistical team replacement requires the complete known `teamId`, `teamName`,
+and `teamAbbreviation` tuple. Snapshot team replacement requires both the known
+`snapshotTeamId` and matching `snapshotTeamName`. Invalid booleans, impossible
+dates, unknown teams, malformed option-year arrays, and empty fields fail.
+Omitted optional booleans remain omitted. Validated applied override content and
+count participate in player semantic identity.
+
+No override should be added merely to make a static artifact look current.
+
+## Comparison-pool rules
+
+The comparison pool is an eligibility and involvement filter, not a trade-value
+model or ranking. Its rules remain:
+
+- Eligible with a current-season minute, or with a previous-season minute when
+  listed in the roster snapshot.
+- Unavailable snapshot players are not automatically excluded.
+- Per statistical team, include the top five eligible outfield players and top
+  eligible goalkeeper by `current minutes + previous minutes * 0.5`.
+- Participation ties use total score, current minutes, previous minutes, then
+  ASA player ID.
+- Include every eligible exact `Designated Player` and `U22 Initiative` record.
+- Include every eligible player with at least five current-season goals plus
+  primary assists.
+- Exclusions take precedence.
+
+`data/comparison-pool-overrides.json` has strict `include` and `exclude` arrays
+of `{ playerId, reason, sourceNote }`. Unknown or duplicate IDs, include/exclude
+conflicts, blank explanations, and extra properties fail. A manual inclusion is
+still eligibility-bound: it can add a selection reason to an eligible player,
+but cannot bypass the minute/roster eligibility rule for a no-minute signing.
+
+Pool audit metadata records eligible count, final size, all non-exclusive reason
+counts, position distribution, and team representation range. Pool validation
+always loads the player artifact and then:
+
+1. Validates the source artifact and semantic version.
+2. Recomputes eligibility, selection, reasons, audit metadata, and pool version.
+3. Compares every embedded selected record with its normalized source player.
+4. Rejects missing/extra players, altered fields, rule drift, reason drift,
+   source-version drift, and semantic-version drift.
+
+## Browser, persistence, and exports
+
+The browser validates schema version 2 pool metadata and consumes artifact
+provenance rather than hard-coded dates. It separately labels pool build time,
+unverified or verified statistical coverage, roster snapshot and release-file
+dates, and salary release/currency. Missing metadata uses field-specific honest
+fallbacks.
+
+Personal ranking state remains in one browser `localStorage` key at schema
+version 2. Only stable IDs, ratings, records, totals, matchup state, and bounded
+scheduler history are stored. A semantic data-version change preserves ratings
+and records for returning IDs, adds new IDs unranked, drops removed IDs, filters
+history, and repairs invalid matchups. Elo and scheduler policy are unchanged.
+
+CSV ranking rows are unchanged. TXT and JSON exports distinguish export time,
+player and pool artifact build times and versions, verified coverage, roster
+dates, and salary release/currency. JSON export format version 2 reflects this
+incompatible public metadata-schema change. Exports remain browser-only and are
+not import files.
+
+Goalkeeper cards currently show playing time only. Goalkeeper saves, goals
+conceded, expected-goals-against, and Goals Added are not yet acquired; no
+fabricated or derived substitute is emitted.
+
+## Publication and attribution
+
+`npm run check:publication` validates both artifacts without rebuilding them or
+refreshing any source. The production web build runs this command before Vite.
+There is no deployment workflow in this repository yet.
+
+This project is independent and is not affiliated with or endorsed by MLS,
+MLSPA, ASA, any club, or any player. Repository code licences do not establish a
+licence or legal approval to redistribute underlying source data. Review current
+terms and attribution requirements before publishing an artifact.

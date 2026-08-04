@@ -5,6 +5,7 @@ import { downloadBrowserFile, type DownloadResult } from "./download.js";
 import { rankingExportFilename, type RankingExportKind } from "./filename.js";
 import { formatRankingJson, JSON_MIME_TYPE } from "./json.js";
 import { createRankingExportModel } from "./model.js";
+import type { RankingExportMetadata } from "./model.js";
 import { formatTop25Text, TEXT_MIME_TYPE } from "./text.js";
 
 export type ExportRankingResult = DownloadResult | { kind: "failure"; reason: "model"; error: unknown };
@@ -12,11 +13,11 @@ export type ExportRankingResult = DownloadResult | { kind: "failure"; reason: "m
 export function exportPersonalRanking(
   kind: RankingExportKind,
   session: BrowserSession,
-  metadata: { dataVersion: string; generatedAt?: string },
+  metadata: RankingExportMetadata,
   now = new Date(),
 ): ExportRankingResult {
   try {
-    const model = createRankingExportModel({ session, ...metadata, product: PRODUCT.title, now });
+    const model = createRankingExportModel({ session, metadata, product: PRODUCT.title, now });
     if (model.summary.rankedPlayers === 0) {
       throw new Error("Cannot export ranking: no compared players are ranked.");
     }

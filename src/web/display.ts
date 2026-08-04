@@ -28,8 +28,8 @@ export function selectDisplayStats(player: ComparisonPoolPlayer): DisplayStats {
     usesPreviousSeason: Boolean(player.previousSeason),
     notice: player.previousSeason
       ? player.positionGroup === "GK"
-        ? "No 2026 MLS minutes. Showing 2025 MLS playing time."
-        : "No 2026 MLS minutes. Showing 2025 statistics."
+        ? `No ${player.currentSeason.season} MLS minutes. Showing ${player.previousSeason.season} MLS playing time.`
+        : `No ${player.currentSeason.season} MLS minutes. Showing ${player.previousSeason.season} statistics.`
       : "No MLS minutes are available for display.",
   };
 }

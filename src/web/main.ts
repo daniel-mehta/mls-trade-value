@@ -39,7 +39,16 @@ try {
   const state: RenderState = {
     session: initializeBrowserSession(pool.players),
     status: { kind: "idle", message: "Choose either player or skip this matchup." },
-    dataGeneratedAt: pool.generatedAt,
+    dataMetadata: {
+      season: pool.season,
+      previousSeason: pool.previousSeason,
+      generatedAt: pool.generatedAt,
+      statisticsThrough: pool.provenance.statisticsThrough,
+      rosterSnapshotDate: pool.provenance.rosterSnapshotDate,
+      rosterReleaseDate: pool.provenance.rosterReleaseDate,
+      salaryReleaseDate: pool.provenance.salaryReleaseDate,
+      salaryCurrency: pool.provenance.salaryCurrency,
+    },
     persistenceMessage: SAVED_MESSAGE,
     resetDialogOpen: false,
   };
@@ -143,6 +152,7 @@ try {
       const result = exportPersonalRanking(kind, state.session, {
         dataVersion: pool.dataVersion,
         generatedAt: pool.generatedAt,
+        provenance: pool.provenance,
       });
       state.status = result.kind === "success"
         ? { kind: "idle", message: `${kind === "text" ? "Top 25 TXT" : kind.toUpperCase()} ranking downloaded.` }

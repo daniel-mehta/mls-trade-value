@@ -18,8 +18,12 @@ npm run build:web
 npm run preview:web
 ```
 
-Run the focused browser suite with `npm run test:web`. Existing Elo, player-data,
-roster, and comparison-pool commands remain separate; `npm test` runs all Vitest
+Run the focused browser suite with `npm run test:web`. `npm run check:publication`
+strictly validates both committed artifacts, recomputes their semantic versions
+and comparison-pool membership, and runs the publication-critical data, roster,
+pool, browser-data, persistence, freshness, documentation, and export tests.
+`npm run build:web` runs that check before producing `dist`; neither command
+refreshes sources or rewrites generated artifacts. `npm test` runs all Vitest
 tests.
 
 The browser fetches the committed `public/data/comparison-pool.json` file and
@@ -103,10 +107,12 @@ cloud synchronization. The ranking is not written to repository files or Git
 commits. Browser storage can be blocked or cleared, so it is not a backup or a
 place for secrets.
 
-Cards show 2026 MLS statistics when the player has 2026 minutes. When they do
-not, the card explicitly says that it is showing available 2025 statistics.
-Roster metadata is a static February 26, 2026 snapshot and must not be treated
-as live roster information.
+Cards use the current and previous seasons declared by the artifact. When a
+player has no current-season minutes, the card explicitly labels any available
+previous-season fallback. Build time, verified statistical coverage, roster
+snapshot date, roster release-file date, and salary release are separate
+metadata fields. A missing verified coverage date is displayed as not recorded;
+artifact build time is never presented as a statistics-through date.
 
 ## ranking exports
 
@@ -118,9 +124,11 @@ your saved ranking state, Elo ratings, matchup, or scheduling history.
   spreadsheet-friendly columns for identity, team, position, Elo, and record.
 - **Top 25 TXT** downloads up to 25 compared players as plain shareable text.
 - **JSON** downloads the complete compared-player ranking plus dataset, Elo,
-  and comparison-count metadata. It is a ranking export, not currently an
-  import file. Exported Elo values use the same two-decimal precision as the
-  visible ranking.
+  and comparison-count metadata. Export schema version 2 separately identifies
+  export time, player-artifact and pool-artifact build times and versions,
+  verified statistical coverage, roster dates, and salary release/currency.
+  It is a ranking export, not an import file. Exported Elo values use the same
+  two-decimal precision as the visible ranking.
 
 Only players with at least one completed comparison receive a personal rank and
 appear in these files; untouched pool players are omitted. Export files may

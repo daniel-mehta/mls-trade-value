@@ -1,28 +1,46 @@
-const FALLBACK_NOTICE = "Static dataset. Generation date unavailable.";
-import { ROSTER_SNAPSHOT_LABEL } from "./config.js";
+export interface DataFreshnessMetadata {
+  season?: number;
+  previousSeason?: number;
+  generatedAt?: string;
+  statisticsThrough?: string | null;
+  rosterSnapshotDate?: string;
+  rosterReleaseDate?: string;
+  salaryReleaseDate?: string | null;
+  salaryCurrency?: string;
+}
 
-const ROSTER_SNAPSHOT_NOTICE = `Roster metadata reflects ${ROSTER_SNAPSHOT_LABEL}.`;
-
-/**
- * Describes the committed comparison-pool artifact without implying live or
- * source-coverage freshness. UTC prevents the calendar day varying by browser.
- */
-export function formatDataFreshnessNotice(generatedAt: string | undefined): string {
-  if (typeof generatedAt !== "string" || !/^\d{4}-\d{2}-\d{2}T/.test(generatedAt)) {
-    return FALLBACK_NOTICE;
-  }
-
-  const generatedTime = Date.parse(generatedAt);
-  if (!Number.isFinite(generatedTime)) {
-    return FALLBACK_NOTICE;
-  }
-
-  const readableDate = new Intl.DateTimeFormat("en-US", {
+function readableDate(value: unknown): string | null {
+  if (typeof value !== "string" || !value.trim() || !Number.isFinite(Date.parse(value))) return null;
+  return new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
     timeZone: "UTC",
-  }).format(new Date(generatedTime));
+  }).format(new Date(value));
+}
 
-  return `Data snapshot generated ${readableDate}. Statistics do not update automatically and may not reflect recent matches, transfers, injuries, or roster changes. ${ROSTER_SNAPSHOT_NOTICE}`;
+/** Describes separate artifact, statistics, roster, and salary dates honestly. */
+export function formatDataFreshnessNotice(metadata: DataFreshnessMetadata): string {
+  const buildDate = readableDate(metadata.generatedAt);
+  const coverageDate = readableDate(metadata.statisticsThrough);
+  const rosterDate = readableDate(metadata.rosterSnapshotDate);
+  const rosterReleaseDate = readableDate(metadata.rosterReleaseDate);
+  const salaryDate = readableDate(metadata.salaryReleaseDate);
+  const currency = typeof metadata.salaryCurrency === "string" && metadata.salaryCurrency.trim()
+    ? metadata.salaryCurrency.trim()
+    : null;
+  return [
+    buildDate ? `Dataset artifact built ${buildDate}.` : "Dataset artifact build date unavailable.",
+    coverageDate ? `Verified statistics through ${coverageDate}.` : "Verified statistical coverage date not recorded.",
+    rosterDate ? `Roster snapshot: ${rosterDate}.` : "Roster snapshot date unavailable.",
+    rosterReleaseDate ? `Roster release file date: ${rosterReleaseDate}.` : "Roster release date unavailable.",
+    salaryDate ? `Salary release: ${salaryDate}${currency ? ` (${currency})` : ""}.` : "Salary release date unavailable.",
+    "Statistics and roster metadata do not update automatically.",
+  ].join(" ");
+}
+
+export function formatSeasonContext(metadata: DataFreshnessMetadata): string {
+  return Number.isInteger(metadata.season) && Number.isInteger(metadata.previousSeason)
+    ? `${metadata.season} MLS statistics with selected ${metadata.previousSeason} context.`
+    : "Static MLS statistics with prior-season context where available.";
 }

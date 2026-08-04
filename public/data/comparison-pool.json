@@ -1,15 +1,71 @@
 {
-  "schemaVersion": 1,
-  "dataVersion": "comparison-pool-asa-mls-2026-2025-roster-2026-02-26",
-  "sourceDataVersion": "asa-mls-2026-2025-roster-2026-02-26",
+  "schemaVersion": 2,
+  "humanReadableLabel": "Comparison pool | MLS 2026/2025 | roster snapshot 2026-02-26",
+  "dataVersion": "sha256:b908787a78240e97d7a2725cdc870db2027e0a9c88eeaec283567fb8d9a78f10",
+  "sourceDataVersion": "sha256:a04dc712b90578ee4d745cacf7b9efa74963b57fb914448d1c70b1d84d88b74f",
   "season": 2026,
   "previousSeason": 2025,
-  "generatedAt": "2026-07-30T20:34:42.826Z",
+  "generatedAt": "2026-08-04T17:56:46.668Z",
+  "provenance": {
+    "sourcePlayerDataVersion": "sha256:a04dc712b90578ee4d745cacf7b9efa74963b57fb914448d1c70b1d84d88b74f",
+    "sourcePlayerGeneratedAt": "2026-08-04T17:56:38.945Z",
+    "statisticsThrough": null,
+    "rosterSnapshotDate": "2026-02-26",
+    "rosterReleaseDate": "2026-02-27",
+    "salaryReleaseDate": "2026-04-16",
+    "salaryCurrency": "USD"
+  },
   "selectionRules": {
+    "eligibilityCurrentSeasonMinutesGreaterThan": 0,
+    "previousSeasonFallbackRequiresRosterSnapshot": true,
+    "unavailablePlayersExcluded": false,
     "baseOutfieldPlayersPerTeam": 5,
     "baseGoalkeepersPerTeam": 1,
     "previousSeasonMinutesWeight": 0.5,
-    "currentSeasonGoalContributionThreshold": 5
+    "participationScoreFormula": "current-minutes + previous-minutes * 0.5",
+    "currentSeasonGoalContributionThreshold": 5,
+    "designationInclusions": [
+      "Designated Player",
+      "U22 Initiative"
+    ],
+    "tieBreakers": [
+      "participation-score-desc",
+      "current-minutes-desc",
+      "previous-minutes-desc",
+      "asa-player-id-asc"
+    ],
+    "manualInclusionsEligibilityBound": true,
+    "exclusionsTakePrecedence": true
+  },
+  "overrides": {
+    "schemaVersion": 1,
+    "includeCount": 0,
+    "excludeCount": 0,
+    "contentSha256": "7695f637813836072bb39645ed4bbe703123aa4aecede69a78f876a2b77e1fbc"
+  },
+  "audit": {
+    "eligiblePlayerCount": 839,
+    "finalPoolSize": 303,
+    "selectionReasonCounts": {
+      "team-outfield-selection": 150,
+      "team-goalkeeper-selection": 30,
+      "designated-player": 70,
+      "u22-initiative": 85,
+      "current-season-five-goal-contributions": 99,
+      "manual-inclusion": 0
+    },
+    "positionDistribution": {
+      "GK": 31,
+      "DEF": 86,
+      "MID": 69,
+      "FWD": 117
+    },
+    "teamRepresentation": {
+      "teamCount": 30,
+      "minimum": 6,
+      "maximum": 14,
+      "median": 10
+    }
   },
   "players": [
     {
@@ -91,7 +147,7 @@
         "xGoals": 2.0318,
         "xAssists": 1.6945,
         "keyPasses": 9,
-        "goalsAdded": 2.4600999999999997
+        "goalsAdded": 2.4601
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -340,7 +396,7 @@
         "xGoals": 0.3829,
         "xAssists": 3.0028,
         "keyPasses": 39,
-        "goalsAdded": 3.7993999999999994
+        "goalsAdded": 3.7994
       },
       "previousSeason": {
         "season": 2025,
@@ -350,7 +406,7 @@
         "xGoals": 0.7779,
         "xAssists": 2.1345,
         "keyPasses": 26,
-        "goalsAdded": 5.016700000000001
+        "goalsAdded": 5.0167
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -390,7 +446,7 @@
         "xGoals": 0.7685,
         "xAssists": 0.021,
         "keyPasses": 1,
-        "goalsAdded": 0.7316000000000001
+        "goalsAdded": 0.7316
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -430,7 +486,7 @@
         "xGoals": 7.6583,
         "xAssists": 3.9038,
         "keyPasses": 42,
-        "goalsAdded": 6.3342
+        "goalsAdded": 6.334200000000001
       },
       "previousSeason": {
         "season": 2025,
@@ -541,7 +597,7 @@
         "xGoals": 3.2248,
         "xAssists": 3.678,
         "keyPasses": 28,
-        "goalsAdded": 7.2844999999999995
+        "goalsAdded": 7.284500000000001
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -628,7 +684,7 @@
         "xGoals": 0.5891,
         "xAssists": 2.1941,
         "keyPasses": 14,
-        "goalsAdded": 1.9987000000000001
+        "goalsAdded": 1.9987
       },
       "previousSeason": {
         "season": 2025,
@@ -788,7 +844,7 @@
         "xGoals": 1.8573,
         "xAssists": 0.3751,
         "keyPasses": 7,
-        "goalsAdded": 0.32669999999999966
+        "goalsAdded": 0.32669999999999977
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -889,7 +945,7 @@
         "xGoals": 0.2811,
         "xAssists": 0.3997,
         "keyPasses": 9,
-        "goalsAdded": 3.4519999999999995
+        "goalsAdded": 3.452
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -929,7 +985,7 @@
         "xGoals": 0.922,
         "xAssists": 3.3693,
         "keyPasses": 24,
-        "goalsAdded": 3.6260000000000003
+        "goalsAdded": 3.626
       },
       "previousSeason": {
         "season": 2025,
@@ -939,7 +995,7 @@
         "xGoals": 1.6298,
         "xAssists": 4.5743,
         "keyPasses": 41,
-        "goalsAdded": 6.198699999999999
+        "goalsAdded": 6.1987
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1119,7 +1175,7 @@
         "xGoals": 0.4107,
         "xAssists": 1.102,
         "keyPasses": 9,
-        "goalsAdded": 2.0158
+        "goalsAdded": 2.0157999999999996
       },
       "previousSeason": {
         "season": 2025,
@@ -1230,7 +1286,7 @@
         "xGoals": 9.8684,
         "xAssists": 0.8307,
         "keyPasses": 8,
-        "goalsAdded": 5.517500000000001
+        "goalsAdded": 5.5175
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1281,7 +1337,7 @@
         "xGoals": 0.7194,
         "xAssists": 0.3121,
         "keyPasses": 4,
-        "goalsAdded": 4.658799999999999
+        "goalsAdded": 4.6588
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1382,7 +1438,7 @@
         "xGoals": 1.2197,
         "xAssists": 0.5294,
         "keyPasses": 1,
-        "goalsAdded": 4.729299999999999
+        "goalsAdded": 4.7293
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1428,7 +1484,7 @@
         "xGoals": 17.2744,
         "xAssists": 1.3912,
         "keyPasses": 12,
-        "goalsAdded": 7.9857
+        "goalsAdded": 7.9857000000000005
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1518,7 +1574,7 @@
         "xGoals": 3.0025,
         "xAssists": 1.0929,
         "keyPasses": 4,
-        "goalsAdded": 2.7779999999999996
+        "goalsAdded": 2.778
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1595,6 +1651,53 @@
       ]
     },
     {
+      "id": "jYQJz0RGQG",
+      "name": "CJ dos Santos",
+      "teamId": "zeQZBOzQKw",
+      "teamName": "San Diego FC",
+      "teamAbbreviation": "SD",
+      "positionGroup": "GK",
+      "position": "GK",
+      "baseSalary": 350000,
+      "guaranteedCompensation": 390875,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 401,
+        "goals": 0,
+        "assists": 0,
+        "xGoals": 0,
+        "xAssists": 0,
+        "keyPasses": 0
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 3198,
+        "goals": 0,
+        "assists": 0,
+        "xGoals": 0,
+        "xAssists": 0,
+        "keyPasses": 0
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "zeQZBOzQKw",
+        "snapshotTeamName": "San Diego FC",
+        "rosterSlot": "Senior Roster",
+        "contractThrough": "2027",
+        "optionYears": [
+          "2028"
+        ],
+        "internationalSlot": false,
+        "unavailable": false,
+        "rosterConstructionModel": "U22 Initiative Player Model"
+      },
+      "selectionReasons": [
+        "team-goalkeeper-selection"
+      ]
+    },
+    {
       "id": "4JMAoJgYqK",
       "name": "Cade Cowell",
       "teamId": "a2lqRX2Mr0",
@@ -1612,7 +1715,7 @@
         "xGoals": 2.5606,
         "xAssists": 3.8979,
         "keyPasses": 20,
-        "goalsAdded": 2.996
+        "goalsAdded": 2.9960000000000004
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1714,7 +1817,7 @@
         "xGoals": 5.3318,
         "xAssists": 1.4603,
         "keyPasses": 9,
-        "goalsAdded": 4.5139000000000005
+        "goalsAdded": 4.5139
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1865,7 +1968,7 @@
         "xGoals": 5.2137,
         "xAssists": 0.758,
         "keyPasses": 10,
-        "goalsAdded": 3.2628
+        "goalsAdded": 3.2628000000000004
       },
       "selectionReasons": [
         "current-season-five-goal-contributions"
@@ -1889,7 +1992,7 @@
         "xGoals": 0.7727,
         "xAssists": 0.1911,
         "keyPasses": 3,
-        "goalsAdded": 2.9308000000000005
+        "goalsAdded": 2.9307999999999996
       },
       "previousSeason": {
         "season": 2025,
@@ -1899,7 +2002,7 @@
         "xGoals": 1.9606,
         "xAssists": 1.3523,
         "keyPasses": 8,
-        "goalsAdded": 7.3267999999999995
+        "goalsAdded": 7.3268
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1918,53 +2021,6 @@
       },
       "selectionReasons": [
         "team-outfield-selection"
-      ]
-    },
-    {
-      "id": "jYQJz0RGQG",
-      "name": "CJ dos Santos",
-      "teamId": "zeQZBOzQKw",
-      "teamName": "San Diego FC",
-      "teamAbbreviation": "SD",
-      "positionGroup": "GK",
-      "position": "GK",
-      "baseSalary": 350000,
-      "guaranteedCompensation": 390875,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 401,
-        "goals": 0,
-        "assists": 0,
-        "xGoals": 0,
-        "xAssists": 0,
-        "keyPasses": 0
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 3198,
-        "goals": 0,
-        "assists": 0,
-        "xGoals": 0,
-        "xAssists": 0,
-        "keyPasses": 0
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "zeQZBOzQKw",
-        "snapshotTeamName": "San Diego FC",
-        "rosterSlot": "Senior Roster",
-        "contractThrough": "2027",
-        "optionYears": [
-          "2028"
-        ],
-        "internationalSlot": false,
-        "unavailable": false,
-        "rosterConstructionModel": "U22 Initiative Player Model"
-      },
-      "selectionReasons": [
-        "team-goalkeeper-selection"
       ]
     },
     {
@@ -2034,7 +2090,7 @@
         "xGoals": 1.0751,
         "xAssists": 0.9341,
         "keyPasses": 13,
-        "goalsAdded": 0.9524
+        "goalsAdded": 0.9523999999999999
       },
       "previousSeason": {
         "season": 2025,
@@ -2081,7 +2137,7 @@
         "xGoals": 1.6164,
         "xAssists": 3.5839,
         "keyPasses": 31,
-        "goalsAdded": 2.5388
+        "goalsAdded": 2.5387999999999997
       },
       "previousSeason": {
         "season": 2025,
@@ -2261,57 +2317,6 @@
       ]
     },
     {
-      "id": "Xj5Y68Olqb",
-      "name": "Dániel Gazdag",
-      "teamId": "mvzqoLZQap",
-      "teamName": "Columbus Crew",
-      "teamAbbreviation": "CLB",
-      "positionGroup": "FWD",
-      "position": "ST",
-      "baseSalary": 2049996,
-      "guaranteedCompensation": 2647635,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 738,
-        "goals": 3,
-        "assists": 0,
-        "xGoals": 3.2003,
-        "xAssists": 0.2021,
-        "keyPasses": 4,
-        "goalsAdded": 1.1954
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 2858,
-        "goals": 6,
-        "assists": 5,
-        "xGoals": 10.7584,
-        "xAssists": 3.8184,
-        "keyPasses": 31,
-        "goalsAdded": 6.252599999999999
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "mvzqoLZQap",
-        "snapshotTeamName": "Columbus Crew",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "Designated Player",
-        "contractThrough": "2027",
-        "optionYears": [
-          "2028"
-        ],
-        "internationalSlot": false,
-        "convertibleWithTam": false,
-        "unavailable": false,
-        "rosterConstructionModel": "Designated Player Model"
-      },
-      "selectionReasons": [
-        "designated-player"
-      ]
-    },
-    {
       "id": "9vQ22jRLQK",
       "name": "Daniel Lovitz",
       "teamId": "vzqoOgNqap",
@@ -2385,7 +2390,7 @@
         "xGoals": 1.9804,
         "xAssists": 0.3528,
         "keyPasses": 6,
-        "goalsAdded": 3.965
+        "goalsAdded": 3.9650000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -2404,55 +2409,6 @@
       },
       "selectionReasons": [
         "team-outfield-selection"
-      ]
-    },
-    {
-      "id": "a35rKGpLqL",
-      "name": "Dániel Sallói",
-      "teamId": "kRQabn8MKZ",
-      "teamName": "Toronto FC",
-      "teamAbbreviation": "TOR",
-      "positionGroup": "FWD",
-      "position": "W",
-      "baseSalary": 1300000,
-      "guaranteedCompensation": 1343333,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 1686,
-        "goals": 4,
-        "assists": 3,
-        "xGoals": 4.1556,
-        "xAssists": 1.7338,
-        "keyPasses": 17,
-        "goalsAdded": 3.8538
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 2454,
-        "goals": 7,
-        "assists": 3,
-        "xGoals": 6.1155,
-        "xAssists": 3.0179,
-        "keyPasses": 23,
-        "goalsAdded": 4.7305
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "kRQabn8MKZ",
-        "snapshotTeamName": "Toronto FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "TAM Player",
-        "contractThrough": "2026",
-        "internationalSlot": false,
-        "unavailable": false,
-        "canadianInternationalSlotExemption": false,
-        "rosterConstructionModel": "U22 Initiative Player Model"
-      },
-      "selectionReasons": [
-        "team-outfield-selection",
-        "current-season-five-goal-contributions"
       ]
     },
     {
@@ -2483,7 +2439,7 @@
         "xGoals": 5.3245,
         "xAssists": 2.6679,
         "keyPasses": 29,
-        "goalsAdded": 5.922300000000001
+        "goalsAdded": 5.9223
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -2573,7 +2529,7 @@
         "xGoals": 2.7662,
         "xAssists": 1.622,
         "keyPasses": 10,
-        "goalsAdded": 1.8444
+        "goalsAdded": 1.8444000000000003
       },
       "previousSeason": {
         "season": 2025,
@@ -2630,7 +2586,7 @@
         "xGoals": 2.0954,
         "xAssists": 0.9573,
         "keyPasses": 15,
-        "goalsAdded": 6.544200000000001
+        "goalsAdded": 6.5442
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -2853,7 +2809,7 @@
         "xGoals": 0.7665,
         "xAssists": 2.852,
         "keyPasses": 28,
-        "goalsAdded": 3.908499999999999
+        "goalsAdded": 3.9085
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -2892,7 +2848,7 @@
         "xGoals": 5.6777,
         "xAssists": 1.8511,
         "keyPasses": 13,
-        "goalsAdded": 2.7512
+        "goalsAdded": 2.7512000000000003
       },
       "previousSeason": {
         "season": 2025,
@@ -2928,59 +2884,6 @@
       ]
     },
     {
-      "id": "odMXRxV2qY",
-      "name": "Dénis Bouanga",
-      "teamId": "eVq3ya6MWO",
-      "teamName": "Los Angeles FC",
-      "teamAbbreviation": "LAFC",
-      "positionGroup": "FWD",
-      "position": "W",
-      "baseSalary": 4000000,
-      "guaranteedCompensation": 4939217,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 1606,
-        "goals": 10,
-        "assists": 3,
-        "xGoals": 9.0009,
-        "xAssists": 4.9743,
-        "keyPasses": 30,
-        "goalsAdded": 6.639899999999999
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 3294,
-        "goals": 26,
-        "assists": 8,
-        "xGoals": 26.3141,
-        "xAssists": 8.758,
-        "keyPasses": 49,
-        "goalsAdded": 17.3909
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "eVq3ya6MWO",
-        "snapshotTeamName": "Los Angeles FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "Designated Player",
-        "contractThrough": "2028",
-        "optionYears": [
-          "2029"
-        ],
-        "internationalSlot": true,
-        "convertibleWithTam": false,
-        "unavailable": false,
-        "rosterConstructionModel": "U22 Initiative Player Model"
-      },
-      "selectionReasons": [
-        "team-outfield-selection",
-        "designated-player",
-        "current-season-five-goal-contributions"
-      ]
-    },
-    {
       "id": "eV5DzD0ZQK",
       "name": "Dennis Gjengaar",
       "teamId": "a2lqRX2Mr0",
@@ -3001,7 +2904,7 @@
         "xGoals": 2.5435,
         "xAssists": 1.2714,
         "keyPasses": 6,
-        "goalsAdded": 2.2701
+        "goalsAdded": 2.2701000000000002
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -3042,7 +2945,7 @@
         "xGoals": 2.1831,
         "xAssists": 3.3546,
         "keyPasses": 29,
-        "goalsAdded": 2.6971000000000003
+        "goalsAdded": 2.6971
       },
       "previousSeason": {
         "season": 2025,
@@ -3130,56 +3033,6 @@
       ]
     },
     {
-      "id": "BLMv6j1AMx",
-      "name": "Djé D'Avilla",
-      "teamId": "X0Oq66zq6D",
-      "teamName": "Chicago Fire FC",
-      "teamAbbreviation": "CHI",
-      "positionGroup": "MID",
-      "position": "CM",
-      "baseSalary": 573000,
-      "guaranteedCompensation": 685486,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 1148,
-        "goals": 0,
-        "assists": 0,
-        "xGoals": 0.3314,
-        "xAssists": 0.2111,
-        "keyPasses": 4,
-        "goalsAdded": 0.47559999999999997
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 1579,
-        "goals": 2,
-        "assists": 1,
-        "xGoals": 0.4821,
-        "xAssists": 0.5119,
-        "keyPasses": 5,
-        "goalsAdded": 1.2357
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "X0Oq66zq6D",
-        "snapshotTeamName": "Chicago Fire FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "U22 Initiative",
-        "contractThrough": "2028",
-        "optionYears": [
-          "2029"
-        ],
-        "internationalSlot": true,
-        "unavailable": false,
-        "rosterConstructionModel": "U22 Initiative Player Model"
-      },
-      "selectionReasons": [
-        "u22-initiative"
-      ]
-    },
-    {
       "id": "aDQ0PnvBQE",
       "name": "Djordje Mihailovic",
       "teamId": "kRQabn8MKZ",
@@ -3233,6 +3086,56 @@
       ]
     },
     {
+      "id": "BLMv6j1AMx",
+      "name": "Djé D'Avilla",
+      "teamId": "X0Oq66zq6D",
+      "teamName": "Chicago Fire FC",
+      "teamAbbreviation": "CHI",
+      "positionGroup": "MID",
+      "position": "CM",
+      "baseSalary": 573000,
+      "guaranteedCompensation": 685486,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 1148,
+        "goals": 0,
+        "assists": 0,
+        "xGoals": 0.3314,
+        "xAssists": 0.2111,
+        "keyPasses": 4,
+        "goalsAdded": 0.47559999999999997
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 1579,
+        "goals": 2,
+        "assists": 1,
+        "xGoals": 0.4821,
+        "xAssists": 0.5119,
+        "keyPasses": 5,
+        "goalsAdded": 1.2357
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "X0Oq66zq6D",
+        "snapshotTeamName": "Chicago Fire FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "U22 Initiative",
+        "contractThrough": "2028",
+        "optionYears": [
+          "2029"
+        ],
+        "internationalSlot": true,
+        "unavailable": false,
+        "rosterConstructionModel": "U22 Initiative Player Model"
+      },
+      "selectionReasons": [
+        "u22-initiative"
+      ]
+    },
+    {
       "id": "ljqEJWxzQx",
       "name": "Dominik Marczuk",
       "teamId": "a2lqR4JMr0",
@@ -3250,7 +3153,7 @@
         "xGoals": 0.1429,
         "xAssists": 0.0234,
         "keyPasses": 1,
-        "goalsAdded": 0.2575
+        "goalsAdded": 0.25750000000000006
       },
       "previousSeason": {
         "season": 2025,
@@ -3444,7 +3347,7 @@
         "xGoals": 0.3084,
         "xAssists": 0.2639,
         "keyPasses": 5,
-        "goalsAdded": 2.1484000000000005
+        "goalsAdded": 2.1484
       },
       "previousSeason": {
         "season": 2025,
@@ -3454,7 +3357,7 @@
         "xGoals": 0.7105,
         "xAssists": 0.5913,
         "keyPasses": 8,
-        "goalsAdded": 1.7321999999999997
+        "goalsAdded": 1.7322
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -3476,6 +3379,159 @@
       ]
     },
     {
+      "id": "Xj5Y68Olqb",
+      "name": "Dániel Gazdag",
+      "teamId": "mvzqoLZQap",
+      "teamName": "Columbus Crew",
+      "teamAbbreviation": "CLB",
+      "positionGroup": "FWD",
+      "position": "ST",
+      "baseSalary": 2049996,
+      "guaranteedCompensation": 2647635,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 738,
+        "goals": 3,
+        "assists": 0,
+        "xGoals": 3.2003,
+        "xAssists": 0.2021,
+        "keyPasses": 4,
+        "goalsAdded": 1.1953999999999998
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 2858,
+        "goals": 6,
+        "assists": 5,
+        "xGoals": 10.7584,
+        "xAssists": 3.8184,
+        "keyPasses": 31,
+        "goalsAdded": 6.2526
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "mvzqoLZQap",
+        "snapshotTeamName": "Columbus Crew",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "Designated Player",
+        "contractThrough": "2027",
+        "optionYears": [
+          "2028"
+        ],
+        "internationalSlot": false,
+        "convertibleWithTam": false,
+        "unavailable": false,
+        "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "designated-player"
+      ]
+    },
+    {
+      "id": "a35rKGpLqL",
+      "name": "Dániel Sallói",
+      "teamId": "kRQabn8MKZ",
+      "teamName": "Toronto FC",
+      "teamAbbreviation": "TOR",
+      "positionGroup": "FWD",
+      "position": "W",
+      "baseSalary": 1300000,
+      "guaranteedCompensation": 1343333,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 1686,
+        "goals": 4,
+        "assists": 3,
+        "xGoals": 4.1556,
+        "xAssists": 1.7338,
+        "keyPasses": 17,
+        "goalsAdded": 3.8537999999999997
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 2454,
+        "goals": 7,
+        "assists": 3,
+        "xGoals": 6.1155,
+        "xAssists": 3.0179,
+        "keyPasses": 23,
+        "goalsAdded": 4.7305
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "kRQabn8MKZ",
+        "snapshotTeamName": "Toronto FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "TAM Player",
+        "contractThrough": "2026",
+        "internationalSlot": false,
+        "unavailable": false,
+        "canadianInternationalSlotExemption": false,
+        "rosterConstructionModel": "U22 Initiative Player Model"
+      },
+      "selectionReasons": [
+        "team-outfield-selection",
+        "current-season-five-goal-contributions"
+      ]
+    },
+    {
+      "id": "odMXRxV2qY",
+      "name": "Dénis Bouanga",
+      "teamId": "eVq3ya6MWO",
+      "teamName": "Los Angeles FC",
+      "teamAbbreviation": "LAFC",
+      "positionGroup": "FWD",
+      "position": "W",
+      "baseSalary": 4000000,
+      "guaranteedCompensation": 4939217,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 1606,
+        "goals": 10,
+        "assists": 3,
+        "xGoals": 9.0009,
+        "xAssists": 4.9743,
+        "keyPasses": 30,
+        "goalsAdded": 6.639899999999999
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 3294,
+        "goals": 26,
+        "assists": 8,
+        "xGoals": 26.3141,
+        "xAssists": 8.758,
+        "keyPasses": 49,
+        "goalsAdded": 17.3909
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "eVq3ya6MWO",
+        "snapshotTeamName": "Los Angeles FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "Designated Player",
+        "contractThrough": "2028",
+        "optionYears": [
+          "2029"
+        ],
+        "internationalSlot": true,
+        "convertibleWithTam": false,
+        "unavailable": false,
+        "rosterConstructionModel": "U22 Initiative Player Model"
+      },
+      "selectionReasons": [
+        "team-outfield-selection",
+        "designated-player",
+        "current-season-five-goal-contributions"
+      ]
+    },
+    {
       "id": "p6qbOD1bQ0",
       "name": "Eddie Segura",
       "teamId": "eVq3ya6MWO",
@@ -3493,7 +3549,7 @@
         "xGoals": 0.1525,
         "xAssists": 0.6784,
         "keyPasses": 7,
-        "goalsAdded": 1.2249
+        "goalsAdded": 1.2248999999999999
       },
       "previousSeason": {
         "season": 2025,
@@ -3522,58 +3578,6 @@
       ]
     },
     {
-      "id": "7vQ7xWmYMD",
-      "name": "Édier Ocampo",
-      "teamId": "lgpMOvnQzy",
-      "teamName": "Vancouver Whitecaps FC",
-      "teamAbbreviation": "VAN",
-      "positionGroup": "DEF",
-      "position": "FB",
-      "baseSalary": 400000,
-      "guaranteedCompensation": 453799,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 1318,
-        "goals": 1,
-        "assists": 0,
-        "xGoals": 0.35,
-        "xAssists": 2.1478,
-        "keyPasses": 22,
-        "goalsAdded": 2.8622
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 2968,
-        "goals": 2,
-        "assists": 0,
-        "xGoals": 2.3443,
-        "xAssists": 3.2387,
-        "keyPasses": 20,
-        "goalsAdded": 3.7203
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "lgpMOvnQzy",
-        "snapshotTeamName": "Vancouver Whitecaps FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "U22 Initiative",
-        "contractThrough": "2027",
-        "optionYears": [
-          "2028"
-        ],
-        "internationalSlot": true,
-        "unavailable": false,
-        "canadianInternationalSlotExemption": false,
-        "rosterConstructionModel": "U22 Initiative Player Model"
-      },
-      "selectionReasons": [
-        "team-outfield-selection",
-        "u22-initiative"
-      ]
-    },
-    {
       "id": "NWMWlEAD5l",
       "name": "Edwin Cerrillo",
       "teamId": "kaDQ0wRqEv",
@@ -3591,7 +3595,7 @@
         "xGoals": 0.3214,
         "xAssists": 0.5397,
         "keyPasses": 10,
-        "goalsAdded": 1.3259999999999998
+        "goalsAdded": 1.326
       },
       "previousSeason": {
         "season": 2025,
@@ -3830,7 +3834,7 @@
         "xGoals": 1.1895,
         "xAssists": 3.312,
         "keyPasses": 22,
-        "goalsAdded": 1.8752999999999997
+        "goalsAdded": 1.8753
       },
       "previousSeason": {
         "season": 2025,
@@ -3840,7 +3844,7 @@
         "xGoals": 1.4772,
         "xAssists": 1.0849,
         "keyPasses": 13,
-        "goalsAdded": 2.7293
+        "goalsAdded": 2.7293000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -3925,7 +3929,7 @@
         "xGoals": 0.9944,
         "xAssists": 0.0282,
         "keyPasses": 1,
-        "goalsAdded": -0.16300000000000006
+        "goalsAdded": -0.1630000000000001
       },
       "previousSeason": {
         "season": 2025,
@@ -4025,7 +4029,7 @@
         "xGoals": 8.7903,
         "xAssists": 10.0007,
         "keyPasses": 81,
-        "goalsAdded": 11.735399999999998
+        "goalsAdded": 11.7354
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -4204,7 +4208,7 @@
         "xGoals": 0.3828,
         "xAssists": 0.0633,
         "keyPasses": 1,
-        "goalsAdded": 0.9192000000000001
+        "goalsAdded": 0.9192
       },
       "previousSeason": {
         "season": 2025,
@@ -4254,7 +4258,7 @@
         "xGoals": 0.4008,
         "xAssists": 0.0957,
         "keyPasses": 2,
-        "goalsAdded": 1.2340000000000002
+        "goalsAdded": 1.234
       },
       "previousSeason": {
         "season": 2025,
@@ -4314,7 +4318,7 @@
         "xGoals": 1.3149,
         "xAssists": 0.1236,
         "keyPasses": 3,
-        "goalsAdded": 5.9136999999999995
+        "goalsAdded": 5.9137
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -4353,7 +4357,7 @@
         "xGoals": 6.6955,
         "xAssists": 3.5201,
         "keyPasses": 21,
-        "goalsAdded": 6.2683
+        "goalsAdded": 6.268300000000001
       },
       "previousSeason": {
         "season": 2025,
@@ -4363,7 +4367,7 @@
         "xGoals": 10.62,
         "xAssists": 4.7142,
         "keyPasses": 22,
-        "goalsAdded": 10.9528
+        "goalsAdded": 10.952799999999998
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -4403,7 +4407,7 @@
         "xGoals": 0.3471,
         "xAssists": 0.2495,
         "keyPasses": 5,
-        "goalsAdded": 0.20620000000000008
+        "goalsAdded": 0.20620000000000005
       },
       "previousSeason": {
         "season": 2025,
@@ -4495,7 +4499,7 @@
         "xGoals": 0.0139,
         "xAssists": 0,
         "keyPasses": 0,
-        "goalsAdded": 0.4719010472
+        "goalsAdded": 0.47190104720000003
       },
       "previousSeason": {
         "season": 2025,
@@ -4556,7 +4560,7 @@
         "xGoals": 2.8282,
         "xAssists": 4.3362,
         "keyPasses": 32,
-        "goalsAdded": 3.9003000000000005
+        "goalsAdded": 3.9003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -4737,7 +4741,7 @@
         "xGoals": 5.6821,
         "xAssists": 2.5371,
         "keyPasses": 20,
-        "goalsAdded": 3.5629000000000004
+        "goalsAdded": 3.5629
       },
       "previousSeason": {
         "season": 2025,
@@ -4747,7 +4751,7 @@
         "xGoals": 17.1368,
         "xAssists": 11.4581,
         "keyPasses": 95,
-        "goalsAdded": 12.601
+        "goalsAdded": 12.600999999999999
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -4790,7 +4794,7 @@
         "xGoals": 4.355,
         "xAssists": 0.9451,
         "keyPasses": 8,
-        "goalsAdded": 3.4032999999999998
+        "goalsAdded": 3.4033
       },
       "previousSeason": {
         "season": 2025,
@@ -4844,7 +4848,7 @@
         "xGoals": 0.4526,
         "xAssists": 0.1978,
         "keyPasses": 4,
-        "goalsAdded": 0.8521999999999998
+        "goalsAdded": 0.8522
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5082,7 +5086,7 @@
         "xGoals": 0.6457,
         "xAssists": 0.3628,
         "keyPasses": 2,
-        "goalsAdded": 2.2348999999999997
+        "goalsAdded": 2.2349
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5129,7 +5133,7 @@
         "xGoals": 3.9560999999999997,
         "xAssists": 3.2173999999999996,
         "keyPasses": 24,
-        "goalsAdded": 3.3376999999999994
+        "goalsAdded": 3.3377
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5261,7 +5265,7 @@
         "xGoals": 0.3581,
         "xAssists": 0.7554,
         "keyPasses": 7,
-        "goalsAdded": 0.9059
+        "goalsAdded": 0.9059000000000001
       },
       "previousSeason": {
         "season": 2025,
@@ -5321,7 +5325,7 @@
         "xGoals": 4.1172,
         "xAssists": 5.1882,
         "keyPasses": 36,
-        "goalsAdded": 6.1690000000000005
+        "goalsAdded": 6.169
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5358,7 +5362,7 @@
         "xGoals": 2.7431,
         "xAssists": 0.9431,
         "keyPasses": 15,
-        "goalsAdded": 3.4295000000000004
+        "goalsAdded": 3.4295
       },
       "previousSeason": {
         "season": 2025,
@@ -5424,7 +5428,7 @@
         "xGoals": 2.8658,
         "xAssists": 0.607,
         "keyPasses": 7,
-        "goalsAdded": 8.65
+        "goalsAdded": 8.649999999999999
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5660,7 +5664,7 @@
         "xGoals": 0.1996,
         "xAssists": 1.5803,
         "keyPasses": 10,
-        "goalsAdded": 1.5511000000000001
+        "goalsAdded": 1.5511
       },
       "previousSeason": {
         "season": 2025,
@@ -5670,7 +5674,7 @@
         "xGoals": 1.1065,
         "xAssists": 2.5652,
         "keyPasses": 23,
-        "goalsAdded": 3.6687999999999996
+        "goalsAdded": 3.6688
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5763,7 +5767,7 @@
         "xGoals": 1.0058,
         "xAssists": 0.8878,
         "keyPasses": 7,
-        "goalsAdded": 4.8714
+        "goalsAdded": 4.8713999999999995
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5898,7 +5902,7 @@
         "xGoals": 1.952,
         "xAssists": 0.4334,
         "keyPasses": 8,
-        "goalsAdded": 1.2780999999999998
+        "goalsAdded": 1.2781
       },
       "previousSeason": {
         "season": 2025,
@@ -6079,55 +6083,6 @@
       ]
     },
     {
-      "id": "a35ry7P2ML",
-      "name": "João Klauss",
-      "teamId": "kaDQ0wRqEv",
-      "teamName": "LA Galaxy",
-      "teamAbbreviation": "LAG",
-      "positionGroup": "FWD",
-      "position": "ST",
-      "baseSalary": 2187500,
-      "guaranteedCompensation": 2915000,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 606,
-        "goals": 5,
-        "assists": 0,
-        "xGoals": 4.3251,
-        "xAssists": 0.7877,
-        "keyPasses": 6,
-        "goalsAdded": 2.3387000000000002
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 2695,
-        "goals": 10,
-        "assists": 2,
-        "xGoals": 12.0102,
-        "xAssists": 4.1024,
-        "keyPasses": 32,
-        "goalsAdded": 9.4487
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "kaDQ0wRqEv",
-        "snapshotTeamName": "LA Galaxy",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "Designated Player",
-        "contractThrough": "2026",
-        "internationalSlot": true,
-        "convertibleWithTam": false,
-        "unavailable": false,
-        "rosterConstructionModel": "Designated Player Model"
-      },
-      "selectionReasons": [
-        "designated-player",
-        "current-season-five-goal-contributions"
-      ]
-    },
-    {
       "id": "2vQ1NBY8Mr",
       "name": "Joaquín Pereyra",
       "teamId": "kRQand1MKZ",
@@ -6290,7 +6245,7 @@
         "xGoals": 1.7931,
         "xAssists": 1.4198,
         "keyPasses": 16,
-        "goalsAdded": 3.3966999999999996
+        "goalsAdded": 3.3967
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -6485,7 +6440,7 @@
         "xGoals": 6.1373,
         "xAssists": 2.8673,
         "keyPasses": 14,
-        "goalsAdded": 3.5598
+        "goalsAdded": 3.5597999999999996
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -6614,7 +6569,7 @@
         "xGoals": 0.1557,
         "xAssists": 0.3385,
         "keyPasses": 6,
-        "goalsAdded": 0.007499999999999965
+        "goalsAdded": 0.007499999999999951
       },
       "previousSeason": {
         "season": 2025,
@@ -6673,7 +6628,7 @@
         "xGoals": 2.4866,
         "xAssists": 1.749,
         "keyPasses": 22,
-        "goalsAdded": 4.575200000000001
+        "goalsAdded": 4.5752
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -6696,6 +6651,55 @@
       ]
     },
     {
+      "id": "a35ry7P2ML",
+      "name": "João Klauss",
+      "teamId": "kaDQ0wRqEv",
+      "teamName": "LA Galaxy",
+      "teamAbbreviation": "LAG",
+      "positionGroup": "FWD",
+      "position": "ST",
+      "baseSalary": 2187500,
+      "guaranteedCompensation": 2915000,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 606,
+        "goals": 5,
+        "assists": 0,
+        "xGoals": 4.3251,
+        "xAssists": 0.7877,
+        "keyPasses": 6,
+        "goalsAdded": 2.3387000000000002
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 2695,
+        "goals": 10,
+        "assists": 2,
+        "xGoals": 12.0102,
+        "xAssists": 4.1024,
+        "keyPasses": 32,
+        "goalsAdded": 9.4487
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "kaDQ0wRqEv",
+        "snapshotTeamName": "LA Galaxy",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "Designated Player",
+        "contractThrough": "2026",
+        "internationalSlot": true,
+        "convertibleWithTam": false,
+        "unavailable": false,
+        "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "designated-player",
+        "current-season-five-goal-contributions"
+      ]
+    },
+    {
       "id": "Vj58l1ZD58",
       "name": "Juan Arias",
       "teamId": "a2lqR4JMr0",
@@ -6713,7 +6717,7 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0,
-        "goalsAdded": -0.10049999999999999
+        "goalsAdded": -0.1005
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -6754,7 +6758,7 @@
         "xGoals": 0.6522,
         "xAssists": 2.0683,
         "keyPasses": 21,
-        "goalsAdded": 1.3174
+        "goalsAdded": 1.3174000000000001
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -6771,97 +6775,6 @@
       },
       "selectionReasons": [
         "current-season-five-goal-contributions"
-      ]
-    },
-    {
-      "id": "e7MzJPvGMr",
-      "name": "Julián Aude",
-      "teamId": "kaDQ0wRqEv",
-      "teamName": "LA Galaxy",
-      "teamAbbreviation": "LAG",
-      "positionGroup": "DEF",
-      "position": "FB",
-      "baseSalary": 375000,
-      "guaranteedCompensation": 385000,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 712,
-        "goals": 0,
-        "assists": 0,
-        "xGoals": 0,
-        "xAssists": 0.0319,
-        "keyPasses": 2,
-        "goalsAdded": 0.9873000000000001
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 1394,
-        "goals": 0,
-        "assists": 0,
-        "xGoals": 0.4433,
-        "xAssists": 0.9685,
-        "keyPasses": 11,
-        "goalsAdded": 2.2207999999999997
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "kaDQ0wRqEv",
-        "snapshotTeamName": "LA Galaxy",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "U22 Initiative",
-        "contractThrough": "2027",
-        "internationalSlot": true,
-        "unavailable": false,
-        "rosterConstructionModel": "Designated Player Model"
-      },
-      "selectionReasons": [
-        "u22-initiative"
-      ]
-    },
-    {
-      "id": "BLMv6jROMx",
-      "name": "Julián Fernández",
-      "teamId": "Vj58weDM8n",
-      "teamName": "New York City FC",
-      "teamAbbreviation": "NYC",
-      "positionGroup": "FWD",
-      "position": "W",
-      "baseSalary": 720000,
-      "guaranteedCompensation": 784300,
-      "currentSeason": {
-        "season": 2026
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 1665,
-        "goals": 3,
-        "assists": 5,
-        "xGoals": 3.5533,
-        "xAssists": 6.264,
-        "keyPasses": 43,
-        "goalsAdded": 5.1069
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": false,
-        "snapshotTeamId": "Vj58weDM8n",
-        "snapshotTeamName": "New York City FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "U22 Initiative",
-        "currentStatus": "Unavailable - On Loan",
-        "contractThrough": "2027",
-        "optionYears": [
-          "2028"
-        ],
-        "internationalSlot": false,
-        "unavailable": true,
-        "rosterConstructionModel": "Designated Player Model"
-      },
-      "selectionReasons": [
-        "u22-initiative"
       ]
     },
     {
@@ -6913,6 +6826,97 @@
       "selectionReasons": [
         "team-outfield-selection",
         "current-season-five-goal-contributions"
+      ]
+    },
+    {
+      "id": "e7MzJPvGMr",
+      "name": "Julián Aude",
+      "teamId": "kaDQ0wRqEv",
+      "teamName": "LA Galaxy",
+      "teamAbbreviation": "LAG",
+      "positionGroup": "DEF",
+      "position": "FB",
+      "baseSalary": 375000,
+      "guaranteedCompensation": 385000,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 712,
+        "goals": 0,
+        "assists": 0,
+        "xGoals": 0,
+        "xAssists": 0.0319,
+        "keyPasses": 2,
+        "goalsAdded": 0.9873
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 1394,
+        "goals": 0,
+        "assists": 0,
+        "xGoals": 0.4433,
+        "xAssists": 0.9685,
+        "keyPasses": 11,
+        "goalsAdded": 2.2208
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "kaDQ0wRqEv",
+        "snapshotTeamName": "LA Galaxy",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "U22 Initiative",
+        "contractThrough": "2027",
+        "internationalSlot": true,
+        "unavailable": false,
+        "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "u22-initiative"
+      ]
+    },
+    {
+      "id": "BLMv6jROMx",
+      "name": "Julián Fernández",
+      "teamId": "Vj58weDM8n",
+      "teamName": "New York City FC",
+      "teamAbbreviation": "NYC",
+      "positionGroup": "FWD",
+      "position": "W",
+      "baseSalary": 720000,
+      "guaranteedCompensation": 784300,
+      "currentSeason": {
+        "season": 2026
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 1665,
+        "goals": 3,
+        "assists": 5,
+        "xGoals": 3.5533,
+        "xAssists": 6.264,
+        "keyPasses": 43,
+        "goalsAdded": 5.1068999999999996
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": false,
+        "snapshotTeamId": "Vj58weDM8n",
+        "snapshotTeamName": "New York City FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "U22 Initiative",
+        "currentStatus": "Unavailable - On Loan",
+        "contractThrough": "2027",
+        "optionYears": [
+          "2028"
+        ],
+        "internationalSlot": false,
+        "unavailable": true,
+        "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "u22-initiative"
       ]
     },
     {
@@ -7046,7 +7050,7 @@
         "xGoals": 1.5403,
         "xAssists": 2.7368,
         "keyPasses": 14,
-        "goalsAdded": 7.9202
+        "goalsAdded": 7.9201999999999995
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7086,7 +7090,7 @@
         "xGoals": 1.7498,
         "xAssists": 1.4381,
         "keyPasses": 11,
-        "goalsAdded": 1.5078999999999998
+        "goalsAdded": 1.5079
       },
       "previousSeason": {
         "season": 2025,
@@ -7137,7 +7141,7 @@
         "xGoals": 10.2995,
         "xAssists": 0.7446,
         "keyPasses": 7,
-        "goalsAdded": 3.6995
+        "goalsAdded": 3.6994999999999996
       },
       "previousSeason": {
         "season": 2025,
@@ -7147,7 +7151,7 @@
         "xGoals": 13.3561,
         "xAssists": 1.1115,
         "keyPasses": 14,
-        "goalsAdded": 6.9155999999999995
+        "goalsAdded": 6.9156
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7300,7 +7304,7 @@
         "xGoals": 5.0982,
         "xAssists": 4.5325,
         "keyPasses": 29,
-        "goalsAdded": 5.854899999999999
+        "goalsAdded": 5.854900000000001
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7320,59 +7324,6 @@
       },
       "selectionReasons": [
         "u22-initiative",
-        "current-season-five-goal-contributions"
-      ]
-    },
-    {
-      "id": "raMyAWZAMd",
-      "name": "Kévin Denkey",
-      "teamId": "NWMWlBK5lz",
-      "teamName": "FC Cincinnati",
-      "teamAbbreviation": "CIN",
-      "positionGroup": "FWD",
-      "position": "ST",
-      "baseSalary": 3800000,
-      "guaranteedCompensation": 3810000,
-      "currentSeason": {
-        "season": 2026,
-        "minutes": 1491,
-        "goals": 11,
-        "assists": 2,
-        "xGoals": 10.5054,
-        "xAssists": 1.444,
-        "keyPasses": 14,
-        "goalsAdded": 5.2458
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 2827,
-        "goals": 16,
-        "assists": 1,
-        "xGoals": 14.8511,
-        "xAssists": 3.2704,
-        "keyPasses": 28,
-        "goalsAdded": 6.4137
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "NWMWlBK5lz",
-        "snapshotTeamName": "FC Cincinnati",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "Designated Player",
-        "contractThrough": "2028",
-        "optionYears": [
-          "2029"
-        ],
-        "internationalSlot": true,
-        "convertibleWithTam": true,
-        "unavailable": false,
-        "rosterConstructionModel": "Designated Player Model"
-      },
-      "selectionReasons": [
-        "team-outfield-selection",
-        "designated-player",
         "current-season-five-goal-contributions"
       ]
     },
@@ -7404,7 +7355,7 @@
         "xGoals": 7.2859,
         "xAssists": 0.8556,
         "keyPasses": 12,
-        "goalsAdded": 2.6986
+        "goalsAdded": 2.6986000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7499,7 +7450,7 @@
         "xGoals": 0.4371,
         "xAssists": 0.419,
         "keyPasses": 5,
-        "goalsAdded": 2.8358000000000003
+        "goalsAdded": 2.8358
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7670,6 +7621,59 @@
       ]
     },
     {
+      "id": "raMyAWZAMd",
+      "name": "Kévin Denkey",
+      "teamId": "NWMWlBK5lz",
+      "teamName": "FC Cincinnati",
+      "teamAbbreviation": "CIN",
+      "positionGroup": "FWD",
+      "position": "ST",
+      "baseSalary": 3800000,
+      "guaranteedCompensation": 3810000,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 1491,
+        "goals": 11,
+        "assists": 2,
+        "xGoals": 10.5054,
+        "xAssists": 1.444,
+        "keyPasses": 14,
+        "goalsAdded": 5.2458
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 2827,
+        "goals": 16,
+        "assists": 1,
+        "xGoals": 14.8511,
+        "xAssists": 3.2704,
+        "keyPasses": 28,
+        "goalsAdded": 6.4136999999999995
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "NWMWlBK5lz",
+        "snapshotTeamName": "FC Cincinnati",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "Designated Player",
+        "contractThrough": "2028",
+        "optionYears": [
+          "2029"
+        ],
+        "internationalSlot": true,
+        "convertibleWithTam": true,
+        "unavailable": false,
+        "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "team-outfield-selection",
+        "designated-player",
+        "current-season-five-goal-contributions"
+      ]
+    },
+    {
       "id": "xW5pw8KGMg",
       "name": "Lawrence Ennali",
       "teamId": "YgOMngl5wN",
@@ -7749,7 +7753,7 @@
         "xGoals": 7.232,
         "xAssists": 4.109,
         "keyPasses": 27,
-        "goalsAdded": 5.285399999999999
+        "goalsAdded": 5.2854
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7800,7 +7804,7 @@
         "xGoals": 26.52,
         "xAssists": 16.4661,
         "keyPasses": 89,
-        "goalsAdded": 26.3939
+        "goalsAdded": 26.393900000000002
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7840,7 +7844,7 @@
         "xGoals": 4.2741,
         "xAssists": 2.113,
         "keyPasses": 8,
-        "goalsAdded": 3.2495999999999996
+        "goalsAdded": 3.2496
       },
       "previousSeason": {
         "season": 2025,
@@ -7890,7 +7894,7 @@
         "xGoals": 3.9671,
         "xAssists": 0.3681,
         "keyPasses": 6,
-        "goalsAdded": 1.7504000000000002
+        "goalsAdded": 1.7504
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7932,7 +7936,7 @@
         "xGoals": 0.3538,
         "xAssists": 0.7447,
         "keyPasses": 5,
-        "goalsAdded": 1.7695
+        "goalsAdded": 1.7694999999999999
       },
       "previousSeason": {
         "season": 2025,
@@ -7992,7 +7996,7 @@
         "xGoals": 2.6549,
         "xAssists": 3.1633,
         "keyPasses": 27,
-        "goalsAdded": 3.2456999999999994
+        "goalsAdded": 3.2457000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -8180,7 +8184,7 @@
         "xGoals": 0.9393,
         "xAssists": 0.5671,
         "keyPasses": 3,
-        "goalsAdded": 1.5301999999999998
+        "goalsAdded": 1.5302
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -8403,7 +8407,7 @@
         "xGoals": 0.2871,
         "xAssists": 0.5208,
         "keyPasses": 5,
-        "goalsAdded": 3.4922999999999997
+        "goalsAdded": 3.4923
       },
       "previousSeason": {
         "season": 2025,
@@ -8657,7 +8661,7 @@
         "xGoals": 7.2026,
         "xAssists": 1.9703,
         "keyPasses": 12,
-        "goalsAdded": 3.3994000000000004
+        "goalsAdded": 3.3994
       },
       "previousSeason": {
         "season": 2025,
@@ -8764,7 +8768,7 @@
         "xGoals": 2.3254,
         "xAssists": 4.3709,
         "keyPasses": 39,
-        "goalsAdded": 8.073599999999999
+        "goalsAdded": 8.0736
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -8904,7 +8908,7 @@
         "xGoals": 1.9716,
         "xAssists": 2.5915,
         "keyPasses": 12,
-        "goalsAdded": 2.5205
+        "goalsAdded": 2.5204999999999997
       },
       "previousSeason": {
         "season": 2025,
@@ -9061,7 +9065,7 @@
         "xGoals": 5.1728,
         "xAssists": 1.3624,
         "keyPasses": 16,
-        "goalsAdded": 6.517
+        "goalsAdded": 6.5169999999999995
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -9246,7 +9250,7 @@
         "xGoals": 1.806,
         "xAssists": 2.6183,
         "keyPasses": 19,
-        "goalsAdded": 3.5623000000000005
+        "goalsAdded": 3.5623
       },
       "previousSeason": {
         "season": 2025,
@@ -9382,7 +9386,7 @@
         "xGoals": 2.2795,
         "xAssists": 3.156,
         "keyPasses": 27,
-        "goalsAdded": 1.8741
+        "goalsAdded": 1.8740999999999999
       },
       "previousSeason": {
         "season": 2025,
@@ -9392,7 +9396,7 @@
         "xGoals": 4.2658,
         "xAssists": 8.3367,
         "keyPasses": 69,
-        "goalsAdded": 5.528300000000001
+        "goalsAdded": 5.5283
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -9473,7 +9477,7 @@
         "xGoals": 0.6492,
         "xAssists": 0.1548,
         "keyPasses": 1,
-        "goalsAdded": 0.39310000000000006
+        "goalsAdded": 0.3931
       },
       "previousSeason": {
         "season": 2025,
@@ -9771,7 +9775,7 @@
         "xGoals": 1.7745,
         "xAssists": 0.3712,
         "keyPasses": 7,
-        "goalsAdded": 6.557799999999999
+        "goalsAdded": 6.5578
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -9813,7 +9817,7 @@
         "xGoals": 4.077,
         "xAssists": 2.3206,
         "keyPasses": 17,
-        "goalsAdded": 3.4922000000000004
+        "goalsAdded": 3.4922
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -9994,7 +9998,7 @@
         "xGoals": 0.307,
         "xAssists": 0.1964,
         "keyPasses": 3,
-        "goalsAdded": 1.6578000000000002
+        "goalsAdded": 1.6578
       },
       "previousSeason": {
         "season": 2025,
@@ -10004,7 +10008,7 @@
         "xGoals": 0,
         "xAssists": 0.6535,
         "keyPasses": 8,
-        "goalsAdded": 1.2393999999999998
+        "goalsAdded": 1.2394
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -10043,7 +10047,7 @@
         "xGoals": 1.9375,
         "xAssists": 0.5286,
         "keyPasses": 5,
-        "goalsAdded": 3.4442999999999997
+        "goalsAdded": 3.4443
       },
       "previousSeason": {
         "season": 2025,
@@ -10092,7 +10096,7 @@
         "xGoals": 0.8995,
         "xAssists": 1.5131,
         "keyPasses": 9,
-        "goalsAdded": 1.7685999999999997
+        "goalsAdded": 1.7686
       },
       "previousSeason": {
         "season": 2025,
@@ -10228,7 +10232,7 @@
         "xGoals": 0.0157,
         "xAssists": 0.1477,
         "keyPasses": 3,
-        "goalsAdded": 0.026199999999999973
+        "goalsAdded": 0.0262
       },
       "previousSeason": {
         "season": 2025,
@@ -10372,7 +10376,7 @@
         "xGoals": 0.2964,
         "xAssists": 0.0595,
         "keyPasses": 2,
-        "goalsAdded": 1.1212
+        "goalsAdded": 1.1212000000000002
       },
       "previousSeason": {
         "season": 2025,
@@ -10666,7 +10670,7 @@
         "xGoals": 0.1883,
         "xAssists": 1.0047,
         "keyPasses": 7,
-        "goalsAdded": 3.0315999999999996
+        "goalsAdded": 3.0316
       },
       "previousSeason": {
         "season": 2025,
@@ -10769,7 +10773,7 @@
         "xGoals": 0.9092,
         "xAssists": 0.6406,
         "keyPasses": 5,
-        "goalsAdded": 1.3239
+        "goalsAdded": 1.3239000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -10818,7 +10822,7 @@
         "xGoals": 2.4158,
         "xAssists": 0.069,
         "keyPasses": 2,
-        "goalsAdded": 5.2337
+        "goalsAdded": 5.233700000000001
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -10856,7 +10860,7 @@
         "xGoals": 4.3824,
         "xAssists": 2.1134,
         "keyPasses": 18,
-        "goalsAdded": 3.9072999999999998
+        "goalsAdded": 3.9073
       },
       "previousSeason": {
         "season": 2025,
@@ -10917,7 +10921,7 @@
         "xGoals": 1.4876,
         "xAssists": 0.1925,
         "keyPasses": 2,
-        "goalsAdded": 4.5988999999999995
+        "goalsAdded": 4.5989
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -11017,7 +11021,7 @@
         "xGoals": 0.3182,
         "xAssists": 0.0139,
         "keyPasses": 1,
-        "goalsAdded": 1.3762999999999999
+        "goalsAdded": 1.3763
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -11057,7 +11061,7 @@
         "xGoals": 0,
         "xAssists": 0.194,
         "keyPasses": 2,
-        "goalsAdded": 0.24069999999999997
+        "goalsAdded": 0.24070000000000003
       },
       "previousSeason": {
         "season": 2025,
@@ -11067,7 +11071,7 @@
         "xGoals": 4.0128,
         "xAssists": 7.2981,
         "keyPasses": 65,
-        "goalsAdded": 6.1995000000000005
+        "goalsAdded": 6.1995
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -11152,7 +11156,7 @@
         "xGoals": 0.915,
         "xAssists": 0.7322,
         "keyPasses": 6,
-        "goalsAdded": 1.6171000000000002
+        "goalsAdded": 1.6170999999999998
       },
       "previousSeason": {
         "season": 2025,
@@ -11162,7 +11166,7 @@
         "xGoals": 1.2994,
         "xAssists": 0.9014,
         "keyPasses": 16,
-        "goalsAdded": 3.6743999999999994
+        "goalsAdded": 3.6744
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -11252,7 +11256,7 @@
         "xGoals": 2.656,
         "xAssists": 2.1525,
         "keyPasses": 16,
-        "goalsAdded": 2.9521999999999995
+        "goalsAdded": 2.9522000000000004
       },
       "previousSeason": {
         "season": 2025,
@@ -11385,50 +11389,6 @@
       ]
     },
     {
-      "id": "4wM4J9zlqj",
-      "name": "Pedro de la Vega",
-      "teamId": "jYQJ19EqGR",
-      "teamName": "Seattle Sounders FC",
-      "teamAbbreviation": "SEA",
-      "positionGroup": "FWD",
-      "position": "W",
-      "baseSalary": 1000000,
-      "guaranteedCompensation": 1379000,
-      "currentSeason": {
-        "season": 2026
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 1313,
-        "goals": 4,
-        "assists": 3,
-        "xGoals": 3.1772,
-        "xAssists": 2.195,
-        "keyPasses": 16,
-        "goalsAdded": 3.2413
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "jYQJ19EqGR",
-        "snapshotTeamName": "Seattle Sounders FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "Designated Player",
-        "contractThrough": "2027",
-        "optionYears": [
-          "2028"
-        ],
-        "internationalSlot": false,
-        "convertibleWithTam": false,
-        "unavailable": false,
-        "rosterConstructionModel": "Designated Player Model"
-      },
-      "selectionReasons": [
-        "designated-player"
-      ]
-    },
-    {
       "id": "7VqG3l0xqv",
       "name": "Pedro Soma",
       "teamId": "zeQZBOzQKw",
@@ -11476,6 +11436,50 @@
       },
       "selectionReasons": [
         "u22-initiative"
+      ]
+    },
+    {
+      "id": "4wM4J9zlqj",
+      "name": "Pedro de la Vega",
+      "teamId": "jYQJ19EqGR",
+      "teamName": "Seattle Sounders FC",
+      "teamAbbreviation": "SEA",
+      "positionGroup": "FWD",
+      "position": "W",
+      "baseSalary": 1000000,
+      "guaranteedCompensation": 1379000,
+      "currentSeason": {
+        "season": 2026
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 1313,
+        "goals": 4,
+        "assists": 3,
+        "xGoals": 3.1772,
+        "xAssists": 2.195,
+        "keyPasses": 16,
+        "goalsAdded": 3.2413
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "jYQJ19EqGR",
+        "snapshotTeamName": "Seattle Sounders FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "Designated Player",
+        "contractThrough": "2027",
+        "optionYears": [
+          "2028"
+        ],
+        "internationalSlot": false,
+        "convertibleWithTam": false,
+        "unavailable": false,
+        "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "designated-player"
       ]
     },
     {
@@ -11662,7 +11666,7 @@
         "xGoals": 8.9104,
         "xAssists": 8.6607,
         "keyPasses": 71,
-        "goalsAdded": 7.089799999999999
+        "goalsAdded": 7.0898
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -11740,7 +11744,7 @@
         "xGoals": 8.5706,
         "xAssists": 1.3417,
         "keyPasses": 5,
-        "goalsAdded": 6.260300000000001
+        "goalsAdded": 6.2603
       },
       "previousSeason": {
         "season": 2025,
@@ -12034,7 +12038,7 @@
         "xGoals": 0.5647,
         "xAssists": 0.8311,
         "keyPasses": 8,
-        "goalsAdded": 1.2683000000000002
+        "goalsAdded": 1.2683
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -12085,7 +12089,7 @@
         "xGoals": 0.159,
         "xAssists": 1.4345,
         "keyPasses": 9,
-        "goalsAdded": 0.5083000000000001
+        "goalsAdded": 0.5083
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -12235,7 +12239,7 @@
         "xGoals": 1.0844,
         "xAssists": 0.1364,
         "keyPasses": 4,
-        "goalsAdded": 4.7589999999999995
+        "goalsAdded": 4.759
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -12328,7 +12332,7 @@
         "xGoals": 1.6734,
         "xAssists": 2.1313,
         "keyPasses": 21,
-        "goalsAdded": 3.7754000000000003
+        "goalsAdded": 3.7754
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -12461,7 +12465,7 @@
         "xGoals": 1.64,
         "xAssists": 2.9875,
         "keyPasses": 25,
-        "goalsAdded": 2.977
+        "goalsAdded": 2.9769999999999994
       },
       "previousSeason": {
         "season": 2025,
@@ -12671,7 +12675,7 @@
         "xGoals": 0.3647,
         "xAssists": 0.3235,
         "keyPasses": 4,
-        "goalsAdded": 0.6163
+        "goalsAdded": 0.6163000000000001
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -12757,7 +12761,7 @@
         "xGoals": 0.2099,
         "xAssists": 0.125,
         "keyPasses": 2,
-        "goalsAdded": 1.9998000000000002
+        "goalsAdded": 1.9998
       },
       "previousSeason": {
         "season": 2025,
@@ -12814,7 +12818,7 @@
         "xGoals": 3.146,
         "xAssists": 8.8334,
         "keyPasses": 84,
-        "goalsAdded": 7.588499999999999
+        "goalsAdded": 7.5885
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13031,7 +13035,7 @@
         "xGoals": 7.1125,
         "xAssists": 2.5042,
         "keyPasses": 15,
-        "goalsAdded": 3.6578999999999997
+        "goalsAdded": 3.6579
       },
       "previousSeason": {
         "season": 2025,
@@ -13133,7 +13137,7 @@
         "xGoals": 0.4763,
         "xAssists": 0.953,
         "keyPasses": 11,
-        "goalsAdded": 2.0314
+        "goalsAdded": 2.0313999999999997
       },
       "previousSeason": {
         "season": 2025,
@@ -13143,7 +13147,7 @@
         "xGoals": 1.4143,
         "xAssists": 2.2381,
         "keyPasses": 19,
-        "goalsAdded": 6.206100000000001
+        "goalsAdded": 6.2061
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13190,7 +13194,7 @@
         "xGoals": 15.3073,
         "xAssists": 2.1547,
         "keyPasses": 23,
-        "goalsAdded": 7.266599999999999
+        "goalsAdded": 7.2666
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13267,7 +13271,7 @@
         "xGoals": 0.8168,
         "xAssists": 1.4798,
         "keyPasses": 11,
-        "goalsAdded": 1.9159
+        "goalsAdded": 1.9159000000000002
       },
       "previousSeason": {
         "season": 2025,
@@ -13313,7 +13317,7 @@
         "xGoals": 0.2885,
         "xAssists": 0.1017,
         "keyPasses": 1,
-        "goalsAdded": 0.13679999999999998
+        "goalsAdded": 0.1368
       },
       "previousSeason": {
         "season": 2025,
@@ -13412,7 +13416,7 @@
         "xGoals": 0.2245,
         "xAssists": 0.2734,
         "keyPasses": 2,
-        "goalsAdded": 2.6075000000000004
+        "goalsAdded": 2.6075
       },
       "previousSeason": {
         "season": 2025,
@@ -13518,7 +13522,7 @@
         "xGoals": 6.8429,
         "xAssists": 2.4905,
         "keyPasses": 21,
-        "goalsAdded": 3.8713999999999995
+        "goalsAdded": 3.8714
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13608,7 +13612,7 @@
         "xGoals": 0,
         "xAssists": 0.2504,
         "keyPasses": 3,
-        "goalsAdded": 3.8074
+        "goalsAdded": 3.8074000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13658,7 +13662,7 @@
         "xGoals": 1.4047,
         "xAssists": 0.8796,
         "keyPasses": 7,
-        "goalsAdded": 4.643999999999999
+        "goalsAdded": 4.644
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13818,47 +13822,6 @@
       ]
     },
     {
-      "id": "raMyeeOAMd",
-      "name": "Tomás Ángel",
-      "teamId": "zeQZBOzQKw",
-      "teamName": "San Diego FC",
-      "teamAbbreviation": "SD",
-      "positionGroup": "FWD",
-      "position": "ST",
-      "currentSeason": {
-        "season": 2026
-      },
-      "previousSeason": {
-        "season": 2025,
-        "minutes": 851,
-        "goals": 3,
-        "assists": 2,
-        "xGoals": 1.7142,
-        "xAssists": 0.9578,
-        "keyPasses": 12,
-        "goalsAdded": 0.9996999999999998
-      },
-      "rosterProfile": {
-        "snapshotDate": "2026-02-26",
-        "listedInRosterSnapshot": true,
-        "activeAtRosterSnapshot": true,
-        "snapshotTeamId": "zeQZBOzQKw",
-        "snapshotTeamName": "San Diego FC",
-        "rosterSlot": "Senior Roster",
-        "rosterDesignation": "U22 Initiative",
-        "contractThrough": "2026",
-        "optionYears": [
-          "2027"
-        ],
-        "internationalSlot": false,
-        "unavailable": false,
-        "rosterConstructionModel": "U22 Initiative Player Model"
-      },
-      "selectionReasons": [
-        "u22-initiative"
-      ]
-    },
-    {
       "id": "eVq3rkkw5W",
       "name": "Tomás Avilés",
       "teamId": "APk5LGOMOW",
@@ -13886,7 +13849,7 @@
         "xGoals": 0.3831,
         "xAssists": 0,
         "keyPasses": 0,
-        "goalsAdded": 2.7490999999999994
+        "goalsAdded": 2.7491
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13929,7 +13892,7 @@
         "xGoals": 0.342,
         "xAssists": 1.4087,
         "keyPasses": 12,
-        "goalsAdded": 0.7681000000000001
+        "goalsAdded": 0.7681
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -13947,6 +13910,47 @@
         "internationalSlot": true,
         "unavailable": false,
         "rosterConstructionModel": "Designated Player Model"
+      },
+      "selectionReasons": [
+        "u22-initiative"
+      ]
+    },
+    {
+      "id": "raMyeeOAMd",
+      "name": "Tomás Ángel",
+      "teamId": "zeQZBOzQKw",
+      "teamName": "San Diego FC",
+      "teamAbbreviation": "SD",
+      "positionGroup": "FWD",
+      "position": "ST",
+      "currentSeason": {
+        "season": 2026
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 851,
+        "goals": 3,
+        "assists": 2,
+        "xGoals": 1.7142,
+        "xAssists": 0.9578,
+        "keyPasses": 12,
+        "goalsAdded": 0.9997
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "zeQZBOzQKw",
+        "snapshotTeamName": "San Diego FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "U22 Initiative",
+        "contractThrough": "2026",
+        "optionYears": [
+          "2027"
+        ],
+        "internationalSlot": false,
+        "unavailable": false,
+        "rosterConstructionModel": "U22 Initiative Player Model"
       },
       "selectionReasons": [
         "u22-initiative"
@@ -14018,7 +14022,7 @@
         "xGoals": 0.7325,
         "xAssists": 1.2859,
         "keyPasses": 14,
-        "goalsAdded": 2.5355999999999996
+        "goalsAdded": 2.5356
       },
       "previousSeason": {
         "season": 2025,
@@ -14028,7 +14032,7 @@
         "xGoals": 1.5679,
         "xAssists": 0.7612,
         "keyPasses": 10,
-        "goalsAdded": 2.3242
+        "goalsAdded": 2.3242000000000003
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14078,7 +14082,7 @@
         "xGoals": 1.52,
         "xAssists": 1.7979,
         "keyPasses": 21,
-        "goalsAdded": 2.5020000000000002
+        "goalsAdded": 2.502
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14119,7 +14123,7 @@
         "xGoals": 0.0296,
         "xAssists": 0.2566,
         "keyPasses": 2,
-        "goalsAdded": 0.31229999999999997
+        "goalsAdded": 0.3123
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14256,7 +14260,7 @@
         "xGoals": 0.7454,
         "xAssists": 0.5921,
         "keyPasses": 4,
-        "goalsAdded": 0.5939
+        "goalsAdded": 0.5938999999999999
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14351,7 +14355,7 @@
         "xGoals": 0.6275,
         "xAssists": 0.8081,
         "keyPasses": 6,
-        "goalsAdded": 0.27349999999999985
+        "goalsAdded": 0.27349999999999997
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14402,7 +14406,7 @@
         "xGoals": 0.7802,
         "xAssists": 1.5794,
         "keyPasses": 15,
-        "goalsAdded": 5.5889999999999995
+        "goalsAdded": 5.589
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14615,6 +14619,58 @@
       "selectionReasons": [
         "team-outfield-selection",
         "current-season-five-goal-contributions"
+      ]
+    },
+    {
+      "id": "7vQ7xWmYMD",
+      "name": "Édier Ocampo",
+      "teamId": "lgpMOvnQzy",
+      "teamName": "Vancouver Whitecaps FC",
+      "teamAbbreviation": "VAN",
+      "positionGroup": "DEF",
+      "position": "FB",
+      "baseSalary": 400000,
+      "guaranteedCompensation": 453799,
+      "currentSeason": {
+        "season": 2026,
+        "minutes": 1318,
+        "goals": 1,
+        "assists": 0,
+        "xGoals": 0.35,
+        "xAssists": 2.1478,
+        "keyPasses": 22,
+        "goalsAdded": 2.8622
+      },
+      "previousSeason": {
+        "season": 2025,
+        "minutes": 2968,
+        "goals": 2,
+        "assists": 0,
+        "xGoals": 2.3443,
+        "xAssists": 3.2387,
+        "keyPasses": 20,
+        "goalsAdded": 3.7203
+      },
+      "rosterProfile": {
+        "snapshotDate": "2026-02-26",
+        "listedInRosterSnapshot": true,
+        "activeAtRosterSnapshot": true,
+        "snapshotTeamId": "lgpMOvnQzy",
+        "snapshotTeamName": "Vancouver Whitecaps FC",
+        "rosterSlot": "Senior Roster",
+        "rosterDesignation": "U22 Initiative",
+        "contractThrough": "2027",
+        "optionYears": [
+          "2028"
+        ],
+        "internationalSlot": true,
+        "unavailable": false,
+        "canadianInternationalSlotExemption": false,
+        "rosterConstructionModel": "U22 Initiative Player Model"
+      },
+      "selectionReasons": [
+        "team-outfield-selection",
+        "u22-initiative"
       ]
     }
   ]

@@ -1,14 +1,19 @@
-import type { ComparisonPoolPlayer } from "../../data/comparisonPool.js";
+import type { ComparisonPoolPlayer, ComparisonPoolProvenance } from "../../data/comparisonPool.js";
 import { DEFAULT_INITIAL_RATING, DEFAULT_K_FACTOR } from "../../domain/elo.js";
 import { rankComparedPlayers, type BrowserSession } from "../session.js";
-import { ROSTER_SNAPSHOT_DATE } from "../config.js";
 
-export const RANKING_EXPORT_FORMAT_VERSION = 1 as const;
+export const RANKING_EXPORT_FORMAT_VERSION = 2 as const;
 
 export interface RankingExportDataset {
-  dataVersion: string;
-  generatedAt: string | null;
+  sourcePlayerDataVersion: string;
+  comparisonPoolDataVersion: string;
+  playerArtifactBuiltAt: string | null;
+  comparisonPoolArtifactBuiltAt: string | null;
+  statisticsThrough: string | null;
   rosterSnapshotDate: string | null;
+  rosterReleaseDate: string | null;
+  salaryReleaseDate: string | null;
+  salaryCurrency: string | null;
 }
 
 export interface RankedExportPlayer {
@@ -41,13 +46,17 @@ export interface RankingExportModel {
   rankedPlayers: RankedExportPlayer[];
 }
 
-export interface RankingExportModelInput {
-  session: BrowserSession;
+export interface RankingExportMetadata {
   dataVersion: string;
   generatedAt?: string;
+  provenance: ComparisonPoolProvenance;
+}
+
+export interface RankingExportModelInput {
+  session: BrowserSession;
+  metadata: RankingExportMetadata;
   product: string;
   now: Date;
-  rosterSnapshotDate?: string;
 }
 
 function requiredText(value: unknown, label: string): string {
@@ -60,9 +69,7 @@ function optionalText(value: unknown): string {
 }
 
 function count(value: unknown, label: string): number {
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
-    throw new Error(`Cannot export ranking: ${label} is invalid.`);
-  }
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) throw new Error(`Cannot export ranking: ${label} is invalid.`);
   return value;
 }
 
@@ -71,22 +78,20 @@ function normalizedTimestamp(value: unknown): string | null {
   return new Date(value).toISOString();
 }
 
-/** JSON uses the same two-decimal display precision as the visible ranking. */
+function normalizedDate(value: unknown): string | null {
+  if (value === null) return null;
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value ? value : null;
+}
+
 function normalizeElo(value: unknown): number {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new Error("Cannot export ranking: a player Elo value is invalid.");
-  }
+  if (typeof value !== "number" || !Number.isFinite(value)) throw new Error("Cannot export ranking: a player Elo value is invalid.");
   return Number(value.toFixed(2));
 }
 
-function exportPlayer(
-  entry: ReturnType<typeof rankComparedPlayers>[number],
-  player: ComparisonPoolPlayer | undefined,
-  rank: number,
-): RankedExportPlayer {
-  if (!player || player.id !== entry.player.id) {
-    throw new Error("Cannot export ranking: a ranked player is missing from the comparison pool.");
-  }
+function exportPlayer(entry: ReturnType<typeof rankComparedPlayers>[number], player: ComparisonPoolPlayer | undefined, rank: number): RankedExportPlayer {
+  if (!player || player.id !== entry.player.id) throw new Error("Cannot export ranking: a ranked player is missing from the comparison pool.");
   return {
     rank,
     playerId: requiredText(player.id, "ASA player ID"),
@@ -103,29 +108,29 @@ function exportPlayer(
   };
 }
 
-/**
- * Builds the one normalized export representation. Its ordering comes directly
- * from the existing deterministic ranking engine; it never changes session data.
- */
+/** Builds the normalized export without changing ranking order or session state. */
 export function createRankingExportModel(input: RankingExportModelInput): RankingExportModel {
-  const dataVersion = requiredText(input.dataVersion, "dataset version");
   const exportedAt = input.now.toISOString();
   const ranked = rankComparedPlayers(input.session);
   const playersById = new Map(input.session.players.map((player) => [player.id, player]));
   const rankedPlayers = ranked.map((entry, index) => exportPlayer(entry, playersById.get(entry.player.id), index + 1));
   const totalPlayers = input.session.players.length;
-  if (!Number.isInteger(totalPlayers) || totalPlayers < rankedPlayers.length) {
-    throw new Error("Cannot export ranking: player pool is invalid.");
-  }
-
+  if (!Number.isInteger(totalPlayers) || totalPlayers < rankedPlayers.length) throw new Error("Cannot export ranking: player pool is invalid.");
+  const provenance = input.metadata.provenance;
   return {
     exportFormatVersion: RANKING_EXPORT_FORMAT_VERSION,
     product: requiredText(input.product, "product name"),
     exportedAt,
     dataset: {
-      dataVersion,
-      generatedAt: normalizedTimestamp(input.generatedAt),
-      rosterSnapshotDate: input.rosterSnapshotDate ?? ROSTER_SNAPSHOT_DATE,
+      sourcePlayerDataVersion: requiredText(provenance.sourcePlayerDataVersion, "source player data version"),
+      comparisonPoolDataVersion: requiredText(input.metadata.dataVersion, "comparison-pool data version"),
+      playerArtifactBuiltAt: normalizedTimestamp(provenance.sourcePlayerGeneratedAt),
+      comparisonPoolArtifactBuiltAt: normalizedTimestamp(input.metadata.generatedAt),
+      statisticsThrough: normalizedDate(provenance.statisticsThrough),
+      rosterSnapshotDate: normalizedDate(provenance.rosterSnapshotDate),
+      rosterReleaseDate: normalizedDate(provenance.rosterReleaseDate),
+      salaryReleaseDate: normalizedDate(provenance.salaryReleaseDate),
+      salaryCurrency: optionalText(provenance.salaryCurrency) || null,
     },
     elo: { initialRating: DEFAULT_INITIAL_RATING, kFactor: DEFAULT_K_FACTOR },
     summary: {

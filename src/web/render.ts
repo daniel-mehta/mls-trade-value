@@ -1,7 +1,7 @@
 import type { ComparisonPoolPlayer } from "../data/comparisonPool.js";
 import type { RankedPlayer } from "../domain/types.js";
-import { DATA_NOTE, PRODUCT } from "./config.js";
-import { formatDataFreshnessNotice } from "./freshness.js";
+import { PRODUCT } from "./config.js";
+import { formatDataFreshnessNotice, formatSeasonContext, type DataFreshnessMetadata } from "./freshness.js";
 import {
   buildPlayerStatFields,
   buildRosterFields,
@@ -30,7 +30,7 @@ export interface RenderHandlers {
 export interface RenderState {
   session: BrowserSession;
   status: ComparisonStatus;
-  dataGeneratedAt?: string;
+  dataMetadata?: DataFreshnessMetadata;
   persistenceMessage?: string;
   resetDialogOpen?: boolean;
 }
@@ -335,8 +335,8 @@ export function renderApp(
   const notices = element("div", "site-notices");
   notices.append(
     element("p", "persistence-notice", state.persistenceMessage ?? "Your ranking is saved only in this browser. It is not uploaded or shared."),
-    element("p", "data-note", DATA_NOTE),
-    element("p", "data-freshness", formatDataFreshnessNotice(state.dataGeneratedAt)),
+    element("p", "data-note", formatSeasonContext(state.dataMetadata ?? {})),
+    element("p", "data-freshness", formatDataFreshnessNotice(state.dataMetadata ?? {})),
     element("p", "pool-note", `${state.session.players.length} real players loaded from the static comparison pool.`),
   );
   header.append(headerCopy, notices);

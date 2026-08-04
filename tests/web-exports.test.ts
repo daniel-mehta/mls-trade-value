@@ -10,7 +10,7 @@ import { createRankingExportModel } from "../src/web/exports/model.js";
 import { formatTop25Text } from "../src/web/exports/text.js";
 import { renderApp } from "../src/web/render.js";
 import { applyBrowserVote, initializeBrowserSession } from "../src/web/session.js";
-import { poolPlayer, zeroRandom } from "./web-fixtures.js";
+import { poolPlayer, testPoolProvenance, zeroRandom } from "./web-fixtures.js";
 
 const clock = new Date("2026-08-03T20:00:00.000Z");
 
@@ -31,8 +31,7 @@ function rankedSession() {
 function model() {
   return createRankingExportModel({
     session: rankedSession(),
-    dataVersion: "comparison-pool-v1",
-    generatedAt: "not-a-timestamp",
+    metadata: { dataVersion: "comparison-pool-v1", generatedAt: "not-a-timestamp", provenance: testPoolProvenance },
     product: "MLS Trade Value Elo",
     now: clock,
   });
@@ -42,11 +41,21 @@ describe("shared ranking export model", () => {
   it("uses deterministic existing ranking order, excludes unranked players, and does not mutate state", () => {
     const session = rankedSession();
     const before = structuredClone(session);
-    const result = createRankingExportModel({ session, dataVersion: "pool-v1", generatedAt: "2026-08-01T00:00:00.000Z", product: "MLS Trade Value Elo", now: clock });
+    const result = createRankingExportModel({ session, metadata: { dataVersion: "pool-v1", generatedAt: "2026-08-01T00:00:00.000Z", provenance: testPoolProvenance }, product: "MLS Trade Value Elo", now: clock });
     expect(result.rankedPlayers.map((player) => player.playerId)).toEqual(["a", "b"]);
     expect(result.rankedPlayers.map((player) => player.rank)).toEqual([1, 2]);
     expect(result.summary).toEqual({ rankedPlayers: 2, unrankedPlayers: 1, completedComparisons: 5, skippedComparisons: 2 });
-    expect(result.dataset).toEqual({ dataVersion: "pool-v1", generatedAt: "2026-08-01T00:00:00.000Z", rosterSnapshotDate: "2026-02-26" });
+    expect(result.dataset).toEqual({
+      sourcePlayerDataVersion: testPoolProvenance.sourcePlayerDataVersion,
+      comparisonPoolDataVersion: "pool-v1",
+      playerArtifactBuiltAt: "2026-07-30T18:51:17.821Z",
+      comparisonPoolArtifactBuiltAt: "2026-08-01T00:00:00.000Z",
+      statisticsThrough: null,
+      rosterSnapshotDate: "2026-02-26",
+      rosterReleaseDate: "2026-02-27",
+      salaryReleaseDate: "2026-04-16",
+      salaryCurrency: "USD",
+    });
     expect(result.elo).toEqual({ initialRating: DEFAULT_INITIAL_RATING, kFactor: DEFAULT_K_FACTOR });
     expect(session).toEqual(before);
   });
@@ -54,7 +63,7 @@ describe("shared ranking export model", () => {
   it("fails rather than silently exporting a malformed ranked record", () => {
     const session = rankedSession();
     session.ratings.a.elo = Number.NaN;
-    expect(() => createRankingExportModel({ session, dataVersion: "pool-v1", product: "MLS Trade Value Elo", now: clock })).toThrow(/Elo value is invalid/);
+    expect(() => createRankingExportModel({ session, metadata: { dataVersion: "pool-v1", provenance: testPoolProvenance }, product: "MLS Trade Value Elo", now: clock })).toThrow(/Elo value is invalid/);
   });
 });
 
@@ -76,7 +85,12 @@ describe("ranking export formatters", () => {
     const text = formatTop25Text(model());
     expect(text).toContain("My MLS Trade Value Elo Top 25");
     expect(text).toContain("Exported: August 3, 2026");
-    expect(text).toContain("Dataset version: comparison-pool-v1");
+    expect(text).toContain("Source player version:");
+    expect(text).toContain("Comparison-pool version: comparison-pool-v1");
+    expect(text).toContain("Verified statistics through: not recorded");
+    expect(text).toContain("Roster snapshot: February 26, 2026");
+    expect(text).toContain("Salary release: April 16, 2026 (USD)");
+    expect(text).not.toContain("contentSha256");
     expect(text).toContain("Completed comparisons: 5");
     expect(text).toContain("Skipped comparisons: 2");
     expect(text).toContain("1. Álvaro, \"Ace\"");
@@ -89,7 +103,7 @@ describe("ranking export formatters", () => {
   it("creates pretty, explicit machine-readable JSON without persisted browser state", () => {
     const json = formatRankingJson(model());
     const parsed = JSON.parse(json);
-    expect(parsed.exportFormatVersion).toBe(1);
+    expect(parsed.exportFormatVersion).toBe(2);
     expect(parsed.rankedPlayers).toHaveLength(2);
     expect(parsed.summary.unrankedPlayers).toBe(1);
     expect(parsed.rankedPlayers[0].elo).toBe(1578.42);
@@ -138,7 +152,7 @@ describe("export filenames and browser download", () => {
     const before = structuredClone(session);
     const fetcher = vi.spyOn(globalThis, "fetch");
     const storageWrite = vi.spyOn(Storage.prototype, "setItem");
-    const result = exportPersonalRanking("csv", session, { dataVersion: "pool-v1" }, clock);
+    const result = exportPersonalRanking("csv", session, { dataVersion: "pool-v1", provenance: testPoolProvenance }, clock);
     expect(result.kind).toBe("failure");
     expect(session).toEqual(before);
     expect(fetcher).not.toHaveBeenCalled();

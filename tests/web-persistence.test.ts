@@ -9,7 +9,7 @@ import {
 import { applyBrowserVote, applySkip, buildTop25, initializeBrowserSession } from "../src/web/session.js";
 import { RANKING_STORAGE_KEY, RankingStorageAdapter, type StorageLike } from "../src/web/storage.js";
 import type { ComparisonPool } from "../src/data/comparisonPool.js";
-import { poolPlayer, zeroRandom } from "./web-fixtures.js";
+import { comparisonPoolFixture, poolPlayer, zeroRandom } from "./web-fixtures.js";
 
 class MemoryStorage implements StorageLike {
   readonly values = new Map<string, string>();
@@ -18,16 +18,7 @@ class MemoryStorage implements StorageLike {
   removeItem(key: string) { this.values.delete(key); }
 }
 
-const pool = (ids: string[], dataVersion = "pool-v1"): ComparisonPool => ({
-  schemaVersion: 1 as const,
-  dataVersion,
-  sourceDataVersion: "source",
-  season: 2026,
-  previousSeason: 2025,
-  generatedAt: "2026-08-01T00:00:00.000Z",
-  selectionRules: { baseOutfieldPlayersPerTeam: 5, baseGoalkeepersPerTeam: 1, previousSeasonMinutesWeight: 0.5, currentSeasonGoalContributionThreshold: 5 },
-  players: ids.map((id) => poolPlayer(id)),
-});
+const pool = (ids: string[], dataVersion = "pool-v1"): ComparisonPool => comparisonPoolFixture(ids.map((id) => poolPlayer(id)), dataVersion);
 
 describe("ranking storage adapter", () => {
   it("uses only the namespaced application key for missing, save, and remove", () => {
@@ -160,6 +151,21 @@ describe("persisted ranking schema", () => {
 });
 
 describe("restoration and dataset reconciliation", () => {
+  it("preserves ranking progress when a descriptive dataset version becomes semantic", () => {
+    const legacyPool = pool(["a", "b", "c", "d"], "comparison-pool-asa-mls-2026-2025-roster-2026-02-26");
+    const initial = initializeBrowserSession(legacyPool.players, zeroRandom);
+    const voted = applyBrowserVote(initial, initial.currentMatchup!.playerAId, zeroRandom).session;
+    const saved = createPersistedRankingState(voted, legacyPool.dataVersion, "2026-08-01T00:00:00.000Z");
+    const semanticPool = pool(["a", "b", "c", "d"], `sha256:${"d".repeat(64)}`);
+    const restored = restoreBrowserSession(semanticPool, saved, zeroRandom);
+    expect(restored.kind).toBe("reconciled");
+    if (restored.kind === "reconciled") {
+      expect(restored.reason).toBe("dataset");
+      expect(restored.session.ratings).toEqual(voted.ratings);
+      expect(restored.session.completedComparisons).toBe(voted.completedComparisons);
+    }
+  });
+
   it("restores Elo records, totals, Top 25, current matchup, and histories without mutating source players", () => {
     const source = pool(["a", "b", "c", "d"]);
     const before = structuredClone(source.players);

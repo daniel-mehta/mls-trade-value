@@ -1,4 +1,5 @@
 import { textField, type AsaRow } from "./asaClient.js";
+import { canonicalStringify } from "./semanticVersion.js";
 
 /**
  * ASA can return multiple MLSPA releases for one player-season. Salaries are
@@ -16,7 +17,7 @@ export function latestSalaryByPlayer(rows: AsaRow[]): Map<string, AsaRow> {
       .filter((entry): entry is { row: AsaRow; release: string } => Boolean(entry.release && /^\d{4}-\d{2}-\d{2}$/.test(entry.release)));
     const latest = dated.length ? [...dated].sort((a, b) => a.release.localeCompare(b.release)).at(-1)!.release : undefined;
     const candidates = latest ? dated.filter((entry) => entry.release === latest).map((entry) => entry.row) : playerRows;
-    const unique = new Map(candidates.map((row) => [JSON.stringify(row), row]));
+    const unique = new Map(candidates.map((row) => [canonicalStringify(row), row]));
     if (unique.size > 1) throw new Error(`Ambiguous salary rows for player ${id}: no single latest MLSPA release`);
     selected.set(id, candidates[0]);
   }

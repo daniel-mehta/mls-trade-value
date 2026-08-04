@@ -64,6 +64,62 @@ describe("static player dataset validation", () => {
 
   it("rejects empty player records", () => expect(validateDataset(playerDataset([]))).toContain("players must be non-empty"));
 
+  it("strictly validates goalkeeper metric shape, values, season, position, and omission semantics", () => {
+    const invalidField = playerDataset([staticPlayer("gk", {
+      positionGroup: "GK",
+      goalkeeperMetrics: { currentSeason: { season: 2026, saves: 1, invented: 2 } as any },
+    })]);
+    expect(validateDataset(invalidField).join("\n")).toContain("unsupported keys: invented");
+
+    const invalidNumber = playerDataset([staticPlayer("gk", {
+      positionGroup: "GK",
+      goalkeeperMetrics: { currentSeason: { season: 2026, saves: 1 } },
+    })]);
+    invalidNumber.players[0].goalkeeperMetrics!.currentSeason!.saves = Number.NaN;
+    expect(validateDataset(invalidNumber).join("\n")).toContain("invalid saves");
+
+    const wrongSeason = playerDataset([staticPlayer("gk", {
+      positionGroup: "GK",
+      goalkeeperMetrics: { currentSeason: { season: 2025, saves: 1 } },
+    })]);
+    expect(validateDataset(wrongSeason).join("\n")).toContain("season must be 2026");
+
+    const outfield = playerDataset([staticPlayer("a", {
+      goalkeeperMetrics: { currentSeason: { season: 2026, saves: 1 } },
+    })]);
+    expect(validateDataset(outfield).join("\n")).toContain("only be attached to goalkeepers");
+
+    const zeroFilled = playerDataset([staticPlayer("gk", {
+      positionGroup: "GK",
+      goalkeeperMetrics: { currentSeason: { season: 2026, saves: 0, shotsFaced: 0 } },
+    })]);
+    expect(validateDataset(zeroFilled).join("\n")).toContain("zero-filled goalkeeper metric object");
+
+    const validMissingOptional = playerDataset([staticPlayer("gk", {
+      positionGroup: "GK",
+      goalkeeperMetrics: { currentSeason: { season: 2026, saves: 1 } },
+    })]);
+    validMissingOptional.dataVersion = computePlayerDataVersion(validMissingOptional);
+    expect(validateDataset(validMissingOptional)).toEqual([]);
+  });
+
+  it("requires complete, available goalkeeper provenance for publication", () => {
+    const missing = playerDataset([staticPlayer()]);
+    missing.sources = missing.sources.filter((source) => source.sourceId !== "asa-goalkeeper-xgoals-2026");
+    delete missing.audit.sourceRowCounts["asa-goalkeeper-xgoals-2026"];
+    delete missing.audit.goalkeeper.sources["asa-goalkeeper-xgoals-2026"];
+    expect(validateDataset(missing).join("\n")).toContain("missing required source snapshot: asa-goalkeeper-xgoals-2026");
+
+    const unavailable = playerDataset([staticPlayer()]);
+    const source = unavailable.sources.find((entry) => entry.sourceId === "asa-goalkeeper-goals-added-2025")!;
+    source.status = "optional-unavailable";
+    source.contentSha256 = null;
+    source.rowCount = 0;
+    unavailable.audit.sourceRowCounts[source.sourceId] = 0;
+    unavailable.audit.goalkeeper.sources[source.sourceId].rawRowCount = 0;
+    expect(validateDataset(unavailable).join("\n")).toContain("required goalkeeper source must be available");
+  });
+
   it("detects a stale semantic version after substantive mutation", () => {
     const dataset = playerDataset([staticPlayer()]);
     dataset.players[0].currentSeason.minutes = 99;

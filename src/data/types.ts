@@ -11,12 +11,33 @@ export interface PlayerSeasonStats {
   xAssists?: number;
   keyPasses?: number;
   goalsAdded?: number;
+}
+
+export const GOALKEEPER_GOALS_ADDED_ACTIONS = [
+  "claiming",
+  "fielding",
+  "handling",
+  "passing",
+  "shotstopping",
+  "sweeping",
+] as const;
+export type GoalkeeperGoalsAddedAction = typeof GOALKEEPER_GOALS_ADDED_ACTIONS[number];
+
+/** Direct ASA goalkeeper totals. General player minutes remain authoritative. */
+export interface GoalkeeperSeasonMetrics {
+  season: number;
+  shotsFaced?: number;
   goalsConceded?: number;
   saves?: number;
-  savePercentage?: number;
-  expectedGoalsAgainst?: number;
-  goalsPrevented?: number;
-  cleanSheets?: number;
+  xGoalsFaced?: number;
+  goalsMinusXGoalsFaced?: number;
+  goalsAdded?: number;
+  goalsAddedByAction?: Partial<Record<GoalkeeperGoalsAddedAction, number>>;
+}
+
+export interface GoalkeeperMetrics {
+  currentSeason?: GoalkeeperSeasonMetrics;
+  previousSeason?: GoalkeeperSeasonMetrics;
 }
 
 export interface StaticPlayer {
@@ -32,6 +53,7 @@ export interface StaticPlayer {
   guaranteedCompensation?: number;
   currentSeason: PlayerSeasonStats;
   previousSeason?: PlayerSeasonStats;
+  goalkeeperMetrics?: GoalkeeperMetrics;
   rosterProfile?: PlayerRosterProfile;
 }
 
@@ -101,12 +123,29 @@ export interface OverrideProvenance {
 }
 
 export interface PlayerNormalizationRules {
-  rulesVersion: "player-normalization-v1";
+  rulesVersion: "player-normalization-v2";
   displayedTeamPolicy: "current-minutes-then-previous-minutes-then-team-id";
   playerIdentityKey: "asa-player-id";
   teamIdentityKey: "asa-team-id";
   salarySelectionPolicy: "latest-valid-player-release-no-sum";
   unknownPositionPolicy: "exclude-and-report";
+  goalkeeperAggregationPolicy: "additive-source-totals-by-player-season";
+}
+
+export interface GoalkeeperSourceAudit {
+  rawRowCount: number;
+  matchedGoalkeeperIds: number;
+  unmatchedPlayerIds: number;
+  duplicateRows: number;
+  nonGoalkeeperJoinConflicts: number;
+  malformedRows: 0;
+}
+
+export interface GoalkeeperAudit {
+  sources: Record<string, GoalkeeperSourceAudit>;
+  goalkeepersWithCurrentSeasonMetrics: number;
+  goalkeepersWithPreviousSeasonMetrics: number;
+  goalkeepersWithPlayingTimeButNoMetrics: number;
 }
 
 export interface PlayerDatasetAudit {
@@ -123,10 +162,11 @@ export interface PlayerDatasetAudit {
   ignoredRosterDuplicateCount: number;
   statisticalSnapshotTeamDisagreementCount: number;
   appliedRosterOverrideCount: number;
+  goalkeeper: GoalkeeperAudit;
 }
 
 export interface PlayerDataset {
-  schemaVersion: 3;
+  schemaVersion: 4;
   humanReadableLabel: string;
   dataVersion: string;
   competition: "MLS";
@@ -148,12 +188,13 @@ export const PREVIOUS_SEASON = Number(process.env.MLS_PREVIOUS_SEASON ?? CURRENT
 export const COMPETITION = "mls" as const;
 
 export const PLAYER_NORMALIZATION_RULES: PlayerNormalizationRules = {
-  rulesVersion: "player-normalization-v1",
+  rulesVersion: "player-normalization-v2",
   displayedTeamPolicy: "current-minutes-then-previous-minutes-then-team-id",
   playerIdentityKey: "asa-player-id",
   teamIdentityKey: "asa-team-id",
   salarySelectionPolicy: "latest-valid-player-release-no-sum",
   unknownPositionPolicy: "exclude-and-report",
+  goalkeeperAggregationPolicy: "additive-source-totals-by-player-season",
 };
 
 export function playerHumanReadableLabel(season: number, previousSeason: number, rosterSnapshotDate: string): string {

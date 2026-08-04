@@ -114,6 +114,15 @@ snapshot date, roster release-file date, and salary release are separate
 metadata fields. A missing verified coverage date is displayed as not recorded;
 artifact build time is never presented as a statistics-through date.
 
+Goalkeeper cards use the static artifact's official ASA goalkeeper xGoals and
+Goalkeeper Goals Added source snapshots. When available, they show playing time,
+saves, shots faced, xG faced, goals minus xG faced, and Goalkeeper Goals Added.
+Coverage varies by season and player, so missing goalkeeper fields are omitted
+and no zeroes or substitute metrics are fabricated. These metrics provide context for
+the user's comparison; they do not affect Elo directly, change comparison-pool
+membership, or constitute a trade-value score. Elo reflects only the user's
+pairwise choices.
+
 ## ranking exports
 
 The **Export ranking** controls in the Personal Ranking panel generate files

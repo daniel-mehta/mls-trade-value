@@ -166,6 +166,34 @@ describe("restoration and dataset reconciliation", () => {
     }
   });
 
+  it("preserves saved Elo while refreshing goalkeeper metadata under a new semantic version", () => {
+    const oldPool = comparisonPoolFixture([
+      poolPlayer("gk", { positionGroup: "GK", position: "GK" }),
+      poolPlayer("b"),
+      poolPlayer("c"),
+      poolPlayer("d"),
+    ], "old-goalkeeper-data");
+    const initial = initializeBrowserSession(oldPool.players, zeroRandom);
+    const voted = applyBrowserVote(initial, initial.currentMatchup!.playerAId, zeroRandom).session;
+    const saved = createPersistedRankingState(voted, oldPool.dataVersion, "2026-08-01T00:00:00.000Z");
+    const newPool = comparisonPoolFixture(oldPool.players.map((player) => player.id === "gk"
+      ? {
+          ...player,
+          goalkeeperMetrics: {
+            currentSeason: { season: 2026, saves: 12, shotsFaced: 15 },
+          },
+        }
+      : player), `sha256:${"e".repeat(64)}`);
+    const restored = restoreBrowserSession(newPool, saved, zeroRandom);
+    expect(restored.kind).toBe("reconciled");
+    if (restored.kind === "reconciled") {
+      expect(restored.session.ratings).toEqual(voted.ratings);
+      expect(restored.session.completedComparisons).toBe(voted.completedComparisons);
+      expect(restored.session.currentMatchup).toEqual(voted.currentMatchup);
+      expect(restored.session.players.find((player) => player.id === "gk")?.goalkeeperMetrics?.currentSeason?.saves).toBe(12);
+    }
+  });
+
   it("restores Elo records, totals, Top 25, current matchup, and histories without mutating source players", () => {
     const source = pool(["a", "b", "c", "d"]);
     const before = structuredClone(source.players);

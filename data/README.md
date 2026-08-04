@@ -8,8 +8,8 @@ service at runtime.
 ## Source commands
 
 The player pipeline consumes the public ASA endpoints for player identities and
-positions, teams, player xGoals, xPass, Goals Added, and salaries. No API key or
-paid service is required.
+positions, teams, player xGoals, xPass, outfield Goals Added, goalkeeper xGoals,
+goalkeeper Goals Added, and salaries. No API key or paid service is required.
 
 ```sh
 npm run probe:data
@@ -83,6 +83,13 @@ The player artifact records each consumed source separately with:
 Legacy caches have no trustworthy acquisition timestamp. They deliberately use
 `retrievedAt: null`; artifact build time is not substituted.
 
+Goalkeeper xGoals and Goalkeeper Goals Added are separate source snapshots for
+each configured season. Their provenance entries retain the official endpoint,
+season, canonical content checksum, row count, availability, and trustworthy
+cache retrieval time when recorded. A publication-ready artifact requires both
+goalkeeper source families for both configured seasons; missing or malformed
+provenance does not silently become a playing-time-only publication artifact.
+
 Salary provenance records acquisition status, selected season, selected MLSPA
 release, USD currency, and selected-record count. It does not claim complete
 salary coverage. Roster provenance separately records the repository, release
@@ -109,13 +116,23 @@ public copy therefore says: **Verified statistical coverage date not recorded.**
 - Base salary and average guaranteed compensation remain distinct optional
   numeric fields. Multiple MLSPA releases are never summed. The latest valid
   player release is selected and conflicting rows at that release fail.
+- Goalkeeper rows join only by ASA player ID and retain their season dimension.
+  Additive xGoals-source totals are combined across team rows. Goalkeeper Goals
+  Added is the exact sum of ASA's raw Claiming, Fielding, Handling, Passing,
+  Shotstopping, and Sweeping components. Rates, shares, above-average values,
+  and action counts are not summed or substituted into the player artifact.
+  Missing components remain omitted, and goalkeeper metrics never replace the
+  general displayed-team or playing-time policy.
 
 Audit metadata persists source row counts, current- and cross-season multi-team
 counts, unmatched salaries, unknown-position exclusions, roster accounting,
 final statistical/snapshot team disagreements, applied overrides, player/team
-counts, and position distribution. The disagreement count is recomputed from
-the final attached and overridden players, so transient loan-pair processing
-cannot alter it.
+counts, position distribution, and deterministic goalkeeper join/coverage
+diagnostics. Goalkeeper diagnostics include raw rows by endpoint and season,
+matched and unmatched IDs, duplicate rows, non-goalkeeper conflicts, seasonal
+coverage, and playing-time-only counts. The disagreement count is recomputed
+from the final attached and overridden players, so transient loan-pair
+processing cannot alter it.
 
 ## Roster snapshot
 
@@ -188,7 +205,7 @@ always loads the player artifact and then:
 
 ## Browser, persistence, and exports
 
-The browser validates schema version 2 pool metadata and consumes artifact
+The browser validates schema version 3 pool metadata and consumes artifact
 provenance rather than hard-coded dates. It separately labels pool build time,
 unverified or verified statistical coverage, roster snapshot and release-file
 dates, and salary release/currency. Missing metadata uses field-specific honest
@@ -206,9 +223,21 @@ dates, and salary release/currency. JSON export format version 2 reflects this
 incompatible public metadata-schema change. Exports remain browser-only and are
 not import files.
 
-Goalkeeper cards currently show playing time only. Goalkeeper saves, goals
-conceded, expected-goals-against, and Goals Added are not yet acquired; no
-fabricated or derived substitute is emitted.
+Goalkeeper cards use the official ASA goalkeeper xGoals and Goalkeeper Goals
+Added source families. The normalized goalkeeper structure keeps current and
+previous seasons separate and may contain shots faced, goals conceded, saves,
+xG faced, goals minus xG faced, raw Goalkeeper Goals Added, and its six raw
+action components. The compact card shows at most minutes, saves, shots faced,
+xG faced, goals minus xG faced, and total Goalkeeper Goals Added. Availability
+varies by season and player; missing fields are omitted, and no metrics are
+fabricated or zero-filled.
+
+These are static source snapshots. Artifact build time is not a verified
+statistics-through date, and the artifact continues to record
+`statisticsThrough: null` where direct source evidence is absent. Goalkeeper
+metrics do not directly affect Elo or comparison-pool selection. Pool rules are
+unchanged, and Elo continues to reflect the user's pairwise choices rather than
+any ASA performance metric.
 
 ## Publication and attribution
 

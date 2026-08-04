@@ -105,12 +105,12 @@ function playerCard(
     element(
       "h3",
       "card-section__title",
-      `${selected.season} MLS ${player.positionGroup === "GK" ? "playing time" : "statistics"}`,
+      `${selected.season} MLS ${player.positionGroup === "GK" && !selected.goalkeeperMetrics ? "playing time" : player.positionGroup === "GK" ? "goalkeeper statistics" : "statistics"}`,
     ),
   );
   if (selected.notice) statsSection.append(element("p", "fallback-note", selected.notice));
   const stats = element("dl", "stats-grid");
-  appendFields(stats, buildPlayerStatFields(player, selected.stats));
+  appendFields(stats, buildPlayerStatFields(player, selected.stats, selected.goalkeeperMetrics));
   statsSection.append(stats);
 
   const rosterFields = buildRosterFields(player);

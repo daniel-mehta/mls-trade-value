@@ -68,4 +68,45 @@ describe("browser comparison-pool loading", () => {
     (pool.provenance as any).rosterSnapshotDate = "not-a-date";
     expect(() => validateBrowserPool(pool)).toThrow("provenance is invalid");
   });
+
+  it("rejects malformed or outfield goalkeeper metrics", () => {
+    const invalidMetric = validPool([
+      poolPlayer("gk", {
+        positionGroup: "GK",
+        goalkeeperMetrics: { currentSeason: { season: 2025, saves: 1 } },
+      }),
+      poolPlayer("b"),
+    ]);
+    expect(() => validateBrowserPool(invalidMetric)).toThrow("invalid goalkeeper metrics");
+
+    const outfield = validPool([
+      poolPlayer("a", { goalkeeperMetrics: { currentSeason: { season: 2026, saves: 1 } } }),
+      poolPlayer("b"),
+    ]);
+    expect(() => validateBrowserPool(outfield)).toThrow("invalid goalkeeper metrics");
+
+    const zeroFilled = validPool([
+      poolPlayer("gk", {
+        positionGroup: "GK",
+        goalkeeperMetrics: { currentSeason: { season: 2026, saves: 0, shotsFaced: 0 } },
+      }),
+      poolPlayer("b"),
+    ]);
+    expect(() => validateBrowserPool(zeroFilled)).toThrow("invalid goalkeeper metrics");
+
+    const inconsistentTotal = validPool([
+      poolPlayer("gk", {
+        positionGroup: "GK",
+        goalkeeperMetrics: {
+          currentSeason: {
+            season: 2026,
+            goalsAdded: 2,
+            goalsAddedByAction: { passing: 0.5, shotstopping: 1 },
+          },
+        },
+      }),
+      poolPlayer("b"),
+    ]);
+    expect(() => validateBrowserPool(inconsistentTotal)).toThrow("invalid goalkeeper metrics");
+  });
 });

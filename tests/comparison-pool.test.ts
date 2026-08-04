@@ -93,6 +93,10 @@ describe("source-to-pool semantic validation", () => {
 
   it.each([
     ["altered embedded player", (pool: any) => { pool.players[0].teamName = "Wrong"; }, "selected players"],
+    ["stale embedded goalkeeper field", (pool: any) => {
+      const goalkeeper = pool.players.find((player: StaticPlayer) => player.positionGroup === "GK");
+      goalkeeper.goalkeeperMetrics = { currentSeason: { season: 2026, saves: 999 } };
+    }, "selected players"],
     ["missing expected player", (pool: any) => { pool.players.pop(); }, "selected players"],
     ["extra player", (pool: any) => { pool.players.push(structuredClone(pool.players[0])); }, "selected players"],
     ["wrong reason", (pool: any) => { pool.players[0].selectionReasons = ["manual-inclusion"]; }, "selected players"],

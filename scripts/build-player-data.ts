@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { aggregateSeasonStats, selectDisplayedTeam, stablePlayerSort } from "../src/data/aggregation.js";
 import { asaEndpointUrl, fetchAsa, numberField, textField, type AsaDatasetName, type AsaFetchResult, type AsaRow } from "../src/data/asaClient.js";
 import { isEligible } from "../src/data/eligibility.js";
+import { attachGoalkeeperMetrics, goalkeeperSourceAudit, normalizeGoalkeeperSeason } from "../src/data/goalkeeper.js";
 import { normalizePosition } from "../src/data/position.js";
 import { ROSTER_REPOSITORY, attachRoster, fetchLatestRoster } from "../src/data/roster.js";
 import { applyOverrides, loadOverrides } from "../src/data/rosterOverrides.js";
@@ -32,6 +33,8 @@ interface SeasonSources {
   xg: AsaFetchResult;
   xpass: AsaFetchResult;
   gplus: AsaFetchResult;
+  goalkeeperXg: AsaFetchResult;
+  goalkeeperGplus: AsaFetchResult;
   salaries: AsaFetchResult | null;
 }
 
@@ -151,15 +154,17 @@ async function loadSource(name: AsaDatasetName, season: number): Promise<AsaFetc
 }
 
 async function loadSeason(season: number): Promise<SeasonSources> {
-  const [xg, xpass, gplus] = await Promise.all([
+  const [xg, xpass, gplus, goalkeeperXg, goalkeeperGplus] = await Promise.all([
     loadSource("xgoals", season),
     loadSource("xpass", season),
     loadSource("goals-added", season),
+    loadSource("goalkeeper-xgoals", season),
+    loadSource("goalkeeper-goals-added", season),
   ]);
   let salaries: AsaFetchResult | null = null;
   try { salaries = await loadSource("salaries", season); }
   catch (error) { console.warn(`Salary data unavailable for ${season}: ${(error as Error).message}`); }
-  return { xg, xpass, gplus, salaries };
+  return { xg, xpass, gplus, goalkeeperXg, goalkeeperGplus, salaries };
 }
 
 function teamSetsByPlayer(rows: readonly AsaRow[]): Map<string, Set<string>> {
@@ -208,6 +213,16 @@ async function main(): Promise<void> {
   const allPreviousRows = previousGroups.flat();
   const currentStats = statsFromRows(CURRENT_SEASON, ...currentGroups);
   const previousStats = statsFromRows(PREVIOUS_SEASON, ...previousGroups);
+  const currentGoalkeepers = normalizeGoalkeeperSeason(
+    CURRENT_SEASON,
+    current.goalkeeperXg.rows,
+    current.goalkeeperGplus.rows,
+  );
+  const previousGoalkeepers = normalizeGoalkeeperSeason(
+    PREVIOUS_SEASON,
+    previous.goalkeeperXg.rows,
+    previous.goalkeeperGplus.rows,
+  );
 
   const selectedSalarySource = current.salaries?.rows.length ? { season: CURRENT_SEASON, result: current.salaries } :
     previous.salaries?.rows.length ? { season: PREVIOUS_SEASON, result: previous.salaries } : null;
@@ -253,6 +268,7 @@ async function main(): Promise<void> {
     };
     if (isEligible(player)) players.push(player);
   }
+  attachGoalkeeperMetrics(players, currentGoalkeepers, previousGoalkeepers);
 
   let unmatchedSalaryRows = 0;
   for (const salaryId of salaryByPlayer.keys()) if (!ids.has(salaryId)) unmatchedSalaryRows++;
@@ -272,10 +288,14 @@ async function main(): Promise<void> {
     availableSource(`asa-xgoals-${CURRENT_SEASON}`, current.xg, CURRENT_SEASON),
     availableSource(`asa-xpass-${CURRENT_SEASON}`, current.xpass, CURRENT_SEASON),
     availableSource(`asa-goals-added-${CURRENT_SEASON}`, current.gplus, CURRENT_SEASON),
+    availableSource(`asa-goalkeeper-xgoals-${CURRENT_SEASON}`, current.goalkeeperXg, CURRENT_SEASON),
+    availableSource(`asa-goalkeeper-goals-added-${CURRENT_SEASON}`, current.goalkeeperGplus, CURRENT_SEASON),
     current.salaries ? availableSource(`asa-salaries-${CURRENT_SEASON}`, current.salaries, CURRENT_SEASON) : unavailableSalarySource(CURRENT_SEASON),
     availableSource(`asa-xgoals-${PREVIOUS_SEASON}`, previous.xg, PREVIOUS_SEASON),
     availableSource(`asa-xpass-${PREVIOUS_SEASON}`, previous.xpass, PREVIOUS_SEASON),
     availableSource(`asa-goals-added-${PREVIOUS_SEASON}`, previous.gplus, PREVIOUS_SEASON),
+    availableSource(`asa-goalkeeper-xgoals-${PREVIOUS_SEASON}`, previous.goalkeeperXg, PREVIOUS_SEASON),
+    availableSource(`asa-goalkeeper-goals-added-${PREVIOUS_SEASON}`, previous.goalkeeperGplus, PREVIOUS_SEASON),
     previous.salaries ? availableSource(`asa-salaries-${PREVIOUS_SEASON}`, previous.salaries, PREVIOUS_SEASON) : unavailableSalarySource(PREVIOUS_SEASON),
     {
       sourceId: "asa-roster-profiles",
@@ -295,7 +315,7 @@ async function main(): Promise<void> {
   };
   const positionDistribution = Object.fromEntries(["GK", "DEF", "MID", "FWD"].map((group) => [group, finalPlayers.filter((player) => player.positionGroup === group).length])) as PlayerDataset["audit"]["positionDistribution"];
   const dataset: PlayerDataset = {
-    schemaVersion: 3,
+    schemaVersion: 4,
     humanReadableLabel: playerHumanReadableLabel(CURRENT_SEASON, PREVIOUS_SEASON, roster.release.release_date),
     dataVersion: "",
     competition: "MLS",
@@ -346,6 +366,17 @@ async function main(): Promise<void> {
       ignoredRosterDuplicateCount: rosterAudit.duplicates,
       statisticalSnapshotTeamDisagreementCount: finalDisagreements,
       appliedRosterOverrideCount: overridesApplied,
+      goalkeeper: {
+        sources: {
+          [`asa-goalkeeper-xgoals-${CURRENT_SEASON}`]: goalkeeperSourceAudit(currentGoalkeepers.xGoals, finalPlayers),
+          [`asa-goalkeeper-goals-added-${CURRENT_SEASON}`]: goalkeeperSourceAudit(currentGoalkeepers.goalsAdded, finalPlayers),
+          [`asa-goalkeeper-xgoals-${PREVIOUS_SEASON}`]: goalkeeperSourceAudit(previousGoalkeepers.xGoals, finalPlayers),
+          [`asa-goalkeeper-goals-added-${PREVIOUS_SEASON}`]: goalkeeperSourceAudit(previousGoalkeepers.goalsAdded, finalPlayers),
+        },
+        goalkeepersWithCurrentSeasonMetrics: finalPlayers.filter((player) => player.positionGroup === "GK" && player.goalkeeperMetrics?.currentSeason).length,
+        goalkeepersWithPreviousSeasonMetrics: finalPlayers.filter((player) => player.positionGroup === "GK" && player.goalkeeperMetrics?.previousSeason).length,
+        goalkeepersWithPlayingTimeButNoMetrics: finalPlayers.filter((player) => player.positionGroup === "GK" && !player.goalkeeperMetrics).length,
+      },
     },
     players: finalPlayers,
   };

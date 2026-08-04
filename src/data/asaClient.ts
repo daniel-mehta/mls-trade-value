@@ -5,7 +5,15 @@ import { COMPETITION } from "./types.js";
 
 export const ASA_BASE_URL = "https://app.americansocceranalysis.com/api/v1";
 export type AsaRow = Record<string, unknown>;
-export type AsaDatasetName = "players" | "teams" | "xgoals" | "xpass" | "goals-added" | "salaries";
+export type AsaDatasetName =
+  | "players"
+  | "teams"
+  | "xgoals"
+  | "xpass"
+  | "goals-added"
+  | "salaries"
+  | "goalkeeper-xgoals"
+  | "goalkeeper-goals-added";
 
 export interface AsaFetchResult {
   rows: AsaRow[];
@@ -37,7 +45,13 @@ function unwrapResponse(value: unknown): AsaRow[] {
 /** Fetch directly from ASA rather than at browser runtime. Cache is intentionally
  * raw and ignored by git so a failed live service never masquerades as fresh data. */
 export function asaEndpointUrl(name: AsaDatasetName, season?: number): string {
-  const endpoint = name === "players" || name === "teams" ? name : `players/${name}`;
+  const endpoint = name === "players" || name === "teams"
+    ? name
+    : name === "goalkeeper-xgoals"
+      ? "goalkeepers/xgoals"
+      : name === "goalkeeper-goals-added"
+        ? "goalkeepers/goals-added"
+        : `players/${name}`;
   const url = new URL(`${ASA_BASE_URL}/${COMPETITION}/${endpoint}`);
   if (season !== undefined) {
     url.searchParams.set("season_name", String(season));

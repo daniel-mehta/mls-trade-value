@@ -26,6 +26,15 @@ describe("balanced matchup selection documentation", () => {
     expect(publicDocumentation).toMatch(/manual inclusion is\s+still eligibility-bound/i);
     expect(publicDocumentation).toMatch(/salary acquisition is optional/i);
     expect(publicDocumentation).toMatch(/not affiliated with or endorsed/i);
-    expect(publicDocumentation).toMatch(/Goalkeeper cards currently (?:contain|show) playing time only/i);
+    expect(publicDocumentation).toMatch(/official ASA goalkeeper xGoals/i);
+    expect(publicDocumentation).toMatch(/missing goalkeeper fields are omitted/i);
+  });
+
+  it("contains no internal goalkeeper work label or hard-coded source metric values", () => {
+    expect(publicDocumentation).not.toMatch(/goalkeeper phase|7B/i);
+    const rendering = ["../src/web/display.ts", "../src/web/render.ts"]
+      .map((path) => readFileSync(new URL(path, import.meta.url), "utf8"))
+      .join("\n");
+    expect(rendering).not.toMatch(/24\.9003|1\.0997|1830/);
   });
 });

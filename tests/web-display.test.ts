@@ -115,25 +115,24 @@ describe("player-card display values", () => {
   });
 
   it("displays available goalkeeper-specific metrics", () => {
-    expect(buildGoalkeeperStatFields({
-      season: 2026,
-      minutes: 900,
-      goalsConceded: 10,
-      saves: 42,
-      savePercentage: 80.77,
-      expectedGoalsAgainst: 12.345,
-      goalsPrevented: 2.345,
-      cleanSheets: 4,
-      goalsAdded: 1.234,
-    })).toEqual([
+    expect(buildGoalkeeperStatFields(
+      { season: 2026, minutes: 900 },
+      {
+        season: 2026,
+        goalsConceded: 10,
+        saves: 42,
+        shotsFaced: 52,
+        xGoalsFaced: 12.345,
+        goalsMinusXGoalsFaced: -2.345,
+        goalsAdded: 1.234,
+      },
+    )).toEqual([
       { label: "Minutes", value: "900" },
-      { label: "Goals conceded", value: "10" },
       { label: "Saves", value: "42" },
-      { label: "Save percentage", value: "80.77%" },
-      { label: "Expected goals against", value: "12.35" },
-      { label: "Goals prevented", value: "2.35" },
-      { label: "Clean sheets", value: "4" },
-      { label: "Goals Added", value: "1.23" },
+      { label: "Shots faced", value: "52" },
+      { label: "xG faced", value: "12.35" },
+      { label: "Goals − xG faced", value: "-2.35" },
+      { label: "Goalkeeper Goals Added", value: "1.23" },
     ]);
   });
 
@@ -152,6 +151,24 @@ describe("player-card display values", () => {
     }));
     expect(selected.notice).toBe("No 2026 MLS minutes. Showing 2025 MLS playing time.");
     expect(buildGoalkeeperStatFields(selected.stats)).toEqual([{ label: "Minutes", value: "1,800" }]);
+  });
+
+  it("labels and displays a goalkeeper's previous-season metric fallback", () => {
+    const selected = selectDisplayStats(poolPlayer("gk", {
+      positionGroup: "GK",
+      position: "GK",
+      currentSeason: { season: 2026 },
+      previousSeason: { season: 2025, minutes: 1800 },
+      goalkeeperMetrics: {
+        previousSeason: { season: 2025, saves: 70, shotsFaced: 90 },
+      },
+    }));
+    expect(selected.notice).toBe("No 2026 MLS minutes. Showing available 2025 goalkeeper statistics.");
+    expect(buildGoalkeeperStatFields(selected.stats, selected.goalkeeperMetrics)).toEqual([
+      { label: "Minutes", value: "1,800" },
+      { label: "Saves", value: "70" },
+      { label: "Shots faced", value: "90" },
+    ]);
   });
 
   it("removes duplicate broad and detailed position labels", () => {

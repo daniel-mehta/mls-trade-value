@@ -38,7 +38,7 @@ export function comparisonPoolFixture(
   const teamCounts = [...players.reduce((counts, player) => counts.set(player.teamId, (counts.get(player.teamId) ?? 0) + 1), new Map<string, number>()).values()].sort((a, b) => a - b);
   const middle = Math.floor(teamCounts.length / 2);
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     humanReadableLabel: "Comparison pool | MLS 2026/2025 | roster snapshot 2026-02-26",
     dataVersion,
     sourceDataVersion: TEST_SOURCE_VERSION,

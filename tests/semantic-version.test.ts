@@ -51,6 +51,19 @@ describe("semantic artifact identity", () => {
     }
   });
 
+  it("changes for goalkeeper metrics and goalkeeper source content", () => {
+    const original = playerDataset([staticPlayer("gk", { positionGroup: "GK" })]);
+    const metrics = structuredClone(original);
+    metrics.players[0].goalkeeperMetrics = {
+      currentSeason: { season: 2026, saves: 3, shotsFaced: 5 },
+    };
+    expect(computePlayerDataVersion(metrics)).not.toBe(original.dataVersion);
+
+    const source = structuredClone(original);
+    source.sources.find((entry) => entry.sourceId === "asa-goalkeeper-xgoals-2026")!.contentSha256 = "b".repeat(64);
+    expect(computePlayerDataVersion(source)).not.toBe(original.dataVersion);
+  });
+
   it("changes the pool version for rule, membership, and selection-reason changes", () => {
     const dataset = playerDataset(Array.from({ length: 7 }, (_, index) => staticPlayer(String(index), { currentSeason: { season: 2026, minutes: 100 - index } })));
     const pool = selectComparisonPool(dataset, noOverrides, "2026-08-01T00:00:00.000Z");
@@ -64,6 +77,17 @@ describe("semantic artifact identity", () => {
       mutate(changed);
       expect(computePoolDataVersion(changed)).not.toBe(pool.dataVersion);
     }
+  });
+
+  it("changes the pool version when an embedded goalkeeper field changes", () => {
+    const dataset = playerDataset([staticPlayer("gk", {
+      positionGroup: "GK",
+      goalkeeperMetrics: { currentSeason: { season: 2026, saves: 3, shotsFaced: 5 } },
+    })]);
+    const pool = selectComparisonPool(dataset, noOverrides);
+    const changed = structuredClone(pool);
+    changed.players[0].goalkeeperMetrics!.currentSeason!.saves = 4;
+    expect(computePoolDataVersion(changed)).not.toBe(pool.dataVersion);
   });
 
   it("produces canonically identical fixture builds except generatedAt", () => {

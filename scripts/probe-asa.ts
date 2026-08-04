@@ -2,7 +2,16 @@ import { fetchAsa, field, textField, type AsaDatasetName } from "../src/data/asa
 import { CURRENT_SEASON, PREVIOUS_SEASON } from "../src/data/types.js";
 
 const forceRefresh = process.argv.includes("--refresh");
-const datasets: AsaDatasetName[] = ["players", "teams", "xgoals", "xpass", "goals-added", "salaries"];
+const datasets: AsaDatasetName[] = [
+  "players",
+  "teams",
+  "xgoals",
+  "xpass",
+  "goals-added",
+  "salaries",
+  "goalkeeper-xgoals",
+  "goalkeeper-goals-added",
+];
 
 function playerId(row: Record<string, unknown>): string | undefined { return textField(row, "player_id", "playerId", "id"); }
 function teamId(row: Record<string, unknown>): string | undefined { return textField(row, "team_id", "teamId"); }

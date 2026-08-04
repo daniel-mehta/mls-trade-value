@@ -1,8 +1,10 @@
 import { stablePlayerSort } from "./aggregation.js";
 import { canonicalStringify, computePlayerDataVersion, isSemanticVersion, isSha256 } from "./semanticVersion.js";
 import {
+  GOALKEEPER_GOALS_ADDED_ACTIONS,
   PLAYER_NORMALIZATION_RULES,
   playerHumanReadableLabel,
+  type GoalkeeperSeasonMetrics,
   type PlayerDataset,
   type PlayerRosterProfile,
   type PlayerSeasonStats,
@@ -13,10 +15,12 @@ import {
 const GROUPS: PositionGroup[] = ["GK", "DEF", "MID", "FWD"];
 const DATASET_KEYS = ["schemaVersion", "humanReadableLabel", "dataVersion", "competition", "season", "previousSeason", "generatedAt", "statisticsThrough", "sources", "salary", "rosterSnapshot", "overrides", "normalization", "audit", "players"];
 const SOURCE_KEYS = ["sourceId", "sourceType", "endpointOrRepository", "season", "retrievedAt", "contentSha256", "status", "rowCount"];
-const PLAYER_KEYS = ["id", "name", "teamId", "teamName", "teamAbbreviation", "positionGroup", "position", "age", "baseSalary", "guaranteedCompensation", "currentSeason", "previousSeason", "rosterProfile"];
-const STATS_KEYS = ["season", "appearances", "starts", "minutes", "goals", "assists", "xGoals", "xAssists", "keyPasses", "goalsAdded", "goalsConceded", "saves", "savePercentage", "expectedGoalsAgainst", "goalsPrevented", "cleanSheets"];
+const PLAYER_KEYS = ["id", "name", "teamId", "teamName", "teamAbbreviation", "positionGroup", "position", "age", "baseSalary", "guaranteedCompensation", "currentSeason", "previousSeason", "goalkeeperMetrics", "rosterProfile"];
+const STATS_KEYS = ["season", "appearances", "starts", "minutes", "goals", "assists", "xGoals", "xAssists", "keyPasses", "goalsAdded"];
+const GOALKEEPER_CONTAINER_KEYS = ["currentSeason", "previousSeason"];
+const GOALKEEPER_METRIC_KEYS = ["season", "shotsFaced", "goalsConceded", "saves", "xGoalsFaced", "goalsMinusXGoalsFaced", "goalsAdded", "goalsAddedByAction"];
 const ROSTER_KEYS = ["snapshotDate", "listedInRosterSnapshot", "activeAtRosterSnapshot", "snapshotTeamId", "snapshotTeamName", "rosterSlot", "rosterDesignation", "currentStatus", "contractThrough", "optionYears", "permanentTransferOption", "internationalSlot", "convertibleWithTam", "unavailable", "canadianInternationalSlotExemption", "rosterConstructionModel"];
-const NON_NEGATIVE_STATS: Array<Exclude<keyof PlayerSeasonStats, "season" | "goalsAdded" | "goalsPrevented">> = ["appearances", "starts", "minutes", "goals", "assists", "xGoals", "xAssists", "keyPasses", "goalsConceded", "saves", "savePercentage", "expectedGoalsAgainst", "cleanSheets"];
+const NON_NEGATIVE_STATS: Array<Exclude<keyof PlayerSeasonStats, "season" | "goalsAdded">> = ["appearances", "starts", "minutes", "goals", "assists", "xGoals", "xAssists", "keyPasses"];
 
 function exactKeys(value: unknown, allowed: readonly string[], label: string, errors: string[]): value is Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -61,10 +65,59 @@ function validateStats(stats: PlayerSeasonStats, expectedSeason: number, label: 
     const value = stats[field];
     if (value !== undefined && (!Number.isFinite(value) || value < 0)) errors.push(`${label}: invalid ${field}`);
   }
-  for (const field of ["goalsAdded", "goalsPrevented"] as const) {
+  for (const field of ["goalsAdded"] as const) {
     const value = stats[field];
     if (value !== undefined && !Number.isFinite(value)) errors.push(`${label}: invalid ${field}`);
   }
+}
+
+function validateGoalkeeperSeason(
+  metrics: GoalkeeperSeasonMetrics,
+  expectedSeason: number,
+  label: string,
+  errors: string[],
+): void {
+  if (!exactKeys(metrics, GOALKEEPER_METRIC_KEYS, label, errors)) return;
+  if (metrics.season !== expectedSeason) errors.push(`${label}: season must be ${expectedSeason}`);
+  for (const field of ["shotsFaced", "goalsConceded", "saves", "xGoalsFaced"] as const) {
+    const value = metrics[field];
+    if (value !== undefined && (!Number.isFinite(value) || value < 0)) errors.push(`${label}: invalid ${field}`);
+  }
+  for (const field of ["goalsMinusXGoalsFaced", "goalsAdded"] as const) {
+    const value = metrics[field];
+    if (value !== undefined && !Number.isFinite(value)) errors.push(`${label}: invalid ${field}`);
+  }
+  if (metrics.goalsAddedByAction !== undefined) {
+    if (!exactKeys(metrics.goalsAddedByAction, GOALKEEPER_GOALS_ADDED_ACTIONS, `${label} goalsAddedByAction`, errors)) return;
+    if (!Object.keys(metrics.goalsAddedByAction).length) errors.push(`${label}: goalsAddedByAction must not be empty`);
+    for (const [action, value] of Object.entries(metrics.goalsAddedByAction)) {
+      if (!Number.isFinite(value)) errors.push(`${label}: invalid Goals Added action ${action}`);
+    }
+    const total = GOALKEEPER_GOALS_ADDED_ACTIONS
+      .map((action) => metrics.goalsAddedByAction?.[action])
+      .filter((value): value is number => value !== undefined)
+      .reduce((sum, value) => sum + value, 0);
+    if (metrics.goalsAdded === undefined || Math.abs(metrics.goalsAdded - total) > 1e-9) {
+      errors.push(`${label}: goalsAdded does not equal the documented action-component total`);
+    }
+  } else if (metrics.goalsAdded !== undefined) {
+    errors.push(`${label}: goalsAdded requires goalsAddedByAction`);
+  }
+  if (metrics.goalsConceded !== undefined && metrics.xGoalsFaced !== undefined && metrics.goalsMinusXGoalsFaced !== undefined &&
+      Math.abs(metrics.goalsConceded - metrics.xGoalsFaced - metrics.goalsMinusXGoalsFaced) > 0.001) {
+    errors.push(`${label}: goalsMinusXGoalsFaced is inconsistent with goals conceded and xGoals faced`);
+  }
+  const values = [
+    metrics.shotsFaced,
+    metrics.goalsConceded,
+    metrics.saves,
+    metrics.xGoalsFaced,
+    metrics.goalsMinusXGoalsFaced,
+    metrics.goalsAdded,
+    ...Object.values(metrics.goalsAddedByAction ?? {}),
+  ].filter((value): value is number => value !== undefined);
+  if (!values.length) errors.push(`${label}: goalkeeper metric object is empty`);
+  else if (values.every((value) => value === 0)) errors.push(`${label}: zero-filled goalkeeper metric object is not allowed`);
 }
 
 function validateRoster(profile: PlayerRosterProfile, snapshotDate: string, label: string, errors: string[]): void {
@@ -108,6 +161,14 @@ function validatePlayer(
   }
   validateStats(player.currentSeason, dataset.season, `${label} currentSeason`, errors);
   if (player.previousSeason) validateStats(player.previousSeason, dataset.previousSeason, `${label} previousSeason`, errors);
+  if (player.goalkeeperMetrics) {
+    if (player.positionGroup !== "GK") errors.push(`${label}: goalkeeperMetrics may only be attached to goalkeepers`);
+    if (exactKeys(player.goalkeeperMetrics, GOALKEEPER_CONTAINER_KEYS, `${label} goalkeeperMetrics`, errors)) {
+      if (!player.goalkeeperMetrics.currentSeason && !player.goalkeeperMetrics.previousSeason) errors.push(`${label}: goalkeeperMetrics must not be empty`);
+      if (player.goalkeeperMetrics.currentSeason) validateGoalkeeperSeason(player.goalkeeperMetrics.currentSeason as GoalkeeperSeasonMetrics, dataset.season, `${label} goalkeeperMetrics currentSeason`, errors);
+      if (player.goalkeeperMetrics.previousSeason) validateGoalkeeperSeason(player.goalkeeperMetrics.previousSeason as GoalkeeperSeasonMetrics, dataset.previousSeason, `${label} goalkeeperMetrics previousSeason`, errors);
+    }
+  }
   if (player.rosterProfile) validateRoster(player.rosterProfile, dataset.rosterSnapshot.snapshotDate, `${label} rosterProfile`, errors);
   if (containsNull(player)) errors.push(`${label}: null is not allowed; omit optional player fields`);
 }
@@ -116,14 +177,16 @@ function requiredSourceIds(dataset: PlayerDataset): string[] {
   return [
     "asa-players", "asa-teams",
     `asa-xgoals-${dataset.season}`, `asa-xpass-${dataset.season}`, `asa-goals-added-${dataset.season}`, `asa-salaries-${dataset.season}`,
+    `asa-goalkeeper-xgoals-${dataset.season}`, `asa-goalkeeper-goals-added-${dataset.season}`,
     `asa-xgoals-${dataset.previousSeason}`, `asa-xpass-${dataset.previousSeason}`, `asa-goals-added-${dataset.previousSeason}`, `asa-salaries-${dataset.previousSeason}`,
+    `asa-goalkeeper-xgoals-${dataset.previousSeason}`, `asa-goalkeeper-goals-added-${dataset.previousSeason}`,
   ];
 }
 
 export function validateDataset(dataset: PlayerDataset): string[] {
   const errors: string[] = [];
   if (!exactKeys(dataset, DATASET_KEYS, "dataset", errors)) return errors;
-  if (dataset.schemaVersion !== 3) errors.push("schemaVersion must be 3");
+  if (dataset.schemaVersion !== 4) errors.push("schemaVersion must be 4");
   if (!isSemanticVersion(dataset.dataVersion)) errors.push("dataVersion must be a SHA-256 semantic version");
   if (dataset.competition !== "MLS") errors.push("competition must be MLS");
   if (!Number.isInteger(dataset.season) || dataset.season < 1996) errors.push("invalid dataset season");
@@ -154,6 +217,18 @@ export function validateDataset(dataset: PlayerDataset): string[] {
       }
     }
     for (const sourceId of requiredSourceIds(dataset)) if (!sourceIds.has(sourceId)) errors.push(`missing required source snapshot: ${sourceId}`);
+    for (const season of [dataset.season, dataset.previousSeason]) {
+      for (const family of ["xgoals", "goals-added"] as const) {
+        const sourceId = `asa-goalkeeper-${family}-${season}`;
+        const source = dataset.sources.find((entry) => entry.sourceId === sourceId);
+        const endpoint = family === "xgoals" ? "/goalkeepers/xgoals" : "/goalkeepers/goals-added";
+        if (!source || source.status !== "available") errors.push(`required goalkeeper source must be available: ${sourceId}`);
+        else {
+          if (source.season !== season || !source.endpointOrRepository.includes(endpoint)) errors.push(`goalkeeper source endpoint or season is invalid: ${sourceId}`);
+          if (source.rowCount === 0) errors.push(`required goalkeeper source contains no rows: ${sourceId}`);
+        }
+      }
+    }
   }
 
   if (exactKeys(dataset.salary, ["status", "selectedSeason", "selectedRelease", "currency", "selectedRecordCount"], "salary provenance", errors)) {
@@ -198,7 +273,7 @@ export function validateDataset(dataset: PlayerDataset): string[] {
   if (sorted.some((player, index) => player.id !== dataset.players[index]?.id)) errors.push("players are not deterministically sorted");
 
   const audit = dataset.audit;
-  if (exactKeys(audit, ["sourceRowCounts", "playerCount", "teamCount", "positionDistribution", "currentSeasonMultiTeamCount", "crossSeasonMultiTeamCount", "unmatchedSalaryCount", "unknownPositionExclusionCount", "rosterMatchedCount", "rosterUnmatchedCount", "ignoredRosterDuplicateCount", "statisticalSnapshotTeamDisagreementCount", "appliedRosterOverrideCount"], "dataset audit", errors)) {
+  if (exactKeys(audit, ["sourceRowCounts", "playerCount", "teamCount", "positionDistribution", "currentSeasonMultiTeamCount", "crossSeasonMultiTeamCount", "unmatchedSalaryCount", "unknownPositionExclusionCount", "rosterMatchedCount", "rosterUnmatchedCount", "ignoredRosterDuplicateCount", "statisticalSnapshotTeamDisagreementCount", "appliedRosterOverrideCount", "goalkeeper"], "dataset audit", errors)) {
     const positionDistribution = Object.fromEntries(GROUPS.map((group) => [group, dataset.players.filter((player) => player.positionGroup === group).length]));
     const expectedSourceRows = Object.fromEntries(dataset.sources.map((source) => [source.sourceId, source.rowCount]));
     const matched = dataset.players.filter((player) => player.rosterProfile).length;
@@ -213,6 +288,31 @@ export function validateDataset(dataset: PlayerDataset): string[] {
     if (audit.appliedRosterOverrideCount !== dataset.overrides.appliedCount) errors.push("audit override count is inconsistent");
     for (const field of ["currentSeasonMultiTeamCount", "crossSeasonMultiTeamCount", "unmatchedSalaryCount", "unknownPositionExclusionCount"] as const) {
       if (!nonNegativeInteger(audit[field])) errors.push(`audit ${field} is invalid`);
+    }
+    const goalkeeper = audit.goalkeeper;
+    if (exactKeys(goalkeeper, ["sources", "goalkeepersWithCurrentSeasonMetrics", "goalkeepersWithPreviousSeasonMetrics", "goalkeepersWithPlayingTimeButNoMetrics"], "goalkeeper audit", errors)) {
+      const expectedSourceIds = requiredSourceIds(dataset).filter((sourceId) => sourceId.startsWith("asa-goalkeeper-"));
+      exactKeys(goalkeeper.sources, expectedSourceIds, "goalkeeper source audits", errors);
+      for (const sourceId of expectedSourceIds) {
+        if (!Object.prototype.hasOwnProperty.call(goalkeeper.sources, sourceId)) errors.push(`missing goalkeeper source audit: ${sourceId}`);
+      }
+      for (const sourceId of expectedSourceIds) {
+        const sourceAudit = goalkeeper.sources[sourceId];
+        if (!sourceAudit || !exactKeys(sourceAudit, ["rawRowCount", "matchedGoalkeeperIds", "unmatchedPlayerIds", "duplicateRows", "nonGoalkeeperJoinConflicts", "malformedRows"], `goalkeeper audit ${sourceId}`, errors)) continue;
+        for (const field of ["rawRowCount", "matchedGoalkeeperIds", "unmatchedPlayerIds", "duplicateRows", "nonGoalkeeperJoinConflicts", "malformedRows"] as const) {
+          if (!nonNegativeInteger(sourceAudit[field])) errors.push(`goalkeeper audit ${sourceId}: invalid ${field}`);
+        }
+        const source = dataset.sources.find((entry) => entry.sourceId === sourceId);
+        if (!source || sourceAudit.rawRowCount !== source.rowCount) errors.push(`goalkeeper audit ${sourceId}: raw row count does not match provenance`);
+        if (sourceAudit.malformedRows !== 0) errors.push(`goalkeeper audit ${sourceId}: malformed rows cannot be publication-ready`);
+      }
+      const goalkeepers = dataset.players.filter((player) => player.positionGroup === "GK");
+      const currentCount = goalkeepers.filter((player) => player.goalkeeperMetrics?.currentSeason).length;
+      const previousCount = goalkeepers.filter((player) => player.goalkeeperMetrics?.previousSeason).length;
+      const playingTimeOnly = goalkeepers.filter((player) => !player.goalkeeperMetrics).length;
+      if (goalkeeper.goalkeepersWithCurrentSeasonMetrics !== currentCount) errors.push("goalkeeper current-season coverage audit is inconsistent");
+      if (goalkeeper.goalkeepersWithPreviousSeasonMetrics !== previousCount) errors.push("goalkeeper previous-season coverage audit is inconsistent");
+      if (goalkeeper.goalkeepersWithPlayingTimeButNoMetrics !== playingTimeOnly) errors.push("goalkeeper playing-time-only audit is inconsistent");
     }
   }
 

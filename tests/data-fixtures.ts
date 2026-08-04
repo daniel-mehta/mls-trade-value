@@ -23,10 +23,15 @@ export function staticPlayer(id = "a", overrides: Partial<StaticPlayer> = {}): S
 }
 
 function source(sourceId: string, season: number | null, rowCount = 1): SourceSnapshot {
+  const goalkeeperEndpoint = sourceId.includes("goalkeeper-xgoals")
+    ? "goalkeepers/xgoals"
+    : sourceId.includes("goalkeeper-goals-added")
+      ? "goalkeepers/goals-added"
+      : sourceId;
   return {
     sourceId,
     sourceType: sourceId === "asa-roster-profiles" ? "repository" : "api",
-    endpointOrRepository: `https://example.test/${sourceId}`,
+    endpointOrRepository: `https://example.test/${goalkeeperEndpoint}`,
     season,
     retrievedAt: null,
     contentSha256: CHECKSUM,
@@ -45,10 +50,14 @@ export function playerDataset(players: StaticPlayer[], changes: Partial<PlayerDa
     source(`asa-xgoals-${season}`, season),
     source(`asa-xpass-${season}`, season),
     source(`asa-goals-added-${season}`, season),
+    source(`asa-goalkeeper-xgoals-${season}`, season),
+    source(`asa-goalkeeper-goals-added-${season}`, season),
     source(`asa-salaries-${season}`, season),
     source(`asa-xgoals-${previousSeason}`, previousSeason),
     source(`asa-xpass-${previousSeason}`, previousSeason),
     source(`asa-goals-added-${previousSeason}`, previousSeason),
+    source(`asa-goalkeeper-xgoals-${previousSeason}`, previousSeason),
+    source(`asa-goalkeeper-goals-added-${previousSeason}`, previousSeason),
     source(`asa-salaries-${previousSeason}`, previousSeason),
     source("asa-roster-profiles", season, players.filter((player) => player.rosterProfile).length),
   ];
@@ -57,7 +66,7 @@ export function playerDataset(players: StaticPlayer[], changes: Partial<PlayerDa
   const rosterMatched = sortedPlayers.filter((player) => player.rosterProfile).length;
   const teamCount = new Set(sortedPlayers.map((player) => player.teamId)).size;
   const dataset: PlayerDataset = {
-    schemaVersion: 3,
+    schemaVersion: 4,
     humanReadableLabel: playerHumanReadableLabel(season, previousSeason, rosterDate),
     dataVersion: "",
     competition: "MLS",
@@ -103,6 +112,23 @@ export function playerDataset(players: StaticPlayer[], changes: Partial<PlayerDa
       ignoredRosterDuplicateCount: 0,
       statisticalSnapshotTeamDisagreementCount: sortedPlayers.filter((player) => player.rosterProfile && player.teamId !== player.rosterProfile.snapshotTeamId).length,
       appliedRosterOverrideCount: 0,
+      goalkeeper: {
+        sources: Object.fromEntries(
+          sources
+            .filter((entry) => entry.sourceId.startsWith("asa-goalkeeper-"))
+            .map((entry) => [entry.sourceId, {
+              rawRowCount: entry.rowCount,
+              matchedGoalkeeperIds: 0,
+              unmatchedPlayerIds: entry.rowCount,
+              duplicateRows: 0,
+              nonGoalkeeperJoinConflicts: 0,
+              malformedRows: 0 as const,
+            }]),
+        ),
+        goalkeepersWithCurrentSeasonMetrics: sortedPlayers.filter((player) => player.positionGroup === "GK" && player.goalkeeperMetrics?.currentSeason).length,
+        goalkeepersWithPreviousSeasonMetrics: sortedPlayers.filter((player) => player.positionGroup === "GK" && player.goalkeeperMetrics?.previousSeason).length,
+        goalkeepersWithPlayingTimeButNoMetrics: sortedPlayers.filter((player) => player.positionGroup === "GK" && !player.goalkeeperMetrics).length,
+      },
     },
     players: sortedPlayers,
     ...changes,

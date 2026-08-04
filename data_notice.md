@@ -27,10 +27,14 @@ then previous-season minutes, then normalized ASA team ID. It can differ from
 the separately retained dated roster-snapshot team. Missing optional values are
 omitted; absence does not mean zero or false.
 
-Goalkeeper cards currently contain playing time only. Saves, goals conceded,
-expected-goals-against, and goalkeeper Goals Added are not included in these
-artifacts. Goalkeeper source integration is planned as separate work and no
-derived or fabricated goalkeeper metrics are substituted.
+Goalkeeper cards use static snapshots of ASA's official goalkeeper xGoals and
+Goalkeeper Goals Added sources. When available, the compact card shows minutes,
+saves, shots faced, xG faced, goals minus xG faced, and Goalkeeper Goals Added.
+Current- and previous-season records remain separate. Source availability varies
+by season and player; missing fields are omitted rather than displayed as zero,
+and no substitute metrics are fabricated. These performance fields do not
+affect Elo directly or change comparison-pool membership. Elo reflects the
+user's pairwise choices, not an ASA metric or an objective trade-value score.
 
 This independent project is not affiliated with or endorsed by MLS, MLSPA,
 American Soccer Analysis, any club, or any player. Repository code licensing

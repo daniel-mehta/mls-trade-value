@@ -1,10 +1,11 @@
 import type { ComparisonPoolPlayer } from "../data/comparisonPool.js";
-import type { PlayerSeasonStats } from "../data/types.js";
+import type { GoalkeeperSeasonMetrics, PlayerSeasonStats } from "../data/types.js";
 
 export interface DisplayStats {
   stats: PlayerSeasonStats;
   season: number;
   usesPreviousSeason: boolean;
+  goalkeeperMetrics?: GoalkeeperSeasonMetrics;
   notice?: string;
 }
 
@@ -19,6 +20,9 @@ export function selectDisplayStats(player: ComparisonPoolPlayer): DisplayStats {
       stats: player.currentSeason,
       season: player.currentSeason.season,
       usesPreviousSeason: false,
+      ...(player.positionGroup === "GK" && player.goalkeeperMetrics?.currentSeason
+        ? { goalkeeperMetrics: player.goalkeeperMetrics.currentSeason }
+        : {}),
     };
   }
   const stats = player.previousSeason ?? player.currentSeason;
@@ -26,9 +30,14 @@ export function selectDisplayStats(player: ComparisonPoolPlayer): DisplayStats {
     stats,
     season: stats.season,
     usesPreviousSeason: Boolean(player.previousSeason),
+    ...(player.positionGroup === "GK" && player.goalkeeperMetrics?.previousSeason
+      ? { goalkeeperMetrics: player.goalkeeperMetrics.previousSeason }
+      : {}),
     notice: player.previousSeason
       ? player.positionGroup === "GK"
-        ? `No ${player.currentSeason.season} MLS minutes. Showing ${player.previousSeason.season} MLS playing time.`
+        ? player.goalkeeperMetrics?.previousSeason
+          ? `No ${player.currentSeason.season} MLS minutes. Showing available ${player.previousSeason.season} goalkeeper statistics.`
+          : `No ${player.currentSeason.season} MLS minutes. Showing ${player.previousSeason.season} MLS playing time.`
         : `No ${player.currentSeason.season} MLS minutes. Showing ${player.previousSeason.season} statistics.`
       : "No MLS minutes are available for display.",
   };
@@ -68,16 +77,17 @@ export function buildStatFields(stats: PlayerSeasonStats): DisplayField[] {
     .map(([label, value, formatter]) => ({ label, value: formatter(value) }));
 }
 
-export function buildGoalkeeperStatFields(stats: PlayerSeasonStats): DisplayField[] {
+export function buildGoalkeeperStatFields(
+  stats: PlayerSeasonStats,
+  metrics?: GoalkeeperSeasonMetrics,
+): DisplayField[] {
   const definitions: Array<[string, number | undefined, (value: number) => string]> = [
     ["Minutes", stats.minutes, formatInteger],
-    ["Goals conceded", stats.goalsConceded, formatInteger],
-    ["Saves", stats.saves, formatInteger],
-    ["Save percentage", stats.savePercentage, (value) => `${formatDecimal(value)}%`],
-    ["Expected goals against", stats.expectedGoalsAgainst, formatDecimal],
-    ["Goals prevented", stats.goalsPrevented, formatDecimal],
-    ["Clean sheets", stats.cleanSheets, formatInteger],
-    ["Goals Added", stats.goalsAdded, formatDecimal],
+    ["Saves", metrics?.saves, formatInteger],
+    ["Shots faced", metrics?.shotsFaced, formatInteger],
+    ["xG faced", metrics?.xGoalsFaced, formatDecimal],
+    ["Goals − xG faced", metrics?.goalsMinusXGoalsFaced, formatDecimal],
+    ["Goalkeeper Goals Added", metrics?.goalsAdded, formatDecimal],
   ];
   return definitions
     .filter((entry): entry is [string, number, (value: number) => string] => entry[1] !== undefined)
@@ -87,8 +97,9 @@ export function buildGoalkeeperStatFields(stats: PlayerSeasonStats): DisplayFiel
 export function buildPlayerStatFields(
   player: ComparisonPoolPlayer,
   stats: PlayerSeasonStats,
+  goalkeeperMetrics?: GoalkeeperSeasonMetrics,
 ): DisplayField[] {
-  return player.positionGroup === "GK" ? buildGoalkeeperStatFields(stats) : buildStatFields(stats);
+  return player.positionGroup === "GK" ? buildGoalkeeperStatFields(stats, goalkeeperMetrics) : buildStatFields(stats);
 }
 
 export function formatPositionLine(player: ComparisonPoolPlayer): string {

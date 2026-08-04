@@ -56,7 +56,7 @@ export interface ComparisonPoolAudit {
 }
 
 export interface ComparisonPool {
-  schemaVersion: 2;
+  schemaVersion: 3;
   humanReadableLabel: string;
   dataVersion: string;
   sourceDataVersion: string;
@@ -217,7 +217,7 @@ export function selectComparisonPool(
     selectionReasons: SELECTION_REASONS.filter((reason) => selected.get(player.id)!.has(reason)),
   })));
   const pool: ComparisonPool = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     humanReadableLabel: `Comparison pool | ${dataset.humanReadableLabel}`,
     dataVersion: "",
     sourceDataVersion: dataset.dataVersion,
@@ -255,7 +255,7 @@ function exactObject(value: unknown, allowed: readonly string[], label: string, 
 export function validateComparisonPool(pool: ComparisonPool, dataset: PlayerDataset, overridesInput: ComparisonPoolOverrides): string[] {
   const errors = validateDataset(dataset).map((error) => `source player artifact: ${error}`);
   exactObject(pool, ["schemaVersion", "humanReadableLabel", "dataVersion", "sourceDataVersion", "season", "previousSeason", "generatedAt", "provenance", "selectionRules", "overrides", "audit", "players"], "pool", errors);
-  if (pool.schemaVersion !== 2) errors.push("pool schemaVersion must be 2");
+  if (pool.schemaVersion !== 3) errors.push("pool schemaVersion must be 3");
   if (!Array.isArray(pool.players) || pool.players.length < 150 || pool.players.length > 325) errors.push("pool size must be between 150 and 325 players");
   if (!isSemanticVersion(pool.dataVersion)) errors.push("pool dataVersion must be a SHA-256 semantic version");
   const generated = typeof pool.generatedAt === "string" ? new Date(pool.generatedAt) : null;

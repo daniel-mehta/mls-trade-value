@@ -1,13 +1,53 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "humanReadableLabel": "MLS 2026/2025 | roster snapshot 2026-02-26",
-  "dataVersion": "sha256:a04dc712b90578ee4d745cacf7b9efa74963b57fb914448d1c70b1d84d88b74f",
+  "dataVersion": "sha256:27b1111ef617bba459de97b11b5289386773ba5be9325421d52394fece5023c6",
   "competition": "MLS",
   "season": 2026,
   "previousSeason": 2025,
-  "generatedAt": "2026-08-04T17:56:38.945Z",
+  "generatedAt": "2026-08-04T18:39:34.307Z",
   "statisticsThrough": null,
   "sources": [
+    {
+      "sourceId": "asa-goalkeeper-goals-added-2025",
+      "sourceType": "api",
+      "endpointOrRepository": "https://app.americansocceranalysis.com/api/v1/mls/goalkeepers/goals-added?season_name=2025&split_by_seasons=true&split_by_teams=true",
+      "season": 2025,
+      "retrievedAt": "2026-08-04T18:25:30.590Z",
+      "contentSha256": "b40d619e5f2c46c54544028b928993c34ffead9faea94e299c9cde893ec3874e",
+      "status": "available",
+      "rowCount": 68
+    },
+    {
+      "sourceId": "asa-goalkeeper-goals-added-2026",
+      "sourceType": "api",
+      "endpointOrRepository": "https://app.americansocceranalysis.com/api/v1/mls/goalkeepers/goals-added?season_name=2026&split_by_seasons=true&split_by_teams=true",
+      "season": 2026,
+      "retrievedAt": "2026-08-04T18:25:30.269Z",
+      "contentSha256": "20a2cac19e5747b650f590e8abf78b310a21c1df6fd0350e57aab5c2c9b95b0e",
+      "status": "available",
+      "rowCount": 49
+    },
+    {
+      "sourceId": "asa-goalkeeper-xgoals-2025",
+      "sourceType": "api",
+      "endpointOrRepository": "https://app.americansocceranalysis.com/api/v1/mls/goalkeepers/xgoals?season_name=2025&split_by_seasons=true&split_by_teams=true",
+      "season": 2025,
+      "retrievedAt": "2026-08-04T18:25:30.430Z",
+      "contentSha256": "1fae64f03efcc0616f1950c3f82ee587dd0439dacf265bc87eec1fa532ea0607",
+      "status": "available",
+      "rowCount": 68
+    },
+    {
+      "sourceId": "asa-goalkeeper-xgoals-2026",
+      "sourceType": "api",
+      "endpointOrRepository": "https://app.americansocceranalysis.com/api/v1/mls/goalkeepers/xgoals?season_name=2026&split_by_seasons=true&split_by_teams=true",
+      "season": 2026,
+      "retrievedAt": "2026-08-04T18:25:30.149Z",
+      "contentSha256": "8ef4852398d2aa67638f7ba66f5a3d4058661ec22dc12fc1f381cd8f6493c7a1",
+      "status": "available",
+      "rowCount": 49
+    },
     {
       "sourceId": "asa-goals-added-2025",
       "sourceType": "api",
@@ -147,15 +187,20 @@
     "contentSha256": "57bb044889d4ea8a87b9665778c9e4d320b5a01aa147d8e63454c867a985e22b"
   },
   "normalization": {
-    "rulesVersion": "player-normalization-v1",
+    "rulesVersion": "player-normalization-v2",
     "displayedTeamPolicy": "current-minutes-then-previous-minutes-then-team-id",
     "playerIdentityKey": "asa-player-id",
     "teamIdentityKey": "asa-team-id",
     "salarySelectionPolicy": "latest-valid-player-release-no-sum",
-    "unknownPositionPolicy": "exclude-and-report"
+    "unknownPositionPolicy": "exclude-and-report",
+    "goalkeeperAggregationPolicy": "additive-source-totals-by-player-season"
   },
   "audit": {
     "sourceRowCounts": {
+      "asa-goalkeeper-goals-added-2025": 68,
+      "asa-goalkeeper-goals-added-2026": 49,
+      "asa-goalkeeper-xgoals-2025": 68,
+      "asa-goalkeeper-xgoals-2026": 49,
       "asa-goals-added-2025": 818,
       "asa-goals-added-2026": 715,
       "asa-players": 3530,
@@ -184,7 +229,46 @@
     "rosterUnmatchedCount": 122,
     "ignoredRosterDuplicateCount": 2,
     "statisticalSnapshotTeamDisagreementCount": 16,
-    "appliedRosterOverrideCount": 0
+    "appliedRosterOverrideCount": 0,
+    "goalkeeper": {
+      "sources": {
+        "asa-goalkeeper-xgoals-2026": {
+          "rawRowCount": 49,
+          "matchedGoalkeeperIds": 48,
+          "unmatchedPlayerIds": 0,
+          "duplicateRows": 0,
+          "nonGoalkeeperJoinConflicts": 0,
+          "malformedRows": 0
+        },
+        "asa-goalkeeper-goals-added-2026": {
+          "rawRowCount": 49,
+          "matchedGoalkeeperIds": 48,
+          "unmatchedPlayerIds": 0,
+          "duplicateRows": 0,
+          "nonGoalkeeperJoinConflicts": 0,
+          "malformedRows": 0
+        },
+        "asa-goalkeeper-xgoals-2025": {
+          "rawRowCount": 68,
+          "matchedGoalkeeperIds": 67,
+          "unmatchedPlayerIds": 0,
+          "duplicateRows": 0,
+          "nonGoalkeeperJoinConflicts": 0,
+          "malformedRows": 0
+        },
+        "asa-goalkeeper-goals-added-2025": {
+          "rawRowCount": 68,
+          "matchedGoalkeeperIds": 67,
+          "unmatchedPlayerIds": 0,
+          "duplicateRows": 0,
+          "nonGoalkeeperJoinConflicts": 0,
+          "malformedRows": 0
+        }
+      },
+      "goalkeepersWithCurrentSeasonMetrics": 48,
+      "goalkeepersWithPreviousSeasonMetrics": 67,
+      "goalkeepersWithPlayingTimeButNoMetrics": 0
+    }
   },
   "players": [
     {
@@ -208,6 +292,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 5,
+          "goalsConceded": 2,
+          "saves": 3,
+          "xGoalsFaced": 1.6687,
+          "goalsMinusXGoalsFaced": 0.3313,
+          "goalsAddedByAction": {
+            "claiming": 0.0019,
+            "fielding": 0.0041,
+            "handling": 0.0574,
+            "passing": 0.1594,
+            "shotstopping": -0.3313,
+            "sweeping": -0.0065
+          },
+          "goalsAdded": -0.11499999999999999
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -334,6 +437,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 5,
+          "goalsConceded": 2,
+          "saves": 3,
+          "xGoalsFaced": 2.7707,
+          "goalsMinusXGoalsFaced": -0.7707,
+          "goalsAddedByAction": {
+            "claiming": 0,
+            "fielding": 0.0009,
+            "handling": -0.0132,
+            "passing": 0.0802,
+            "shotstopping": 0.7707,
+            "sweeping": 0.0069
+          },
+          "goalsAdded": 0.8455
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -965,6 +1087,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 9,
+          "goalsConceded": 3,
+          "saves": 6,
+          "xGoalsFaced": 3.0488,
+          "goalsMinusXGoalsFaced": -0.0488,
+          "goalsAddedByAction": {
+            "claiming": 0,
+            "fielding": 0.002,
+            "handling": 0.0064,
+            "passing": 0.09,
+            "shotstopping": 0.0488,
+            "sweeping": 0.007
+          },
+          "goalsAdded": 0.1542
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -1762,6 +1903,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 101,
+          "goalsConceded": 35,
+          "saves": 66,
+          "xGoalsFaced": 33.876,
+          "goalsMinusXGoalsFaced": 1.124,
+          "goalsAddedByAction": {
+            "claiming": 0.0145,
+            "fielding": 0.0333,
+            "handling": -0.5808,
+            "passing": 1.0424,
+            "shotstopping": -1.124,
+            "sweeping": 0.0309
+          },
+          "goalsAdded": -0.5837000000000001
+        }
       }
     },
     {
@@ -2251,6 +2411,42 @@
         "xAssists": 0.039,
         "keyPasses": 1
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 59,
+          "goalsConceded": 28,
+          "saves": 30,
+          "xGoalsFaced": 21.1968,
+          "goalsMinusXGoalsFaced": 6.8032,
+          "goalsAddedByAction": {
+            "claiming": 0.0492,
+            "fielding": 0.0362,
+            "handling": -0.129,
+            "passing": 1.0249,
+            "shotstopping": -6.8032,
+            "sweeping": 0.1695
+          },
+          "goalsAdded": -5.6524
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 77,
+          "goalsConceded": 20,
+          "saves": 55,
+          "xGoalsFaced": 24.2406,
+          "goalsMinusXGoalsFaced": -4.2406,
+          "goalsAddedByAction": {
+            "claiming": -0.1153,
+            "fielding": 0.0266,
+            "handling": 0.082,
+            "passing": 1.0243,
+            "shotstopping": 4.2406,
+            "sweeping": 0.0495
+          },
+          "goalsAdded": 5.3077
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -2575,6 +2771,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 6,
+          "goalsConceded": 4,
+          "saves": 2,
+          "xGoalsFaced": 2.6865,
+          "goalsMinusXGoalsFaced": 1.3135,
+          "goalsAddedByAction": {
+            "claiming": 0.0003,
+            "fielding": -0.2499,
+            "handling": 0.0511,
+            "passing": 0.0883,
+            "shotstopping": -1.3135,
+            "sweeping": -0.001
+          },
+          "goalsAdded": -1.4246999999999999
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 44,
+          "goalsConceded": 18,
+          "saves": 24,
+          "xGoalsFaced": 18.2959,
+          "goalsMinusXGoalsFaced": -0.2959,
+          "goalsAddedByAction": {
+            "claiming": -0.1099,
+            "fielding": 0.0384,
+            "handling": 0.0327,
+            "passing": 0.678,
+            "shotstopping": 0.2959,
+            "sweeping": 0.1436
+          },
+          "goalsAdded": 1.0787
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -2611,6 +2843,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 15,
+          "goalsConceded": 7,
+          "saves": 8,
+          "xGoalsFaced": 6.1739,
+          "goalsMinusXGoalsFaced": 0.8261,
+          "goalsAddedByAction": {
+            "claiming": 0.0019,
+            "fielding": 0.0118,
+            "handling": 0.0346,
+            "passing": 0.1683,
+            "shotstopping": -0.8261,
+            "sweeping": 0.1343
+          },
+          "goalsAdded": -0.47519999999999996
+        }
       }
     },
     {
@@ -2640,6 +2891,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 80,
+          "goalsConceded": 22,
+          "saves": 56,
+          "xGoalsFaced": 25.3786,
+          "goalsMinusXGoalsFaced": -3.3786,
+          "goalsAddedByAction": {
+            "claiming": -0.174,
+            "fielding": 0.0432,
+            "handling": -0.4534,
+            "passing": 0.9438,
+            "shotstopping": 3.3786,
+            "sweeping": -0.0809
+          },
+          "goalsAdded": 3.6573
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 48,
+          "goalsConceded": 16,
+          "saves": 29,
+          "xGoalsFaced": 15.9242,
+          "goalsMinusXGoalsFaced": 0.0758,
+          "goalsAddedByAction": {
+            "claiming": -0.1586,
+            "fielding": -0.2649,
+            "handling": -0.3304,
+            "passing": 0.3698,
+            "shotstopping": -0.0758,
+            "sweeping": 0.1361
+          },
+          "goalsAdded": -0.3238
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -3018,6 +3305,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 21,
+          "goalsConceded": 9,
+          "saves": 12,
+          "xGoalsFaced": 6.4304,
+          "goalsMinusXGoalsFaced": 2.5696,
+          "goalsAddedByAction": {
+            "claiming": 0.0046,
+            "fielding": -0.0201,
+            "handling": -0.3897,
+            "passing": 0.1913,
+            "shotstopping": -2.5696,
+            "sweeping": 0.0991
+          },
+          "goalsAdded": -2.6843999999999997
+        }
       }
     },
     {
@@ -4113,6 +4419,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 5,
+          "goalsConceded": 2,
+          "saves": 3,
+          "xGoalsFaced": 2.0894,
+          "goalsMinusXGoalsFaced": -0.0894,
+          "goalsAddedByAction": {
+            "claiming": 0.001,
+            "fielding": -0.0025,
+            "handling": 0.0126,
+            "passing": -0.0701,
+            "shotstopping": 0.0894,
+            "sweeping": 0.0154
+          },
+          "goalsAdded": 0.045799999999999993
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 46,
+          "goalsConceded": 14,
+          "saves": 32,
+          "xGoalsFaced": 13.5279,
+          "goalsMinusXGoalsFaced": 0.4721,
+          "goalsAddedByAction": {
+            "claiming": 0.0099,
+            "fielding": -0.021,
+            "handling": -0.0084,
+            "passing": 0.5592,
+            "shotstopping": -0.4721,
+            "sweeping": 0.0868
+          },
+          "goalsAdded": 0.15439999999999998
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -4489,6 +4831,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 15,
+          "goalsConceded": 4,
+          "saves": 11,
+          "xGoalsFaced": 6.0948,
+          "goalsMinusXGoalsFaced": -2.0948,
+          "goalsAddedByAction": {
+            "claiming": -0.2414,
+            "fielding": 0.0115,
+            "handling": 0.0316,
+            "passing": 0.1459,
+            "shotstopping": 2.0948,
+            "sweeping": 0.0064
+          },
+          "goalsAdded": 2.0488000000000004
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -4642,6 +5003,25 @@
         "xGoals": 0,
         "xAssists": 0.0202,
         "keyPasses": 1
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 135,
+          "goalsConceded": 49,
+          "saves": 85,
+          "xGoalsFaced": 46.167,
+          "goalsMinusXGoalsFaced": 2.833,
+          "goalsAddedByAction": {
+            "claiming": 0.065,
+            "fielding": -0.1053,
+            "handling": 0.1617,
+            "passing": 1.726,
+            "shotstopping": -2.8331,
+            "sweeping": -0.2426
+          },
+          "goalsAdded": -1.2283
+        }
       }
     },
     {
@@ -4693,6 +5073,42 @@
         "xGoals": 0,
         "xAssists": 0.1374,
         "keyPasses": 2
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 122,
+          "goalsConceded": 34,
+          "saves": 88,
+          "xGoalsFaced": 39.3345,
+          "goalsMinusXGoalsFaced": -5.3345,
+          "goalsAddedByAction": {
+            "claiming": -0.0975,
+            "fielding": 0.0688,
+            "handling": -1.0579,
+            "passing": 1.2873,
+            "shotstopping": 5.3345,
+            "sweeping": 0.0257
+          },
+          "goalsAdded": 5.5609
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 183,
+          "goalsConceded": 48,
+          "saves": 133,
+          "xGoalsFaced": 50.2775,
+          "goalsMinusXGoalsFaced": -2.2775,
+          "goalsAddedByAction": {
+            "claiming": 0.251,
+            "fielding": 0.1896,
+            "handling": 0.1144,
+            "passing": 2.8012,
+            "shotstopping": 2.2775,
+            "sweeping": 0.2884
+          },
+          "goalsAdded": 5.9221
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -5327,6 +5743,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 64,
+          "goalsConceded": 14,
+          "saves": 50,
+          "xGoalsFaced": 21.7938,
+          "goalsMinusXGoalsFaced": -7.7938,
+          "goalsAddedByAction": {
+            "claiming": -0.1939,
+            "fielding": -0.0252,
+            "handling": -0.0657,
+            "passing": 1.069,
+            "shotstopping": 7.7938,
+            "sweeping": 0.0436
+          },
+          "goalsAdded": 8.6216
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -5808,6 +6243,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 25,
+          "goalsConceded": 7,
+          "saves": 17,
+          "xGoalsFaced": 8.2902,
+          "goalsMinusXGoalsFaced": -1.2902,
+          "goalsAddedByAction": {
+            "claiming": -0.1108,
+            "fielding": -0.0039,
+            "handling": 0.0111,
+            "passing": 0.1395,
+            "shotstopping": 1.2902,
+            "sweeping": 0.0359
+          },
+          "goalsAdded": 1.362
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 137,
+          "goalsConceded": 39,
+          "saves": 91,
+          "xGoalsFaced": 41.9709,
+          "goalsMinusXGoalsFaced": -2.9709,
+          "goalsAddedByAction": {
+            "claiming": 0.0908,
+            "fielding": -0.8594,
+            "handling": -0.6207,
+            "passing": 1.4349,
+            "shotstopping": 2.9709,
+            "sweeping": -0.0758
+          },
+          "goalsAdded": 2.9406999999999996
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -5842,6 +6313,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 8,
+          "goalsConceded": 2,
+          "saves": 5,
+          "xGoalsFaced": 2.1192,
+          "goalsMinusXGoalsFaced": -0.1192,
+          "goalsAddedByAction": {
+            "claiming": 0,
+            "fielding": -0.0002,
+            "handling": -0.2229,
+            "passing": 0.0285,
+            "shotstopping": 0.1192,
+            "sweeping": 0.0038
+          },
+          "goalsAdded": -0.0716
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -6166,6 +6656,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 139,
+          "goalsConceded": 40,
+          "saves": 99,
+          "xGoalsFaced": 48.2008,
+          "goalsMinusXGoalsFaced": -8.2008,
+          "goalsAddedByAction": {
+            "claiming": 0.2902,
+            "fielding": -0.3291,
+            "handling": -0.5548,
+            "passing": 1.8793,
+            "shotstopping": 8.2008,
+            "sweeping": -0.2154
+          },
+          "goalsAdded": 9.270999999999999
+        }
       }
     },
     {
@@ -6695,6 +7204,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 72,
+          "goalsConceded": 22,
+          "saves": 46,
+          "xGoalsFaced": 25.0584,
+          "goalsMinusXGoalsFaced": -3.0584,
+          "goalsAddedByAction": {
+            "claiming": -0.1303,
+            "fielding": -0.1753,
+            "handling": 0.2205,
+            "passing": 0.9971,
+            "shotstopping": 3.0584,
+            "sweeping": 0.2708
+          },
+          "goalsAdded": 4.2412
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 149,
+          "goalsConceded": 52,
+          "saves": 96,
+          "xGoalsFaced": 55.1501,
+          "goalsMinusXGoalsFaced": -3.1501,
+          "goalsAddedByAction": {
+            "claiming": 0.1582,
+            "fielding": -0.0225,
+            "handling": -0.3223,
+            "passing": 1.5638,
+            "shotstopping": 3.1501,
+            "sweeping": -0.2015
+          },
+          "goalsAdded": 4.3258
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -7907,6 +8452,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 67,
+          "goalsConceded": 16,
+          "saves": 50,
+          "xGoalsFaced": 21.234099999999998,
+          "goalsMinusXGoalsFaced": -5.2341,
+          "goalsAddedByAction": {
+            "claiming": 0.083,
+            "fielding": -0.0953,
+            "handling": -0.2993,
+            "passing": 1.0513000000000001,
+            "shotstopping": 5.2341,
+            "sweeping": -0.044199999999999996
+          },
+          "goalsAdded": 5.9296
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 148,
+          "goalsConceded": 48,
+          "saves": 98,
+          "xGoalsFaced": 46.5166,
+          "goalsMinusXGoalsFaced": 1.4834,
+          "goalsAddedByAction": {
+            "claiming": 0.2113,
+            "fielding": -0.4808,
+            "handling": 0.2561,
+            "passing": 1.6964,
+            "shotstopping": -1.4834,
+            "sweeping": -0.0994
+          },
+          "goalsAdded": 0.10019999999999984
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -8633,6 +9214,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 11,
+          "goalsConceded": 2,
+          "saves": 9,
+          "xGoalsFaced": 2.9617,
+          "goalsMinusXGoalsFaced": -0.9617,
+          "goalsAddedByAction": {
+            "claiming": 0.0206,
+            "fielding": 0.0017,
+            "handling": 0.1284,
+            "passing": 0.0881,
+            "shotstopping": 0.9617,
+            "sweeping": 0.0467
+          },
+          "goalsAdded": 1.2471999999999999
+        }
       }
     },
     {
@@ -8818,6 +9418,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 1,
+          "goalsConceded": 1,
+          "saves": 0,
+          "xGoalsFaced": 0.84,
+          "goalsMinusXGoalsFaced": 0.16,
+          "goalsAddedByAction": {
+            "claiming": 0.0082,
+            "fielding": 0.0063,
+            "handling": 0,
+            "passing": 0.0413,
+            "shotstopping": -0.16,
+            "sweeping": 0.0082
+          },
+          "goalsAdded": -0.09599999999999997
+        }
       }
     },
     {
@@ -9035,6 +9654,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 70,
+          "goalsConceded": 28,
+          "saves": 41,
+          "xGoalsFaced": 23.5783,
+          "goalsMinusXGoalsFaced": 4.4217,
+          "goalsAddedByAction": {
+            "claiming": 0.0632,
+            "fielding": -0.2449,
+            "handling": -0.4605,
+            "passing": 1.0725,
+            "shotstopping": -4.4217,
+            "sweeping": -0.3045
+          },
+          "goalsAdded": -4.2959000000000005
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 164,
+          "goalsConceded": 35,
+          "saves": 122,
+          "xGoalsFaced": 43.7543,
+          "goalsMinusXGoalsFaced": -8.7543,
+          "goalsAddedByAction": {
+            "claiming": 0.1133,
+            "fielding": 0.0404,
+            "handling": 0.1307,
+            "passing": 2.4256,
+            "shotstopping": 8.7543,
+            "sweeping": -0.0541
+          },
+          "goalsAdded": 11.410200000000001
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -10263,6 +10918,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 81,
+          "goalsConceded": 25,
+          "saves": 55,
+          "xGoalsFaced": 28.0004,
+          "goalsMinusXGoalsFaced": -3.0004,
+          "goalsAddedByAction": {
+            "claiming": 0.0255,
+            "fielding": -0.0154,
+            "handling": -1.3586,
+            "passing": 0.8249,
+            "shotstopping": 3.0004,
+            "sweeping": -0.8037
+          },
+          "goalsAdded": 1.6730999999999998
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 13,
+          "goalsConceded": 5,
+          "saves": 8,
+          "xGoalsFaced": 4.8755,
+          "goalsMinusXGoalsFaced": 0.1245,
+          "goalsAddedByAction": {
+            "claiming": 0,
+            "fielding": -0.0111,
+            "handling": -0.101,
+            "passing": 0.1358,
+            "shotstopping": -0.1245,
+            "sweeping": 0.0132
+          },
+          "goalsAdded": -0.08760000000000001
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -10397,6 +11088,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 64,
+          "goalsConceded": 19,
+          "saves": 40,
+          "xGoalsFaced": 18.6449,
+          "goalsMinusXGoalsFaced": 0.3551,
+          "goalsAddedByAction": {
+            "claiming": -0.0207,
+            "fielding": 0.1114,
+            "handling": -0.1164,
+            "passing": 0.4066,
+            "shotstopping": -0.3551,
+            "sweeping": 0.2343
+          },
+          "goalsAdded": 0.2601
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 0,
+          "goalsConceded": 0,
+          "saves": 0,
+          "xGoalsFaced": 0,
+          "goalsMinusXGoalsFaced": 0,
+          "goalsAddedByAction": {
+            "claiming": 0,
+            "fielding": 0.0006,
+            "handling": 0,
+            "passing": 0.0211,
+            "shotstopping": 0,
+            "sweeping": 0.2483
+          },
+          "goalsAdded": 0.27
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -10712,6 +11439,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 2,
+          "goalsConceded": 0,
+          "saves": 2,
+          "xGoalsFaced": 0.7849,
+          "goalsMinusXGoalsFaced": -0.7849,
+          "goalsAddedByAction": {
+            "claiming": 0,
+            "fielding": -0.0018,
+            "handling": -0.0446,
+            "passing": 0.0236,
+            "shotstopping": 0.7849,
+            "sweeping": 0.0374
+          },
+          "goalsAdded": 0.7995
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 26,
+          "goalsConceded": 13,
+          "saves": 13,
+          "xGoalsFaced": 7.8657,
+          "goalsMinusXGoalsFaced": 5.1343,
+          "goalsAddedByAction": {
+            "claiming": 0.0041,
+            "fielding": -0.255,
+            "handling": 0.0397,
+            "passing": 0.3703,
+            "shotstopping": -5.1343,
+            "sweeping": 0.1656
+          },
+          "goalsAdded": -4.809599999999999
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -12012,6 +12775,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 104,
+          "goalsConceded": 39,
+          "saves": 61,
+          "xGoalsFaced": 36.8914,
+          "goalsMinusXGoalsFaced": 2.1086,
+          "goalsAddedByAction": {
+            "claiming": -0.3774,
+            "fielding": 0.1218,
+            "handling": -0.4287,
+            "passing": 1.139,
+            "shotstopping": -2.1086,
+            "sweeping": 0.7936
+          },
+          "goalsAdded": -0.8603000000000003
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -12087,6 +12869,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 16,
+          "goalsConceded": 5,
+          "saves": 10,
+          "xGoalsFaced": 3.6344,
+          "goalsMinusXGoalsFaced": 1.3656,
+          "goalsAddedByAction": {
+            "claiming": 0.0249,
+            "fielding": 0.0482,
+            "handling": 0.0223,
+            "passing": 0.3568,
+            "shotstopping": -1.3656,
+            "sweeping": -0.0419
+          },
+          "goalsAdded": -0.9553
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -12127,6 +12928,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 13,
+          "goalsConceded": 6,
+          "saves": 7,
+          "xGoalsFaced": 3.9776,
+          "goalsMinusXGoalsFaced": 2.0224,
+          "goalsAddedByAction": {
+            "claiming": 0.0015,
+            "fielding": 0.0271,
+            "handling": 0.0466,
+            "passing": 0.1857,
+            "shotstopping": -2.0224,
+            "sweeping": 0.0449
+          },
+          "goalsAdded": -1.7166000000000003
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 21,
+          "goalsConceded": 4,
+          "saves": 16,
+          "xGoalsFaced": 5.4826,
+          "goalsMinusXGoalsFaced": -1.4826,
+          "goalsAddedByAction": {
+            "claiming": 0.0296,
+            "fielding": -0.0055,
+            "handling": -0.0046,
+            "passing": 0.2644,
+            "shotstopping": 1.4826,
+            "sweeping": 0.2662
+          },
+          "goalsAdded": 2.0327
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -14669,6 +15506,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 58,
+          "goalsConceded": 13,
+          "saves": 44,
+          "xGoalsFaced": 16.1055,
+          "goalsMinusXGoalsFaced": -3.1055,
+          "goalsAddedByAction": {
+            "claiming": -0.4931,
+            "fielding": -0.0001,
+            "handling": -0.6028,
+            "passing": 0.5402,
+            "shotstopping": 3.1055,
+            "sweeping": 0.1085
+          },
+          "goalsAdded": 2.6582000000000003
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 115,
+          "goalsConceded": 36,
+          "saves": 77,
+          "xGoalsFaced": 36.2103,
+          "goalsMinusXGoalsFaced": -0.2103,
+          "goalsAddedByAction": {
+            "claiming": -0.2168,
+            "fielding": -0.2848,
+            "handling": -0.3876,
+            "passing": 1.5866,
+            "shotstopping": 0.2103,
+            "sweeping": -0.1134
+          },
+          "goalsAdded": 0.7943
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -15453,6 +16326,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 3,
+          "goalsConceded": 2,
+          "saves": 1,
+          "xGoalsFaced": 0.8114,
+          "goalsMinusXGoalsFaced": 1.1886,
+          "goalsAddedByAction": {
+            "claiming": 0.0004,
+            "fielding": -0.0099,
+            "handling": 0.0088,
+            "passing": 0.0711,
+            "shotstopping": -1.1886,
+            "sweeping": 0.5084
+          },
+          "goalsAdded": -0.6098000000000003
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -15705,6 +16597,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 72,
+          "goalsConceded": 18,
+          "saves": 52,
+          "xGoalsFaced": 22.6066,
+          "goalsMinusXGoalsFaced": -4.6066,
+          "goalsAddedByAction": {
+            "claiming": -0.0143,
+            "fielding": 0.0899,
+            "handling": -0.0177,
+            "passing": 0.9427,
+            "shotstopping": 4.6066,
+            "sweeping": -0.1434
+          },
+          "goalsAdded": 5.4638
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 8,
+          "goalsConceded": 3,
+          "saves": 4,
+          "xGoalsFaced": 2.0725,
+          "goalsMinusXGoalsFaced": 0.9275,
+          "goalsAddedByAction": {
+            "claiming": 0.0126,
+            "fielding": 0.0092,
+            "handling": 0.074,
+            "passing": 0.2465,
+            "shotstopping": -0.9275,
+            "sweeping": 0.0141
+          },
+          "goalsAdded": -0.5710999999999999
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -16294,6 +17222,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 13,
+          "goalsConceded": 2,
+          "saves": 11,
+          "xGoalsFaced": 2.1405,
+          "goalsMinusXGoalsFaced": -0.1405,
+          "goalsAddedByAction": {
+            "claiming": 0.0476,
+            "fielding": -0.0048,
+            "handling": 0.0871,
+            "passing": 0.2531,
+            "shotstopping": 0.1405,
+            "sweeping": 0.9406
+          },
+          "goalsAdded": 1.4641000000000002
+        }
       }
     },
     {
@@ -16770,6 +17717,42 @@
         "xAssists": 0.0314,
         "keyPasses": 1
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 113,
+          "goalsConceded": 33,
+          "saves": 77,
+          "xGoalsFaced": 37.2262,
+          "goalsMinusXGoalsFaced": -4.2262,
+          "goalsAddedByAction": {
+            "claiming": 0.0017,
+            "fielding": 0.0011,
+            "handling": -0.1281,
+            "passing": 0.8232,
+            "shotstopping": 4.2262,
+            "sweeping": 0.3243
+          },
+          "goalsAdded": 5.2484
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 123,
+          "goalsConceded": 34,
+          "saves": 89,
+          "xGoalsFaced": 36.2864,
+          "goalsMinusXGoalsFaced": -2.2864,
+          "goalsAddedByAction": {
+            "claiming": 0.1063,
+            "fielding": 0.0717,
+            "handling": -0.6999,
+            "passing": 1.9405,
+            "shotstopping": 2.2864,
+            "sweeping": 0.5001
+          },
+          "goalsAdded": 4.2051
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -17147,6 +18130,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 6,
+          "goalsConceded": 1,
+          "saves": 4,
+          "xGoalsFaced": 0.6517,
+          "goalsMinusXGoalsFaced": 0.3483,
+          "goalsAddedByAction": {
+            "claiming": -0.0331,
+            "fielding": 0.0104,
+            "handling": 0.0293,
+            "passing": 0.076,
+            "shotstopping": -0.3483,
+            "sweeping": 0.1723
+          },
+          "goalsAdded": -0.09339999999999998
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 7,
+          "goalsConceded": 2,
+          "saves": 5,
+          "xGoalsFaced": 1.9018,
+          "goalsMinusXGoalsFaced": 0.0982,
+          "goalsAddedByAction": {
+            "claiming": 0.0108,
+            "fielding": 0.0084,
+            "handling": -0.0034,
+            "passing": 0.0424,
+            "shotstopping": -0.0982,
+            "sweeping": 0.0111
+          },
+          "goalsAdded": -0.028899999999999988
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -17205,6 +18224,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 45,
+          "goalsConceded": 14,
+          "saves": 31,
+          "xGoalsFaced": 12.798,
+          "goalsMinusXGoalsFaced": 1.202,
+          "goalsAddedByAction": {
+            "claiming": -0.0919,
+            "fielding": 0.0083,
+            "handling": 0.2666,
+            "passing": 0.429,
+            "shotstopping": -1.202,
+            "sweeping": 0.1334
+          },
+          "goalsAdded": -0.4566000000000002
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -17478,6 +18516,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 20,
+          "goalsConceded": 11,
+          "saves": 9,
+          "xGoalsFaced": 6.6084,
+          "goalsMinusXGoalsFaced": 4.3916,
+          "goalsAddedByAction": {
+            "claiming": 0.0774,
+            "fielding": -0.3473,
+            "handling": -0.0813,
+            "passing": 0.2692,
+            "shotstopping": -4.3916,
+            "sweeping": -0.2792
+          },
+          "goalsAdded": -4.752800000000001
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -17944,6 +19001,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 3,
+          "goalsConceded": 0,
+          "saves": 3,
+          "xGoalsFaced": 0.6514,
+          "goalsMinusXGoalsFaced": -0.6514,
+          "goalsAddedByAction": {
+            "claiming": 0.002,
+            "fielding": 0.0044,
+            "handling": 0.0254,
+            "passing": 0.0308,
+            "shotstopping": 0.6514,
+            "sweeping": -0.0461
+          },
+          "goalsAdded": 0.6678999999999999
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 5,
+          "goalsConceded": 1,
+          "saves": 4,
+          "xGoalsFaced": 0.6656,
+          "goalsMinusXGoalsFaced": 0.3344,
+          "goalsAddedByAction": {
+            "claiming": 0.0037,
+            "fielding": 0.0031,
+            "handling": -0.0607,
+            "passing": 0.0875,
+            "shotstopping": -0.3344,
+            "sweeping": 0.0452
+          },
+          "goalsAdded": -0.25559999999999994
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -18158,6 +19251,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 154,
+          "goalsConceded": 52,
+          "saves": 98,
+          "xGoalsFaced": 51.4141,
+          "goalsMinusXGoalsFaced": 0.5859,
+          "goalsAddedByAction": {
+            "claiming": -0.5716,
+            "fielding": 0.1706,
+            "handling": -0.0309,
+            "passing": 1.8111,
+            "shotstopping": -0.5859,
+            "sweeping": -0.0279
+          },
+          "goalsAdded": 0.7654000000000001
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -18281,6 +19393,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 64,
+          "goalsConceded": 27,
+          "saves": 35,
+          "xGoalsFaced": 22.3705,
+          "goalsMinusXGoalsFaced": 4.6295,
+          "goalsAddedByAction": {
+            "claiming": 0.09169999999999999,
+            "fielding": 0.0576,
+            "handling": 0.1729,
+            "passing": 0.2135,
+            "shotstopping": -4.6295,
+            "sweeping": -0.3425
+          },
+          "goalsAdded": -4.4363
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -18371,6 +19502,42 @@
         "xGoals": 0,
         "xAssists": 0.3526,
         "keyPasses": 2
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 52,
+          "goalsConceded": 25,
+          "saves": 26,
+          "xGoalsFaced": 20.369,
+          "goalsMinusXGoalsFaced": 4.631,
+          "goalsAddedByAction": {
+            "claiming": 0.0827,
+            "fielding": -0.43,
+            "handling": -0.426,
+            "passing": 0.3572,
+            "shotstopping": -4.631,
+            "sweeping": -0.4031
+          },
+          "goalsAdded": -5.450200000000001
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 199,
+          "goalsConceded": 68,
+          "saves": 119,
+          "xGoalsFaced": 59.9452,
+          "goalsMinusXGoalsFaced": 8.0548,
+          "goalsAddedByAction": {
+            "claiming": 0.0159,
+            "fielding": -0.5112,
+            "handling": -0.059,
+            "passing": 2.0817,
+            "shotstopping": -8.0548,
+            "sweeping": -0.0804
+          },
+          "goalsAdded": -6.607799999999999
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -18596,6 +19763,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 67,
+          "goalsConceded": 21,
+          "saves": 45,
+          "xGoalsFaced": 19.512,
+          "goalsMinusXGoalsFaced": 1.488,
+          "goalsAddedByAction": {
+            "claiming": 0.0658,
+            "fielding": -0.0277,
+            "handling": -0.439,
+            "passing": 0.9906,
+            "shotstopping": -1.488,
+            "sweeping": 0.0385
+          },
+          "goalsAdded": -0.8598
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 110,
+          "goalsConceded": 43,
+          "saves": 66,
+          "xGoalsFaced": 35.5864,
+          "goalsMinusXGoalsFaced": 7.4136,
+          "goalsAddedByAction": {
+            "claiming": 0.0778,
+            "fielding": -0.6525,
+            "handling": 0.1315,
+            "passing": 1.2737,
+            "shotstopping": -7.4136,
+            "sweeping": 0.104
+          },
+          "goalsAdded": -6.479100000000001
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -18861,6 +20064,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 26,
+          "goalsConceded": 4,
+          "saves": 22,
+          "xGoalsFaced": 4.8437,
+          "goalsMinusXGoalsFaced": -0.8437,
+          "goalsAddedByAction": {
+            "claiming": 0.126,
+            "fielding": -0.001,
+            "handling": 0.0813,
+            "passing": 0.2591,
+            "shotstopping": 0.8437,
+            "sweeping": -0.0001
+          },
+          "goalsAdded": 1.309
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 115,
+          "goalsConceded": 39,
+          "saves": 74,
+          "xGoalsFaced": 35.6852,
+          "goalsMinusXGoalsFaced": 3.3148,
+          "goalsAddedByAction": {
+            "claiming": -0.5713,
+            "fielding": 0.1817,
+            "handling": -0.408,
+            "passing": 1.5029,
+            "shotstopping": -3.3148,
+            "sweeping": 0.2346
+          },
+          "goalsAdded": -2.3749000000000002
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -18938,6 +20177,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 14,
+          "goalsConceded": 6,
+          "saves": 7,
+          "xGoalsFaced": 4.8085,
+          "goalsMinusXGoalsFaced": 1.1915,
+          "goalsAddedByAction": {
+            "claiming": -0.0345,
+            "fielding": -0.1596,
+            "handling": 0.057,
+            "passing": 0.1259,
+            "shotstopping": -1.1915,
+            "sweeping": 0.1255
+          },
+          "goalsAdded": -1.0772
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -21445,6 +22703,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 42,
+          "goalsConceded": 19,
+          "saves": 23,
+          "xGoalsFaced": 16.8052,
+          "goalsMinusXGoalsFaced": 2.1948,
+          "goalsAddedByAction": {
+            "claiming": 0.0102,
+            "fielding": 0.0043,
+            "handling": -0.1353,
+            "passing": 0.7801,
+            "shotstopping": -2.1948,
+            "sweeping": -0.0337
+          },
+          "goalsAdded": -1.5691999999999995
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -21751,6 +23028,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 96,
+          "goalsConceded": 26,
+          "saves": 70,
+          "xGoalsFaced": 24.9003,
+          "goalsMinusXGoalsFaced": 1.0997,
+          "goalsAddedByAction": {
+            "claiming": -0.214,
+            "fielding": -0.2614,
+            "handling": -0.1119,
+            "passing": 1.2555,
+            "shotstopping": -1.0997,
+            "sweeping": -0.1202
+          },
+          "goalsAdded": -0.5516999999999999
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 187,
+          "goalsConceded": 48,
+          "saves": 136,
+          "xGoalsFaced": 54.2604,
+          "goalsMinusXGoalsFaced": -6.2604,
+          "goalsAddedByAction": {
+            "claiming": 0.0745,
+            "fielding": -0.2304,
+            "handling": 0.1664,
+            "passing": 2.036,
+            "shotstopping": 6.2603,
+            "sweeping": -0.7213
+          },
+          "goalsAdded": 7.5855
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -23298,6 +24611,25 @@
         "xAssists": 0.3775,
         "keyPasses": 1
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 83,
+          "goalsConceded": 33,
+          "saves": 49,
+          "xGoalsFaced": 29.743,
+          "goalsMinusXGoalsFaced": 3.257,
+          "goalsAddedByAction": {
+            "claiming": 0.1249,
+            "fielding": 0.0448,
+            "handling": -0.4114,
+            "passing": 1.1833,
+            "shotstopping": -3.257,
+            "sweeping": 0.2334
+          },
+          "goalsAdded": -2.0820000000000003
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -23423,6 +24755,25 @@
         "xGoals": 0,
         "xAssists": 0.1684,
         "keyPasses": 2
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 122,
+          "goalsConceded": 39,
+          "saves": 83,
+          "xGoalsFaced": 35.809,
+          "goalsMinusXGoalsFaced": 3.191,
+          "goalsAddedByAction": {
+            "claiming": -0.0404,
+            "fielding": -0.3373,
+            "handling": 0.169,
+            "passing": 1.3189,
+            "shotstopping": -3.191,
+            "sweeping": -0.0735
+          },
+          "goalsAdded": -2.1543
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -23592,6 +24943,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 83,
+          "goalsConceded": 31,
+          "saves": 50,
+          "xGoalsFaced": 27.3225,
+          "goalsMinusXGoalsFaced": 3.6775,
+          "goalsAddedByAction": {
+            "claiming": 0.029,
+            "fielding": 0.4007,
+            "handling": 0.0009,
+            "passing": 0.9929,
+            "shotstopping": -3.6775,
+            "sweeping": 0.2024
+          },
+          "goalsAdded": -2.0516
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 9,
+          "goalsConceded": 3,
+          "saves": 6,
+          "xGoalsFaced": 1.4278,
+          "goalsMinusXGoalsFaced": 1.5722,
+          "goalsAddedByAction": {
+            "claiming": 0.0349,
+            "fielding": 0.0007,
+            "handling": -0.0689,
+            "passing": 0.1819,
+            "shotstopping": -1.5722,
+            "sweeping": -0.1642
+          },
+          "goalsAdded": -1.5878000000000003
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -23813,6 +25200,25 @@
         "xGoals": 0,
         "xAssists": 0.0214,
         "keyPasses": 1
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 107,
+          "goalsConceded": 43,
+          "saves": 62,
+          "xGoalsFaced": 40.5192,
+          "goalsMinusXGoalsFaced": 2.4809,
+          "goalsAddedByAction": {
+            "claiming": 0.1842,
+            "fielding": -0.1873,
+            "handling": -0.3916,
+            "passing": 1.2441,
+            "shotstopping": -2.4809,
+            "sweeping": -0.2486
+          },
+          "goalsAdded": -1.8801
+        }
       }
     },
     {
@@ -25220,6 +26626,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 87,
+          "goalsConceded": 24,
+          "saves": 61,
+          "xGoalsFaced": 25.5052,
+          "goalsMinusXGoalsFaced": -1.5052,
+          "goalsAddedByAction": {
+            "claiming": 0.0137,
+            "fielding": 0.0577,
+            "handling": -0.7375,
+            "passing": 0.5612,
+            "shotstopping": 1.5052,
+            "sweeping": 0.0267
+          },
+          "goalsAdded": 1.427
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 150,
+          "goalsConceded": 45,
+          "saves": 105,
+          "xGoalsFaced": 46.6815,
+          "goalsMinusXGoalsFaced": -1.6815,
+          "goalsAddedByAction": {
+            "claiming": 0.2636,
+            "fielding": 0.0962,
+            "handling": 0.4971,
+            "passing": 1.6536,
+            "shotstopping": 1.6815,
+            "sweeping": 0.0454
+          },
+          "goalsAdded": 4.2374
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -25348,6 +26790,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 95,
+          "goalsConceded": 20,
+          "saves": 72,
+          "xGoalsFaced": 29.0405,
+          "goalsMinusXGoalsFaced": -9.0405,
+          "goalsAddedByAction": {
+            "claiming": 0.1046,
+            "fielding": -0.3923,
+            "handling": -0.4627,
+            "passing": 1.0838,
+            "shotstopping": 9.0405,
+            "sweeping": 0.4528
+          },
+          "goalsAdded": 9.8267
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 52,
+          "goalsConceded": 15,
+          "saves": 37,
+          "xGoalsFaced": 18.9409,
+          "goalsMinusXGoalsFaced": -3.9409,
+          "goalsAddedByAction": {
+            "claiming": -0.1312,
+            "fielding": 0.1274,
+            "handling": 0.0996,
+            "passing": 0.675,
+            "shotstopping": 3.9409,
+            "sweeping": 0.0731
+          },
+          "goalsAdded": 4.784800000000001
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -26030,6 +27508,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 123,
+          "goalsConceded": 45,
+          "saves": 76,
+          "xGoalsFaced": 44.8553,
+          "goalsMinusXGoalsFaced": 0.1447,
+          "goalsAddedByAction": {
+            "claiming": 0.0295,
+            "fielding": 0.0639,
+            "handling": -0.8018,
+            "passing": 0.5829,
+            "shotstopping": -0.1447,
+            "sweeping": 0.0794
+          },
+          "goalsAdded": -0.19079999999999997
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 71,
+          "goalsConceded": 22,
+          "saves": 49,
+          "xGoalsFaced": 20.8153,
+          "goalsMinusXGoalsFaced": 1.1847,
+          "goalsAddedByAction": {
+            "claiming": -0.0914,
+            "fielding": -0.0005,
+            "handling": 0.0001,
+            "passing": 1.0896,
+            "shotstopping": -1.1847,
+            "sweeping": -0.0505
+          },
+          "goalsAdded": -0.23740000000000006
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -26464,6 +27978,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 50,
+          "goalsConceded": 18,
+          "saves": 31,
+          "xGoalsFaced": 18.1267,
+          "goalsMinusXGoalsFaced": -0.1266,
+          "goalsAddedByAction": {
+            "claiming": 0.084,
+            "fielding": 0.0132,
+            "handling": -0.758,
+            "passing": 0.6882,
+            "shotstopping": 0.1266,
+            "sweeping": -0.3503
+          },
+          "goalsAdded": -0.1962999999999998
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 62,
+          "goalsConceded": 13,
+          "saves": 48,
+          "xGoalsFaced": 19.0108,
+          "goalsMinusXGoalsFaced": -6.0108,
+          "goalsAddedByAction": {
+            "claiming": 0.0691,
+            "fielding": -0.0581,
+            "handling": 0.5419,
+            "passing": 0.7607,
+            "shotstopping": 6.0108,
+            "sweeping": 0.2861
+          },
+          "goalsAdded": 7.6105
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -27863,6 +29413,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 23,
+          "goalsConceded": 10,
+          "saves": 13,
+          "xGoalsFaced": 9.8464,
+          "goalsMinusXGoalsFaced": 0.1536,
+          "goalsAddedByAction": {
+            "claiming": 0.0046,
+            "fielding": -0.0083,
+            "handling": 0.156,
+            "passing": 0.1367,
+            "shotstopping": -0.1536,
+            "sweeping": 0.0019
+          },
+          "goalsAdded": 0.1373
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -28230,6 +29799,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 36,
+          "goalsConceded": 10,
+          "saves": 25,
+          "xGoalsFaced": 10.296,
+          "goalsMinusXGoalsFaced": -0.296,
+          "goalsAddedByAction": {
+            "claiming": -0.0706,
+            "fielding": 0.0776,
+            "handling": -0.2535,
+            "passing": 0.4313,
+            "shotstopping": 0.296,
+            "sweeping": -0.2054
+          },
+          "goalsAdded": 0.27540000000000003
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 46,
+          "goalsConceded": 12,
+          "saves": 34,
+          "xGoalsFaced": 15.9191,
+          "goalsMinusXGoalsFaced": -3.9191,
+          "goalsAddedByAction": {
+            "claiming": 0.0787,
+            "fielding": -0.0018,
+            "handling": -0.7582,
+            "passing": 0.6029,
+            "shotstopping": 3.9191,
+            "sweeping": -0.0828
+          },
+          "goalsAdded": 3.7579
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -29114,6 +30719,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 17,
+          "goalsConceded": 10,
+          "saves": 7,
+          "xGoalsFaced": 7.6007,
+          "goalsMinusXGoalsFaced": 2.3993,
+          "goalsAddedByAction": {
+            "claiming": 0.0017,
+            "fielding": 0.02,
+            "handling": 0.0405,
+            "passing": 0.1527,
+            "shotstopping": -2.3993,
+            "sweeping": 0.0279
+          },
+          "goalsAdded": -2.1565000000000003
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 100,
+          "goalsConceded": 36,
+          "saves": 63,
+          "xGoalsFaced": 34.1029,
+          "goalsMinusXGoalsFaced": 1.8971,
+          "goalsAddedByAction": {
+            "claiming": -0.2867,
+            "fielding": 0.0304,
+            "handling": -0.7833,
+            "passing": 0.821,
+            "shotstopping": -1.8971,
+            "sweeping": -0.2434
+          },
+          "goalsAdded": -2.3590999999999998
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -30333,6 +31974,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 8,
+          "goalsConceded": 3,
+          "saves": 5,
+          "xGoalsFaced": 3.3819,
+          "goalsMinusXGoalsFaced": -0.3819,
+          "goalsAddedByAction": {
+            "claiming": 0.0026,
+            "fielding": -0.2599,
+            "handling": -0.1312,
+            "passing": 0.0163,
+            "shotstopping": 0.3819,
+            "sweeping": -0.0114
+          },
+          "goalsAdded": -0.0017000000000000348
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 30,
+          "goalsConceded": 5,
+          "saves": 22,
+          "xGoalsFaced": 8.0567,
+          "goalsMinusXGoalsFaced": -3.0567,
+          "goalsAddedByAction": {
+            "claiming": 0.0394,
+            "fielding": 0.0059,
+            "handling": -0.1069,
+            "passing": 0.2931,
+            "shotstopping": 3.0567,
+            "sweeping": 0.1636
+          },
+          "goalsAdded": 3.4518000000000004
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -30439,6 +32116,42 @@
         "xGoals": 0,
         "xAssists": 0.5546,
         "keyPasses": 4
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 75,
+          "goalsConceded": 28,
+          "saves": 44,
+          "xGoalsFaced": 27.276,
+          "goalsMinusXGoalsFaced": 0.724,
+          "goalsAddedByAction": {
+            "claiming": 0.0288,
+            "fielding": -0.1198,
+            "handling": -0.0618,
+            "passing": 1.0467,
+            "shotstopping": -0.724,
+            "sweeping": -0.0924
+          },
+          "goalsAdded": 0.07750000000000001
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 108,
+          "goalsConceded": 38,
+          "saves": 70,
+          "xGoalsFaced": 38.5559,
+          "goalsMinusXGoalsFaced": -0.5559,
+          "goalsAddedByAction": {
+            "claiming": 0.0022,
+            "fielding": 0.0823,
+            "handling": 0.3189,
+            "passing": 2.0794,
+            "shotstopping": 0.5559,
+            "sweeping": -0.5945
+          },
+          "goalsAdded": 2.4442
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -30931,6 +32644,25 @@
         "xGoals": 0,
         "xAssists": 0.5077,
         "keyPasses": 2
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 165,
+          "goalsConceded": 51,
+          "saves": 111,
+          "xGoalsFaced": 52.5082,
+          "goalsMinusXGoalsFaced": -1.5082,
+          "goalsAddedByAction": {
+            "claiming": 0.0762,
+            "fielding": 0.1112,
+            "handling": 0.045,
+            "passing": 1.4712,
+            "shotstopping": 1.5082,
+            "sweeping": -0.6141
+          },
+          "goalsAdded": 2.5977
+        }
       }
     },
     {
@@ -31683,6 +33415,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 76,
+          "goalsConceded": 24,
+          "saves": 51,
+          "xGoalsFaced": 25.8343,
+          "goalsMinusXGoalsFaced": -1.8343,
+          "goalsAddedByAction": {
+            "claiming": 0.1073,
+            "fielding": 0.186,
+            "handling": -0.3248,
+            "passing": 0.8995,
+            "shotstopping": 1.8343,
+            "sweeping": 0.1138
+          },
+          "goalsAdded": 2.8161
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 153,
+          "goalsConceded": 50,
+          "saves": 100,
+          "xGoalsFaced": 52.388,
+          "goalsMinusXGoalsFaced": -2.3881,
+          "goalsAddedByAction": {
+            "claiming": 0.0824,
+            "fielding": 0.0313,
+            "handling": -0.5622,
+            "passing": 2.5331,
+            "shotstopping": 2.388,
+            "sweeping": 0.185
+          },
+          "goalsAdded": 4.6576
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -32810,6 +34578,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 14,
+          "goalsConceded": 2,
+          "saves": 12,
+          "xGoalsFaced": 4.9305,
+          "goalsMinusXGoalsFaced": -2.9305,
+          "goalsAddedByAction": {
+            "claiming": 0.0129,
+            "fielding": 0.0119,
+            "handling": -0.0065,
+            "passing": 0.2851,
+            "shotstopping": 2.9305,
+            "sweeping": 0.3556
+          },
+          "goalsAdded": 3.5895
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 56,
+          "goalsConceded": 14,
+          "saves": 41,
+          "xGoalsFaced": 16.0735,
+          "goalsMinusXGoalsFaced": -2.0735,
+          "goalsAddedByAction": {
+            "claiming": -0.0181,
+            "fielding": -0.2232,
+            "handling": -0.1406,
+            "passing": 0.9282,
+            "shotstopping": 2.0735,
+            "sweeping": -0.028
+          },
+          "goalsAdded": 2.5918
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -32964,6 +34768,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 65,
+          "goalsConceded": 22,
+          "saves": 43,
+          "xGoalsFaced": 21.6586,
+          "goalsMinusXGoalsFaced": 0.3414,
+          "goalsAddedByAction": {
+            "claiming": 0.0412,
+            "fielding": 0.0001,
+            "handling": -0.0655,
+            "passing": 0.9887,
+            "shotstopping": -0.3414,
+            "sweeping": 0.0244
+          },
+          "goalsAdded": 0.6475
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 133,
+          "goalsConceded": 42,
+          "saves": 89,
+          "xGoalsFaced": 42.8071,
+          "goalsMinusXGoalsFaced": -0.8071,
+          "goalsAddedByAction": {
+            "claiming": 0.1173,
+            "fielding": 0.1562,
+            "handling": -1.062,
+            "passing": 2.0785,
+            "shotstopping": 0.8071,
+            "sweeping": 0.0186
+          },
+          "goalsAdded": 2.1157
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -33009,6 +34849,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 93,
+          "goalsConceded": 35,
+          "saves": 57,
+          "xGoalsFaced": 33.1873,
+          "goalsMinusXGoalsFaced": 1.8127,
+          "goalsAddedByAction": {
+            "claiming": -0.7745,
+            "fielding": 0.0233,
+            "handling": -0.5345,
+            "passing": 0.6757,
+            "shotstopping": -1.8127,
+            "sweeping": -0.233
+          },
+          "goalsAdded": -2.6557000000000004
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 148,
+          "goalsConceded": 43,
+          "saves": 101,
+          "xGoalsFaced": 45.1783,
+          "goalsMinusXGoalsFaced": -2.1783,
+          "goalsAddedByAction": {
+            "claiming": -0.0619,
+            "fielding": -0.0758,
+            "handling": -0.245,
+            "passing": 1.6381,
+            "shotstopping": 2.1783,
+            "sweeping": -1.3497
+          },
+          "goalsAdded": 2.0839999999999996
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -34229,6 +36105,42 @@
         "xAssists": 0.1199,
         "keyPasses": 1
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 91,
+          "goalsConceded": 29,
+          "saves": 60,
+          "xGoalsFaced": 29.8881,
+          "goalsMinusXGoalsFaced": -0.8881,
+          "goalsAddedByAction": {
+            "claiming": 0.151,
+            "fielding": -0.0218,
+            "handling": -0.5397,
+            "passing": 0.7226,
+            "shotstopping": 0.8881,
+            "sweeping": -0.0969
+          },
+          "goalsAdded": 1.1033
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 156,
+          "goalsConceded": 41,
+          "saves": 111,
+          "xGoalsFaced": 49.2825,
+          "goalsMinusXGoalsFaced": -8.2825,
+          "goalsAddedByAction": {
+            "claiming": 0.1604,
+            "fielding": -0.127,
+            "handling": -0.5332,
+            "passing": 1.4557,
+            "shotstopping": 8.2825,
+            "sweeping": -0.0718
+          },
+          "goalsAdded": 9.1666
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -34401,6 +36313,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 8,
+          "goalsConceded": 4,
+          "saves": 4,
+          "xGoalsFaced": 4.6583,
+          "goalsMinusXGoalsFaced": -0.6583,
+          "goalsAddedByAction": {
+            "claiming": 0.0034,
+            "fielding": 0.0052,
+            "handling": -0.0312,
+            "passing": 0.1251,
+            "shotstopping": 0.6583,
+            "sweeping": 0.0906
+          },
+          "goalsAdded": 0.8513999999999999
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 20,
+          "goalsConceded": 9,
+          "saves": 11,
+          "xGoalsFaced": 7.3291,
+          "goalsMinusXGoalsFaced": 1.6709,
+          "goalsAddedByAction": {
+            "claiming": 0.0273,
+            "fielding": 0.0117,
+            "handling": 0.0621,
+            "passing": 0.1633,
+            "shotstopping": -1.6709,
+            "sweeping": 0.0539
+          },
+          "goalsAdded": -1.3525999999999998
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -35524,6 +37472,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 53,
+          "goalsConceded": 20,
+          "saves": 30,
+          "xGoalsFaced": 17.5506,
+          "goalsMinusXGoalsFaced": 2.4494,
+          "goalsAddedByAction": {
+            "claiming": -0.2568,
+            "fielding": -0.0192,
+            "handling": -0.0478,
+            "passing": 0.4011,
+            "shotstopping": -2.4494,
+            "sweeping": -0.1249
+          },
+          "goalsAdded": -2.497
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -35558,6 +37525,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 118,
+          "goalsConceded": 33,
+          "saves": 83,
+          "xGoalsFaced": 31.5257,
+          "goalsMinusXGoalsFaced": 1.4743,
+          "goalsAddedByAction": {
+            "claiming": 0.1567,
+            "fielding": -0.1212,
+            "handling": 0.1724,
+            "passing": 1.2974,
+            "shotstopping": -1.4743,
+            "sweeping": 0.0085
+          },
+          "goalsAdded": 0.03950000000000031
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -36826,6 +38812,42 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 76,
+          "goalsConceded": 30,
+          "saves": 45,
+          "xGoalsFaced": 26.2864,
+          "goalsMinusXGoalsFaced": 3.7136,
+          "goalsAddedByAction": {
+            "claiming": 0.0775,
+            "fielding": -0.2577,
+            "handling": -0.031,
+            "passing": 0.5582,
+            "shotstopping": -3.7136,
+            "sweeping": -0.3288
+          },
+          "goalsAdded": -3.6953999999999994
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 38,
+          "goalsConceded": 12,
+          "saves": 26,
+          "xGoalsFaced": 12.8238,
+          "goalsMinusXGoalsFaced": -0.8238,
+          "goalsAddedByAction": {
+            "claiming": 0.1375,
+            "fielding": 0.0164,
+            "handling": 0.2852,
+            "passing": 0.4773,
+            "shotstopping": 0.8238,
+            "sweeping": -0.3657
+          },
+          "goalsAdded": 1.3744999999999998
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -36869,6 +38891,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 8,
+          "goalsConceded": 3,
+          "saves": 5,
+          "xGoalsFaced": 1.8655,
+          "goalsMinusXGoalsFaced": 1.1345,
+          "goalsAddedByAction": {
+            "claiming": 0.002,
+            "fielding": 0,
+            "handling": -0.4265,
+            "passing": 0.06,
+            "shotstopping": -1.1345,
+            "sweeping": 0.0191
+          },
+          "goalsAdded": -1.4799
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 12,
+          "goalsConceded": 5,
+          "saves": 5,
+          "xGoalsFaced": 2.6637,
+          "goalsMinusXGoalsFaced": 2.3363,
+          "goalsAddedByAction": {
+            "claiming": 0.014,
+            "fielding": 0.0041,
+            "handling": 0.0011,
+            "passing": 0.0823,
+            "shotstopping": -2.3363,
+            "sweeping": -0.1002
+          },
+          "goalsAdded": -2.335
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -37567,6 +39625,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 13,
+          "goalsConceded": 1,
+          "saves": 10,
+          "xGoalsFaced": 3.4457,
+          "goalsMinusXGoalsFaced": -2.4457,
+          "goalsAddedByAction": {
+            "claiming": 0.0123,
+            "fielding": 0.0134,
+            "handling": -0.0085,
+            "passing": 0.1542,
+            "shotstopping": 2.4457,
+            "sweeping": -0.0543
+          },
+          "goalsAdded": 2.5628
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -38505,6 +40582,25 @@
         "xAssists": 0,
         "keyPasses": 0
       },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 10,
+          "goalsConceded": 6,
+          "saves": 4,
+          "xGoalsFaced": 4.9771,
+          "goalsMinusXGoalsFaced": 1.0229,
+          "goalsAddedByAction": {
+            "claiming": 0.0206,
+            "fielding": 0.0066,
+            "handling": 0.0231,
+            "passing": 0.123,
+            "shotstopping": -1.0229,
+            "sweeping": -0.0031
+          },
+          "goalsAdded": -0.8527000000000001
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -39305,6 +41401,42 @@
         "xAssists": 0.7348,
         "keyPasses": 2
       },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 46,
+          "goalsConceded": 15,
+          "saves": 30,
+          "xGoalsFaced": 17.4759,
+          "goalsMinusXGoalsFaced": -2.4759,
+          "goalsAddedByAction": {
+            "claiming": 0.0332,
+            "fielding": 0.0961,
+            "handling": -0.1142,
+            "passing": 1.2515,
+            "shotstopping": 2.4759,
+            "sweeping": 0.5503
+          },
+          "goalsAdded": 4.2928
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 144,
+          "goalsConceded": 44,
+          "saves": 95,
+          "xGoalsFaced": 43.5789,
+          "goalsMinusXGoalsFaced": 0.4211,
+          "goalsAddedByAction": {
+            "claiming": -0.2091,
+            "fielding": -0.0842,
+            "handling": -0.5786,
+            "passing": 3.1643,
+            "shotstopping": -0.421,
+            "sweeping": -0.6639
+          },
+          "goalsAdded": 1.2074999999999996
+        }
+      },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
         "listedInRosterSnapshot": true,
@@ -39482,6 +41614,42 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "currentSeason": {
+          "season": 2026,
+          "shotsFaced": 41,
+          "goalsConceded": 14,
+          "saves": 27,
+          "xGoalsFaced": 11.4918,
+          "goalsMinusXGoalsFaced": 2.5082,
+          "goalsAddedByAction": {
+            "claiming": 0.0209,
+            "fielding": 0.0187,
+            "handling": -0.3952,
+            "passing": 0.4127,
+            "shotstopping": -2.5082,
+            "sweeping": 0.1254
+          },
+          "goalsAdded": -2.3257
+        },
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 136,
+          "goalsConceded": 38,
+          "saves": 92,
+          "xGoalsFaced": 43.8878,
+          "goalsMinusXGoalsFaced": -5.8878,
+          "goalsAddedByAction": {
+            "claiming": 0.1148,
+            "fielding": 0.1065,
+            "handling": 0.4644,
+            "passing": 1.4272,
+            "shotstopping": 5.8878,
+            "sweeping": 0.2879
+          },
+          "goalsAdded": 8.2886
+        }
       },
       "rosterProfile": {
         "snapshotDate": "2026-02-26",
@@ -39855,6 +42023,25 @@
         "xGoals": 0,
         "xAssists": 0,
         "keyPasses": 0
+      },
+      "goalkeeperMetrics": {
+        "previousSeason": {
+          "season": 2025,
+          "shotsFaced": 117,
+          "goalsConceded": 40,
+          "saves": 76,
+          "xGoalsFaced": 34.4643,
+          "goalsMinusXGoalsFaced": 5.5357,
+          "goalsAddedByAction": {
+            "claiming": 0.0347,
+            "fielding": -0.0579,
+            "handling": -0.3073,
+            "passing": 1.3555,
+            "shotstopping": -5.5357,
+            "sweeping": 0.4823
+          },
+          "goalsAdded": -4.0283999999999995
+        }
       }
     },
     {

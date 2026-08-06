@@ -22,8 +22,9 @@
     "dev:web": "vite",
     "test:publication:web": "vitest run tests/web-data.test.ts tests/web-display.test.ts tests/web-render.test.ts tests/web-freshness.test.ts tests/web-exports.test.ts tests/web-persistence.test.ts tests/web-documentation.test.ts",
     "check:publication": "npm run validate:data && npm run validate:pool && npm run test:data && npm run test:rosters && npm run test:pool && npm run test:publication:web",
-    "build:web": "npm run check:publication && vite build",
+    "build:web": "npm run check:publication && vite build && tsx scripts/verify-deployment.ts",
     "preview:web": "vite preview",
+    "verify:deployment": "tsx scripts/verify-deployment.ts",
     "test:web": "vitest run tests/web-*.test.ts",
     "build": "tsc --noEmit"
   },

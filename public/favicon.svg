@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>MLS Trade Value Elo</title>
+
+  <rect
+    x="4"
+    y="4"
+    width="56"
+    height="56"
+    rx="14"
+    fill="#465f78"
+  />
+
+  <path
+    d="M13 17h24v-6l15 12-15 12v-6H13z"
+    fill="#ffffff"
+  />
+
+  <path
+    d="M51 47H27v6L12 41l15-12v6h24z"
+    fill="#ffffff"
+  />
+</svg>

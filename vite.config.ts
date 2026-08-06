@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
-export default defineConfig({
-  // Relative assets work both locally and from a future GitHub Pages subpath.
-  base: "./",
+export default defineConfig(({ mode }) => ({
+  // Development server uses root path; production build uses GitHub Pages subpath.
+  base: mode === "production" ? "/mls-trade-value/" : "/",
   build: { outDir: "dist" },
-});
+}));

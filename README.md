@@ -18,6 +18,8 @@ npm run build:web
 npm run preview:web
 ```
 
+The production build is configured for GitHub Pages deployment at the subpath `/mls-trade-value/`. Use `npm run preview:web` to test the production build locally; the preview server will serve from the correct subpath.
+
 Run the focused browser suite with `npm run test:web`. `npm run check:publication`
 strictly validates both committed artifacts, recomputes their semantic versions
 and comparison-pool membership, and runs the publication-critical data, roster,
@@ -143,3 +145,25 @@ Only players with at least one completed comparison receive a personal rank and
 appear in these files; untouched pool players are omitted. Export files may
 contain player names, ratings, and records, so review them before sharing
 publicly.
+
+## deployment
+
+The app is a static Vite site with no backend requirements. GitHub Pages deployment
+uses GitHub Actions with a workflow defined in `.github/workflows/deploy-pages.yml`.
+Deployment is triggered on pushes to `main` and can also be triggered manually.
+
+Deployment is gated by the full publication validation (`npm run check:publication`)
+and test suite. The production build uses the static comparison-pool data committed
+in `public/data/comparison-pool.json`; no data refresh occurs during deployment,
+and no external runtime requests are made. The production base path is
+`/mls-trade-value/`, so the deployed site will be available at
+`https://daniel-mehta.github.io/mls-trade-value/` once Pages is configured.
+
+To build and preview the production site locally:
+
+```sh
+npm run build:web
+npm run preview:web
+```
+
+Then visit `http://localhost:4173/mls-trade-value/` to verify subpath serving.

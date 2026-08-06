@@ -18,7 +18,7 @@ npm run build:web
 npm run preview:web
 ```
 
-The production build is configured for GitHub Pages deployment at the subpath `/mls-trade-value/`. Use `npm run preview:web` to test the production build locally; the preview server will serve from the correct subpath.
+The production build is configured for GitHub Pages deployment at the subpath `/mls-trade-value-elo/`. Use `npm run preview:web` to test the production build locally; the preview server will serve from the correct subpath.
 
 Run the focused browser suite with `npm run test:web`. `npm run check:publication`
 strictly validates both committed artifacts, recomputes their semantic versions
@@ -156,8 +156,8 @@ Deployment is gated by the full publication validation (`npm run check:publicati
 and test suite. The production build uses the static comparison-pool data committed
 in `public/data/comparison-pool.json`; no data refresh occurs during deployment,
 and no external runtime requests are made. The production base path is
-`/mls-trade-value/`, so the deployed site will be available at
-`https://daniel-mehta.github.io/mls-trade-value/` once Pages is configured.
+`/mls-trade-value-elo/`, so the deployed site will be available at
+`https://danielmehta.com/mls-trade-value-elo/` once Pages is configured.
 
 To build and preview the production site locally:
 
@@ -166,4 +166,4 @@ npm run build:web
 npm run preview:web
 ```
 
-Then visit `http://localhost:4173/mls-trade-value/` to verify subpath serving.
+Then visit `http://localhost:4173/mls-trade-value-elo/` to verify subpath serving.

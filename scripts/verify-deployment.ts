@@ -2,7 +2,7 @@
 /*
  * Post-build verification for GitHub Pages deployment.
  * Checks that the production build in dist/ is correctly configured
- * for serving from /mls-trade-value/ subpath.
+ * for serving from /mls-trade-value-elo/ subpath.
  */
 
 import { readFileSync, existsSync } from "node:fs";
@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { cwd } from "node:process";
 
 const DIST_DIR = join(cwd(), "dist");
-const BASE_PATH = "/mls-trade-value/";
+const BASE_PATH = "/mls-trade-value-elo/";
 
 function error(message: string): never {
   console.error(`\nVerification failed: ${message}`);
@@ -75,12 +75,14 @@ if (!descPattern.test(indexContent)) {
 console.log("✓ Correct description present");
 
 // 4. Check no absolute /data/comparison-pool.json references
-// (should be /mls-trade-value/data/comparison-pool.json)
+// (should be /mls-trade-value-elo/data/comparison-pool.json)
 checkNoPattern(indexPath, [
   /href="\/data\/comparison-pool\.json"/,
   /src="\/data\/comparison-pool\.json"/,
+  /\/mls-trade-value\/data\/comparison-pool\.json/,
+  /\/mls-trade-value\//,
 ]);
-console.log("✓ No absolute /data/comparison-pool.json references in index.html");
+console.log("✓ No incorrect base path or root-relative data references in index.html");
 
 // 5. Check built JS/CSS files for correct base path usage
 // Find all JS/CSS files in dist/ that aren't in data/
@@ -107,9 +109,13 @@ for (const assetFile of assetFiles) {
   const content = readFileSync(assetFile, "utf8");
   
   // Check that it uses the base path for data requests
-  // The pattern should be /mls-trade-value/data/comparison-pool.json
+  // The pattern should be /mls-trade-value-elo/data/comparison-pool.json
   if (content.includes("/data/comparison-pool.json")) {
-    error(`Found absolute /data/comparison-pool.json reference in ${assetFile}`);
+    error(`Found root-relative /data/comparison-pool.json reference in ${assetFile}`);
+  }
+
+  if (content.includes("/mls-trade-value/data/comparison-pool.json")) {
+    error(`Found incorrect /mls-trade-value/ base path reference in ${assetFile}`);
   }
   
   if (content.includes(`${BASE_PATH}data/comparison-pool.json`)) {

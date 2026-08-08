@@ -155,4 +155,25 @@ describe("browser rendering", () => {
     expect(reset?.getAttribute("style")).toBeNull();
     expect(reset?.className).not.toContain("absolute");
   });
+
+  it("preserves action focus across rerenders and returns focus after reset cancellation", () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    const initial = initializeBrowserSession([poolPlayer("a"), poolPlayer("b")], zeroRandom);
+    const handlers = { onChoose: vi.fn(), onSkip: vi.fn() };
+
+    renderApp(root, { session: initial, status: idle }, handlers);
+    const chooseA = root.querySelector<HTMLButtonElement>('[data-focus-key="choose-a"]')!;
+    chooseA.focus();
+    const voted = applyBrowserVote(initial, initial.currentMatchup!.playerAId, zeroRandom).session;
+    renderApp(root, { session: voted, status: idle }, handlers);
+    expect(document.activeElement?.getAttribute("data-focus-key")).toBe("choose-a");
+
+    renderApp(root, { session: voted, status: idle, resetDialogOpen: true }, handlers);
+    expect(document.activeElement?.getAttribute("data-focus-key")).toBe("reset-cancel");
+    renderApp(root, { session: voted, status: idle, resetDialogOpen: false }, handlers);
+    expect(document.activeElement?.getAttribute("data-focus-key")).toBe("reset-ranking");
+
+    root.remove();
+  });
 });

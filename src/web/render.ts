@@ -165,6 +165,7 @@ function rankingExports(hasRankedPlayers: boolean, handlers: RenderHandlers): HT
   for (const [kind, label] of options) {
     const button = element("button", "button button--secondary button--export", label);
     button.type = "button";
+    button.dataset.focusKey = `export-${kind}`;
     button.disabled = !hasRankedPlayers;
     button.setAttribute("aria-describedby", "ranking-export-help");
     button.setAttribute("aria-label", `Download ranking as ${label}`);
@@ -186,6 +187,7 @@ function rankingSidebar(entries: readonly RankedPlayer[], handlers: RenderHandle
   headingGroup.append(heading);
   const reset = element("button", "button button--quiet", "Reset ranking");
   reset.type = "button";
+  reset.dataset.focusKey = "reset-ranking";
   reset.addEventListener("click", () => handlers.onRequestReset?.());
   rankingHeader.append(headingGroup, reset);
   aside.append(rankingHeader);
@@ -213,9 +215,11 @@ function resetDialog(handlers: RenderHandlers): HTMLDialogElement {
   const actions = element("div", "reset-dialog__actions");
   const cancel = element("button", "button button--secondary", "Cancel");
   cancel.type = "button";
+  cancel.dataset.focusKey = "reset-cancel";
   cancel.addEventListener("click", () => handlers.onCancelReset?.());
   const confirm = element("button", "button button--danger", "Reset ranking");
   confirm.type = "button";
+  confirm.dataset.focusKey = "reset-confirm";
   confirm.addEventListener("click", () => handlers.onConfirmReset?.());
   actions.append(cancel, confirm);
   dialog.append(heading, description, actions);
@@ -239,12 +243,15 @@ function comparisonControls(
   const buttons = element("div", "comparison-controls__buttons");
   const chooseA = element("button", "button button--primary", `Choose ${playerA.name}`);
   chooseA.type = "button";
+  chooseA.dataset.focusKey = "choose-a";
   chooseA.addEventListener("click", () => handlers.onChoose(playerA.id));
   const chooseB = element("button", "button button--primary", `Choose ${playerB.name}`);
   chooseB.type = "button";
+  chooseB.dataset.focusKey = "choose-b";
   chooseB.addEventListener("click", () => handlers.onChoose(playerB.id));
   const skip = element("button", "button button--secondary", "Skip");
   skip.type = "button";
+  skip.dataset.focusKey = "skip";
   skip.addEventListener("click", handlers.onSkip);
   buttons.append(chooseA, chooseB, skip);
 
@@ -312,6 +319,10 @@ export function renderApp(
   state: RenderState,
   handlers: RenderHandlers,
 ): void {
+  const activeElement = document.activeElement;
+  const previousFocusKey = activeElement instanceof HTMLElement && root.contains(activeElement)
+    ? activeElement.dataset.focusKey
+    : undefined;
   const matchup = state.session.currentMatchup;
   if (!matchup) throw new Error("The browser session has no current matchup.");
   const byId = new Map(state.session.players.map((player) => [player.id, player]));
@@ -362,6 +373,16 @@ export function renderApp(
   if (state.resetDialogOpen && dialog) {
     try { dialog.showModal(); } catch { dialog.open = true; }
     dialog.querySelector<HTMLButtonElement>(".button--secondary")?.focus();
+    return;
+  }
+
+  const nextFocusKey = previousFocusKey === "reset-cancel" || previousFocusKey === "reset-confirm"
+    ? "reset-ranking"
+    : previousFocusKey;
+  if (nextFocusKey) {
+    [...page.querySelectorAll<HTMLElement>("[data-focus-key]")]
+      .find((control) => control.dataset.focusKey === nextFocusKey)
+      ?.focus();
   }
 }
 

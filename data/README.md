@@ -243,7 +243,9 @@ any ASA performance metric.
 
 `npm run check:publication` validates both artifacts without rebuilding them or
 refreshing any source. The production web build runs this command before Vite.
-There is no deployment workflow in this repository yet.
+`.github/workflows/deploy-pages.yml` runs the full test suite and publication
+check, builds `dist`, uploads that directory as the Pages artifact, and deploys
+it only after the build job succeeds. The workflow never refreshes source data.
 
 This project is independent and is not affiliated with or endorsed by MLS,
 MLSPA, ASA, any club, or any player. Repository code licences do not establish a

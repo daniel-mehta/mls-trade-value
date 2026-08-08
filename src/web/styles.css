@@ -188,6 +188,10 @@ button { font: inherit; }
 
 .app-state { width: min(620px, calc(100% - 32px)); margin: 12vh auto 0; padding: 22px; border: 1px solid var(--border); border-radius: 3px; background: var(--panel); }
 .app-state--error { border-top: 3px solid #85413b; }
+.site-footer { margin-top: 22px; padding: 12px 0 4px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; text-align: center; }
+.site-footer__link { color: inherit; }
+.site-footer__link:hover { color: var(--accent); }
+.site-footer__link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .reset-dialog { width: min(460px, calc(100% - 28px)); padding: 18px; border: 1px solid var(--border); border-radius: 3px; color: #202421; background: var(--panel); }
 .reset-dialog::backdrop { background: rgb(20 25 22 / 42%); }
 .reset-dialog__title { margin: 0; font-size: 21px; }

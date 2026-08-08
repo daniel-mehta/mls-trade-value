@@ -20,6 +20,17 @@ describe("browser rendering", () => {
     expect(root.querySelector(".comparison-column > .comparison-cards")).not.toBeNull();
   });
 
+  it("renders the privacy policy link at the bottom of the app", () => {
+    const root = document.createElement("div");
+    const session = initializeBrowserSession([poolPlayer("a"), poolPlayer("b")], zeroRandom);
+    renderApp(root, { session, status: idle }, { onChoose: vi.fn(), onSkip: vi.fn() });
+    const footer = root.querySelector(".site-footer");
+    const link = footer?.querySelector<HTMLAnchorElement>("a");
+    expect(link?.textContent).toBe("Privacy policy");
+    expect(link?.href).toBe("https://danielmehta.com/privacy.html");
+    expect(footer?.compareDocumentPosition(root.querySelector(".workspace")!)).toBe(Node.DOCUMENT_POSITION_PRECEDING);
+  });
+
   it("shows Unranked before a player's first comparison", () => {
     const root = document.createElement("div");
     const session = initializeBrowserSession([poolPlayer("a"), poolPlayer("b")], zeroRandom);

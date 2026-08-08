@@ -314,6 +314,14 @@ function comparisonStatus(state: RenderState): HTMLElement {
   return panel;
 }
 
+function siteFooter(): HTMLElement {
+  const footer = element("footer", "site-footer");
+  const link = element("a", "site-footer__link", "Privacy policy");
+  link.href = "https://danielmehta.com/privacy.html";
+  footer.append(link);
+  return footer;
+}
+
 export function renderApp(
   root: HTMLElement,
   state: RenderState,
@@ -366,7 +374,7 @@ export function renderApp(
     comparisonStatus(state),
   );
   workspace.append(rankingSidebar(buildTop25(state.session), handlers), comparisonColumn);
-  page.append(header, workspace, resetDialog(handlers));
+  page.append(header, workspace, siteFooter(), resetDialog(handlers));
   root.replaceChildren(page);
 
   const dialog = page.querySelector<HTMLDialogElement>(".reset-dialog");

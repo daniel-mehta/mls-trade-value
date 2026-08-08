@@ -1,236 +1,113 @@
 # MLS Trade Value Elo
 
-MLS Trade Value Elo is a static browser tool for building a personal ranking of
-MLS players through head-to-head choices. Each choice updates the two players'
-Elo ratings; the result is your ranking, not a global score or an objective
-valuation model.
+MLS Trade Value Elo is a static browser application for making a personal MLS player trade-value ranking through pairwise comparisons. Pick the player you would value more in each matchup and the app updates both players' Elo ratings. The result stays in your browser: it is not a consensus ranking, a predictive valuation model, or an official MLS ranking.
 
-**Live demo:** [danielmehta.com/mls-trade-value-elo](https://danielmehta.com/mls-trade-value-elo/)
+The application is deployed as static files, with no application backend or runtime football-data API.
 
-## What the tool does
+## Live demo
 
-- Presents two eligible players at a time with role-appropriate statistical,
-  salary, contract, and dated roster context when those fields are available.
-- Updates a personal Elo ranking after each choice and shows compared players
-  in **Your Top 25**.
-- Uses adaptive scheduling to improve coverage, limit repetition, and gradually
-  introduce rating similarity without changing the Elo calculation.
-- Saves progress in the browser and supports reset, skip, CSV, TXT, and JSON
-  export controls.
-- Runs entirely as committed static files: no account, backend, runtime data
-  API, or cloud ranking storage is required. The only external runtime service
-  is optional GoatCounter aggregate usage analytics.
+[Open MLS Trade Value Elo](https://danielmehta.com/mls-trade-value-elo/)
 
-## How ranking works
+## Key features
 
-Every player starts at 1500 Elo. The shared pure TypeScript Elo engine uses the
-standard expected-score formula and a K-factor of 32. Ratings retain full
-floating-point precision internally and are rounded only for display and
-export.
+- Pairwise Elo ranking that reflects your own choices
+- Adaptive matchmaking designed to improve pool coverage and reduce repetition
+- A personal Top 25 for players you have compared
+- Role-specific goalkeeper context alongside outfield context
+- Browser-local persistence, reset controls, and no accounts
+- Local CSV, TXT, and JSON ranking exports
+- Committed data artifacts with reproducible validation and a publication gate
 
-Only players with at least one completed comparison receive a personal rank.
-Ranked players are ordered by:
+## How it works
 
-1. Elo, descending
-2. Completed comparisons, descending
-3. Wins, descending
-4. Player name, ascending
+Every player begins at 1500 Elo. A completed choice updates both players using the same Elo calculation with a K-factor of 32. Only players with at least one completed comparison receive a personal rank; skips advance to another matchup without changing Elo.
 
-Skipping advances the matchup without changing either player's Elo or counting
-as a completed comparison. Early rankings are necessarily provisional while
-most of the pool is unranked or lightly compared.
+Early rankings are provisional because most players have not yet been compared, or have only a small number of comparisons. When records otherwise tie, the ranking uses Elo, completed comparisons, wins, and player name in that order.
 
 ## Comparison pool
 
-The committed browser pool is an eligibility and involvement filter, not a
-trade-value ranking. Eligibility requires current-season minutes, or
-previous-season minutes plus inclusion in the dated roster snapshot. Per
-statistical team, the pool selects five eligible outfield players and one
-goalkeeper using current minutes plus half of previous-season minutes. It also
-includes eligible Designated Players, U22 Initiative players, and players with
-at least five current-season goals plus primary assists. Deterministic
-tie-breakers and strict, currently empty override files make the result
-reproducible. A manual inclusion is still eligibility-bound and cannot add a
-player who fails the minute-and-roster rule.
+The comparison pool is an eligibility and involvement filter, not a trade-value ranking. It includes players with current-season minutes, plus a previous-season fallback for players who remain eligible in a dated roster snapshot. For each statistical team, it selects five outfield players and one goalkeeper by participation score: current-season minutes plus half of previous-season minutes.
 
-Pool membership does not assign Elo or imply relative value. Salary does not
-determine eligibility, Elo, ranking position, or matchup priority.
+Eligible Designated Players, U22 Initiative players, and players with at least five current-season goals plus primary assists are also included. Selection is deterministic. A manual inclusion is still eligibility-bound, so it cannot add a player who fails the minute-and-roster rule.
 
-## Matchup scheduling
+See [data/README.md](data/README.md) for the complete methodology and validation rules.
 
-Coverage of under-compared players is the scheduler's highest priority. It also
-avoids recently repeated pairs and players, keeps bounded cooldown histories,
-and uses cross-team and cross-position variety as a soft preference.
+## Adaptive matchmaking
 
-For the first 20 completed comparisons, a temporary metadata-derived policy
-aims for exactly one featured player in about 65% of matchups.
-The prominence preference uses a scheduler-only score: Designated Player status
-(+3), U22 status
-(+2), five or more current-season goal contributions (+2), base team-pool
-selection (+1), and at least 900 current-season minutes (+1); a score of three
-qualifies. It does not use names, fame, or salary. This influence decays from
-comparisons 20 to 50 and is zero thereafter.
+The scheduler prioritizes under-compared players and avoids recently repeated pairs and players. A temporary, documented prominence preference can improve the quality of early matchups using player metadata only, then fades out. After enough comparisons, Elo similarity gradually becomes another preference while occasional broader matchups preserve ranking connectivity.
 
-Elo similarity begins to influence some selections after 50 completed
-comparisons, reaches full strength at 110, and retains periodic bridge matchups
-for ranking connectivity. Scheduling changes only which players appear; it
-does not change Elo calculations or ranking rules. Skips update cooldown history but
-do not advance the saved completed-comparison count.
+Scheduling determines which two players appear next. It does not alter the Elo calculation or ranking rules.
 
-## Data and provenance
+## Data
 
-The data pipeline normalizes public American Soccer Analysis (ASA) player,
-team, statistical, salary, goalkeeper, and parsed roster-profile sources into
-two committed artifacts:
+American Soccer Analysis (ASA) is the primary data source. Player, team, statistical, salary, and goalkeeper data are normalized into committed static artifacts; dated roster metadata comes from ASA's [mls-roster-profiles](https://github.com/American-Soccer-Analysis/mls-roster-profiles) repository. The browser loads the committed comparison pool rather than calling those sources at runtime.
 
-- `public/data/players.json`: the normalized source dataset
-- `public/data/comparison-pool.json`: the validated browser-facing subset
+The data is static and does not update automatically. Artifact build time is not the same as verified statistical coverage, and `statisticsThrough` is currently `null` because no consumed source metadata provides a defensible through-date. Source dates also differ across statistics, roster metadata, and salaries.
 
-Schema versions and semantic `sha256:` data versions are separate. Semantic
-versions cover substantive source content, normalization rules, provenance,
-overrides, selection rules, and membership; build timestamps are excluded. The
-publication validator recomputes the versions and pool membership from the
-committed files without refreshing sources or rewriting artifacts.
+For artifact details, provenance, and refresh safeguards, see [data/README.md](data/README.md) and [data_notice.md](data_notice.md).
 
-The browser loads only `comparison-pool.json` and local application assets at
-runtime. Data is static and does not update automatically. Artifact build time,
-verified statistical coverage, roster snapshot date, roster release-file date,
-and salary release are distinct. `statisticsThrough` remains `null` unless the
-consumed source metadata directly proves a coverage date; build time is never
-used as a substitute. The roster snapshot can be older than the statistical
-data and may not reflect current team assignments.
+## Goalkeepers
 
-See [data/README.md](data/README.md) for normalization, eligibility, semantic
-versioning, override, and publication details, and [data_notice.md](data_notice.md)
-for the concise data notice.
+Goalkeeper cards use role-appropriate context from the official ASA goalkeeper xGoals and Goalkeeper Goals Added source families. When available, this includes saves, shots faced, xG faced, goals minus xG faced, and Goalkeeper Goals Added. Missing goalkeeper fields are omitted rather than shown as zero.
 
-## Goalkeeper handling
+These metrics help users make a choice; they do not directly determine Elo or pool membership.
 
-Goalkeeper cards use the official ASA goalkeeper xGoals and Goalkeeper Goals
-Added source families. When available, cards show goalkeeper minutes, saves,
-shots faced, xG faced, goals minus xG faced, and Goalkeeper Goals Added.
-Current- and previous-season records remain separate, previous-season fallback
-use is labelled explicitly, and missing goalkeeper fields are omitted rather
-than invented or displayed as zero. These metrics provide comparison context
-only; they do not directly affect Elo, scheduling, or pool membership.
+## Privacy and persistence
 
-## Persistence and privacy
+Your ranking uses browser `localStorage`. There are no accounts or cloud ranking storage. Your player choices are never uploaded, nor are rankings, Elo values, matchup history, or export contents. Browser state is tied to that browser and site origin, so clearing storage or moving to another device does not transfer a ranking.
 
-Rankings persist only in `window.localStorage` under:
+The site uses GoatCounter for privacy-preserving aggregate usage analytics. It receives page visits and only fixed feature-event names for votes, skips, exports, and resets. It receives no player names, IDs, choices, rankings, Elo values, matchup data, or export contents. GoatCounter does not use cookies or persistent analytics identifiers, and the application suppresses its page visits and events when the browser reports Do Not Track.
 
-```text
-daniel-mehta:mls-trade-value-elo:ranking-state
-```
-
-The schema-version-2 state stores stable player IDs, ratings, records, totals,
-current and previous matchups, and bounded scheduler history—not full player
-records. Dataset-version reconciliation retains returning-player records, adds
-new players unranked, removes missing IDs, and repairs invalid matchup history.
-Version 1 state migrates to the current format.
-
-There are no accounts, cookies, ranking uploads, or cloud synchronization.
-Rankings, Elo ratings, matchup history, and player choices remain in your
-browser and are never uploaded. The site uses GoatCounter for privacy-preserving
-aggregate usage analytics: page visits and the anonymous feature events vote,
-skip, CSV/TXT/JSON export, and reset ranking. GoatCounter does not use cookies
-or persistent tracking identifiers. No player-choice, ranking, Elo, matchup,
-or export data is sent. When `navigator.doNotTrack === "1"`, the site prevents
-both GoatCounter page visits and feature events. `Reset ranking` removes only
-this application's key. Browser storage can be blocked or cleared and is not a
-backup; rankings do not transfer between browsers, devices, or site origins.
+For technical transparency, the optional analytics integration uses `https://gc.zgo.at/count.js` and `https://danielmehta.goatcounter.com/count`. Analytics failure does not affect ranking use.
 
 ## Exports
 
-Exports are generated entirely in the browser and do not mutate Elo, matchup,
-scheduler, or saved ranking state:
+Exports are generated locally in the browser.
 
-- **CSV:** every compared player in ranking order with identity, team,
-  position, Elo, and record columns
-- **Top 25 TXT:** up to 25 compared players in a compact text format
-- **JSON:** the complete compared-player ranking plus explicit dataset, Elo,
-  comparison-count, and export-format metadata
+- **CSV**: the full compared-player ranking with player, team, position, Elo, and record fields
+- **TXT**: a compact personal Top 25
+- **JSON**: the structured compared-player ranking with dataset and export metadata
 
-Untouched players are omitted. Exports are not import files and may contain
-player names, personal ratings, and records, so review them before sharing.
+Uncompared players are not exported. Exports are not import files; review personal rankings before sharing them.
+
+## Technical architecture
+
+The application uses TypeScript and Vite, deployed as a static GitHub Pages site. A pure Elo domain layer, browser scheduler, `localStorage` persistence, and browser-only exports operate on committed JSON artifacts. No application backend or runtime football-data API is required.
+
+The data pipeline and publication checks validate schemas, semantic data versions, provenance, deterministic pool reconstruction, and consistency between source and browser artifacts. Vitest covers the domain logic, data pipeline, browser modules, documentation claims, and publication-facing behavior. GitHub Actions runs the full test suite and production build before Pages deployment.
 
 ## Running locally
-
-Node.js 22 is used in GitHub Actions.
 
 ```sh
 npm ci
 npm run dev:web
 ```
 
-Vite prints the development URL. To build and preview the production subpath:
+For the full local validation and production build:
 
 ```sh
-npm run build:web
-npm run preview:web
-```
-
-Then open `http://localhost:4173/mls-trade-value-elo/`.
-
-## Testing and publication validation
-
-```sh
-npm test                 # complete Vitest suite
-npm run build            # TypeScript type-check
+npm test
 npm run check:publication
-npm run build:web        # publication gate, Vite build, deployment verification
-npm run test:web         # focused browser modules
-npm run audit:rosters
-npm run audit:pool
+npm run build:web
 ```
 
-`check:publication` validates player and pool schemas, semantic versions,
-provenance, roster accounting, deterministic selection, source-to-pool
-consistency, browser data handling, persistence, freshness copy, documentation,
-and exports. It does not fetch external sources or regenerate data.
+`npm run build:web` runs the publication checks, builds the production subpath, and verifies the deployment output. Use `npm run preview:web` to inspect that build locally.
 
-## Deployment
+## Testing and publication integrity
 
-Vite uses `/` in development and `/mls-trade-value-elo/` for production.
-Runtime data requests use `import.meta.env.BASE_URL`, so JSON, JavaScript, CSS,
-and the favicon resolve beneath the deployed subpath.
-
-The only intentional external runtime requests are GoatCounter's hosted script
-and aggregate count endpoint: `https://gc.zgo.at/count.js` and
-`https://danielmehta.goatcounter.com/count`. The browser makes no runtime
-requests to ASA, MLS, salary, roster, goalkeeper, backend, or cloud-ranking
-services. GoatCounter is optional and failures do not affect the application.
-
-`.github/workflows/deploy-pages.yml` runs on pushes to `main` and manual
-dispatch. Its build job installs locked dependencies, runs the full test suite,
-runs the publication-gated production build, verifies `dist`, and uploads that
-directory. A separate least-privilege deploy job publishes the artifact to the
-`github-pages` environment. The workflow does not refresh source data and does
-not require a personal token or repository secret.
+The current suite contains 254 automated tests. `npm run check:publication` validates committed artifacts without refreshing sources or rewriting data, including schema, semantic-version, provenance, roster, and pool consistency checks. The production web build runs that gate before Vite builds the site.
 
 ## Limitations
 
-- Elo represents one browser user's choices, not market value, consensus, or a
-  predictive model.
-- Pool selection measures eligibility and involvement; it is not an objective
-  ranking and can omit valid trade-value candidates.
-- Static statistics, salaries, contracts, and roster metadata can become stale
-  and have different source dates and coverage.
-- A verified statistics-through date is unavailable when source metadata does
-  not prove one.
-- Missing source fields reduce the context shown for some players.
-- Browser-local state can be lost and has no account recovery or synchronization.
+- Rankings are subjective and personal, not a market, consensus, predictive, or official valuation.
+- Early Elo results are provisional.
+- Pool membership is an eligibility/involvement filter, not objective trade value.
+- Static statistics, roster metadata, and salary information can become stale and use different source dates.
+- Browser-local state is device- and origin-specific, with no sync or recovery.
+- The project's MIT licence does not settle rights to third-party data.
 
-## Attribution, non-affiliation, and licence
+## Attribution and licence
 
-Player and team statistics, salaries, and goalkeeper data are attributed to
-[American Soccer Analysis](https://www.americansocceranalysis.com/). Dated
-roster metadata comes from ASA's
-[`mls-roster-profiles`](https://github.com/American-Soccer-Analysis/mls-roster-profiles)
-repository, which parses club roster-profile sources.
+Player and team statistics, salaries, and goalkeeper data are attributed to [American Soccer Analysis](https://www.americansocceranalysis.com/). Dated roster metadata comes from ASA's [mls-roster-profiles](https://github.com/American-Soccer-Analysis/mls-roster-profiles) repository, which parses club roster-profile sources.
 
-This independent project is not affiliated with or endorsed by MLS, MLSPA,
-American Soccer Analysis, any club, or any player. The repository's
-[MIT licence](LICENSE) applies to the project code and documentation; it does
-not establish ownership, redistribution rights, legal approval, or a licence
-for underlying third-party data. Review current source terms and attribution
-requirements before redistributing data artifacts.
+This independent project is not affiliated with or endorsed by MLS, MLSPA, American Soccer Analysis, any club, or any player. The repository's [MIT licence](LICENSE) applies to its code and documentation; it does not establish ownership, redistribution rights, legal approval, or a licence for underlying third-party data. Review current source terms and attribution requirements before redistributing data artifacts.

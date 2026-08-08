@@ -17,8 +17,9 @@ valuation model.
   introduce rating similarity without changing the Elo calculation.
 - Saves progress in the browser and supports reset, skip, CSV, TXT, and JSON
   export controls.
-- Runs entirely as committed static files: no account, backend, analytics,
-  tracking, runtime data API, or cloud ranking storage is required.
+- Runs entirely as committed static files: no account, backend, runtime data
+  API, or cloud ranking storage is required. The only external runtime service
+  is optional GoatCounter aggregate usage analytics.
 
 ## How ranking works
 
@@ -127,10 +128,16 @@ records. Dataset-version reconciliation retains returning-player records, adds
 new players unranked, removes missing IDs, and repairs invalid matchup history.
 Version 1 state migrates to the current format.
 
-There are no accounts, cookies, analytics, tracking pixels, ranking uploads, or
-cloud synchronization. `Reset ranking` removes only this application's key.
-Browser storage can be blocked or cleared and is not a backup; rankings do not
-transfer between browsers, devices, or site origins.
+There are no accounts, cookies, ranking uploads, or cloud synchronization.
+Rankings, Elo ratings, matchup history, and player choices remain in your
+browser and are never uploaded. The site uses GoatCounter for privacy-preserving
+aggregate usage analytics: page visits and the anonymous feature events vote,
+skip, CSV/TXT/JSON export, and reset ranking. GoatCounter does not use cookies
+or persistent tracking identifiers. No player-choice, ranking, Elo, matchup,
+or export data is sent. When `navigator.doNotTrack === "1"`, the site prevents
+both GoatCounter page visits and feature events. `Reset ranking` removes only
+this application's key. Browser storage can be blocked or cleared and is not a
+backup; rankings do not transfer between browsers, devices, or site origins.
 
 ## Exports
 
@@ -186,6 +193,12 @@ and exports. It does not fetch external sources or regenerate data.
 Vite uses `/` in development and `/mls-trade-value-elo/` for production.
 Runtime data requests use `import.meta.env.BASE_URL`, so JSON, JavaScript, CSS,
 and the favicon resolve beneath the deployed subpath.
+
+The only intentional external runtime requests are GoatCounter's hosted script
+and aggregate count endpoint: `https://gc.zgo.at/count.js` and
+`https://danielmehta.goatcounter.com/count`. The browser makes no runtime
+requests to ASA, MLS, salary, roster, goalkeeper, backend, or cloud-ranking
+services. GoatCounter is optional and failures do not affect the application.
 
 `.github/workflows/deploy-pages.yml` runs on pushes to `main` and manual
 dispatch. Its build job installs locked dependencies, runs the full test suite,

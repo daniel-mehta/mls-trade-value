@@ -37,4 +37,11 @@ describe("balanced matchup selection documentation", () => {
       .join("\n");
     expect(rendering).not.toMatch(/24\.9003|1\.0997|1830/);
   });
+
+  it("documents the sole optional external analytics service without weakening local ranking privacy", () => {
+    expect(publicDocumentation).toContain("https://gc.zgo.at/count.js");
+    expect(publicDocumentation).toContain("https://danielmehta.goatcounter.com/count");
+    expect(publicDocumentation).toMatch(/GoatCounter.*cookies|cookies.*GoatCounter/is);
+    expect(publicDocumentation).toMatch(/player-choice.*never uploaded|never uploaded.*player choices/is);
+  });
 });

@@ -11,6 +11,8 @@ import { cwd } from "node:process";
 
 const DIST_DIR = join(cwd(), "dist");
 const BASE_PATH = "/mls-trade-value-elo/";
+const GOATCOUNTER_SCRIPT_URL = "https://gc.zgo.at/count.js";
+const GOATCOUNTER_ENDPOINT = "https://danielmehta.goatcounter.com/count";
 
 function error(message: string): never {
   console.error(`\nVerification failed: ${message}`);
@@ -74,6 +76,16 @@ if (!descPattern.test(indexContent)) {
 }
 console.log("✓ Correct description present");
 
+// GoatCounter is the sole allowed external runtime service. Its inline DNT
+// setting prevents the automatic page view before the hosted script loads.
+if (!indexContent.includes(GOATCOUNTER_SCRIPT_URL) || !indexContent.includes(GOATCOUNTER_ENDPOINT)) {
+  error("Expected GoatCounter script or endpoint is missing from index.html");
+}
+if (!/navigator\.doNotTrack === "1"[\s\S]*no_onload: true/.test(indexContent)) {
+  error("GoatCounter DNT no_onload configuration is missing from index.html");
+}
+console.log("✓ GoatCounter script, endpoint, and DNT pageview suppression are present");
+
 // 4. Check no absolute /data/comparison-pool.json references
 // (should be /mls-trade-value-elo/data/comparison-pool.json)
 checkNoPattern(indexPath, [
@@ -129,5 +141,17 @@ for (const assetFile of assetFiles) {
   checkNoPattern(assetFile, [new RegExp(asaUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))]);
 }
 console.log("✓ No external ASA URL in built assets");
+
+const prohibitedAnalyticsHosts = [
+  "google-analytics.com",
+  "googletagmanager.com",
+  "plausible.io",
+  "posthog.com",
+  "cloudflareinsights.com",
+];
+for (const path of [indexPath, ...assetFiles]) {
+  checkNoPattern(path, prohibitedAnalyticsHosts.map((host) => new RegExp(host.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i")));
+}
+console.log("✓ No other analytics-provider runtime references in built assets");
 
 console.log("\n✅ All deployment verification checks passed!");

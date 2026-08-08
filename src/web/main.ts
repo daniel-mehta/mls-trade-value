@@ -9,6 +9,7 @@ import { renderApp, renderFatalState, type RenderState } from "./render.js";
 import { applyBrowserVote, applySkip, initializeBrowserSession } from "./session.js";
 import { RankingStorageAdapter } from "./storage.js";
 import { exportPersonalRanking } from "./exports/exporter.js";
+import { trackUsageEvent } from "./analytics.js";
 
 const SAVED_MESSAGE = "Your ranking is saved only in this browser. It is not uploaded or shared.";
 const UNAVAILABLE_MESSAGE = "Saving unavailable. This session will reset on refresh.";
@@ -120,12 +121,14 @@ try {
         loserAfter: result.loserAfter,
       };
       saveSession();
+      trackUsageEvent("vote");
       rerender();
     },
     onSkip() {
       state.session = applySkip(state.session);
       state.status = { kind: "skip", message: "Elo ratings did not change." };
       saveSession();
+      trackUsageEvent("skip");
       rerender();
     },
     onRequestReset() { state.resetDialogOpen = true; rerender(); },
@@ -145,6 +148,7 @@ try {
           state.persistenceMessage = "Ranking reset in this tab, but the saved copy could not be removed and may return after refresh.";
         }
       }
+      trackUsageEvent("reset-ranking");
       rerender();
       root.querySelector<HTMLButtonElement>(".button--quiet")?.focus();
     },
@@ -157,6 +161,9 @@ try {
       state.status = result.kind === "success"
         ? { kind: "idle", message: `${kind === "text" ? "Top 25 TXT" : kind.toUpperCase()} ranking downloaded.` }
         : { kind: "idle", message: "The ranking export could not be created." };
+      if (result.kind === "success") {
+        trackUsageEvent(kind === "text" ? "export-txt" : `export-${kind}`);
+      }
       rerender();
     },
   });

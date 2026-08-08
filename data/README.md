@@ -217,6 +217,12 @@ scheduler history are stored. A semantic data-version change preserves ratings
 and records for returning IDs, adds new IDs unranked, drops removed IDs, filters
 history, and repairs invalid matchups. Elo and scheduler policy are unchanged.
 
+The browser makes no runtime requests to ASA, MLS, salary, roster, goalkeeper,
+backend, or cloud-ranking services. The only intentional external runtime
+requests are optional GoatCounter aggregate analytics at
+`https://gc.zgo.at/count.js` and `https://danielmehta.goatcounter.com/count`.
+They do not send player choices, IDs, rankings, Elo values, or export contents.
+
 CSV ranking rows are unchanged. TXT and JSON exports distinguish export time,
 player and pool artifact build times and versions, verified coverage, roster
 dates, and salary release/currency. JSON export format version 2 reflects this
